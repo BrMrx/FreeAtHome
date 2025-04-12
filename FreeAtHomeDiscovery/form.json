@@ -2,7 +2,7 @@
   "elements": [
     {
       "type": "Button",
-      "caption": "Ger\u00e4te suchen",
+      "caption": "Geraete suchen",
       "onClick": "FAHDISC_DiscoverDevices($id);"
     }
   ],
