@@ -1,0 +1,15 @@
+{
+  "id": "{5A499B28-ABF4-4E71-A33B-4AA213FA2782}",
+  "name": "Free@Home",
+  "author": "Bruno Marx",
+  "url": "https://github.com/BrMrx/FreeAtHome",
+  "version": "1.0",
+  "modules": [
+    {
+      "id": "{D01F8B7C-FA5C-4C8A-B0FC-1C8C3C3C3C3C}",
+      "name": "Free@Home",
+      "type": 1,
+      "location": "FreeAtHome"
+    }
+  ]
+}
