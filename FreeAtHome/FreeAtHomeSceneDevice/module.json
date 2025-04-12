@@ -1,0 +1,11 @@
+{
+  "id": "{D4D8FEE8-9C3F-4B88-9150-000000000004}",
+  "name": "FreeAtHomeSceneDevice",
+  "type": 3,
+  "vendor": "BuschJaeger",
+  "aliases": ["FreeAtHome Scene Device"],
+  "parentRequirements": [],
+  "childRequirements": [],
+  "implemented": [],
+  "prefix": "FAHSCENE"
+}

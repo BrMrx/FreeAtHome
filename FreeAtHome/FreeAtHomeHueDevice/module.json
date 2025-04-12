@@ -1,0 +1,11 @@
+{
+  "id": "{E5D9FEE8-9C3F-4B88-9150-000000000005}",
+  "name": "FreeAtHomeHueDevice",
+  "type": 3,
+  "aliases": ["FreeAtHome Hue Device"],
+  "vendor": "BuschJaeger",
+  "parentRequirements": [],
+  "childRequirements": [],
+  "implemented": [],
+  "prefix": "FAHHUE"
+}

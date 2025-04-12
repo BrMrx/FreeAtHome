@@ -1,0 +1,11 @@
+{
+  "id": "{A1D5FEE8-9C3F-4B88-9150-000000000001}",
+  "name": "FreeAtHomeDiscovery",
+  "type": 5,
+  "vendor": "BuschJaeger",
+  "aliases": ["FreeAtHome Discovery"],
+  "parentRequirements": [],
+  "childRequirements": [],
+  "implemented": [], 
+  "prefix": "FAHDISC"
+ }
