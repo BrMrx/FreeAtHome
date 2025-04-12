@@ -4,9 +4,9 @@
   "author": "Bruno Marx",
   "url": "https://github.com/BrMrx/FreeAtHome",
   "version": "0.1",
-  "build": 0,
   "date": 0,
-  "compatibility": {
+  "build": 0,
+ "compatibility": {
     "version": "6.0"
   }
 }
