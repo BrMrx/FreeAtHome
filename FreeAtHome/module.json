@@ -1,6 +1,6 @@
 {
   "id": "{D01F8B7C-FA5C-4C8A-B0FC-1C8C3C3C3C3C}",
-  "name": "Free@Home",
+  "name": "FreeAtHome",
   "type": 1,
   "vendor": "SymconFreeAtHome",
   "version": "1.0",
@@ -12,35 +12,35 @@
   "modules": [
     {
       "id": "{A1D5FEE8-9C3F-4B88-9150-000000000001}",
-      "name": "Free@Home Discovery",
+      "name": "FreeAtHome Discovery",
       "type": 1,
       "class": "FreeAtHomeDiscovery",
       "prefix": "FAHDISC"
     },
     {
       "id": "{B2D6FEE8-9C3F-4B88-9150-000000000002}",
-      "name": "Free@Home Konfigurator",
+      "name": "FreeAtHome Konfigurator",
       "type": 4,
       "class": "FreeAtHomeConfigurator",
       "prefix": "FAHCONF"
     },
     {
       "id": "{C3D7FEE8-9C3F-4B88-9150-000000000003}",
-      "name": "Free@Home Ger\u00e4t",
+      "name": "FreeAtHome Ger\u00e4t",
       "type": 3,
       "class": "FreeAtHomeDevice",
       "prefix": "FAHDEV"
     },
     {
       "id": "{D4D8FEE8-9C3F-4B88-9150-000000000004}",
-      "name": "Free@Home Szene",
+      "name": "FreeAtHome Szene",
       "type": 3,
       "class": "FreeAtHomeSceneDevice",
       "prefix": "FAHSCENE"
     },
     {
       "id": "{E5D9FEE8-9C3F-4B88-9150-000000000005}",
-      "name": "Free@Home Hue",
+      "name": "FreeAtHome Hue",
       "type": 3,
       "class": "FreeAtHomeHueDevice",
       "prefix": "FAHHUE"

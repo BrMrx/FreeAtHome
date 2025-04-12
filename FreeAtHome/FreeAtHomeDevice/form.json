@@ -1,0 +1,24 @@
+{
+  "elements": [
+    {
+      "type": "ValidationTextBox",
+      "name": "Host",
+      "caption": "SysAP Host"
+    },
+    {
+      "type": "ValidationTextBox",
+      "name": "Username",
+      "caption": "Benutzername"
+    },
+    {
+      "type": "PasswordTextBox",
+      "name": "Password",
+      "caption": "Passwort"
+    },
+    {
+      "type": "Label",
+      "caption": "Dieses Ger\u00e4t wird automatisch per WebSocket aktualisiert."
+    }
+  ],
+  "status": []
+}

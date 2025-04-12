@@ -1,0 +1,10 @@
+{
+  "elements": [
+    {
+      "type": "Button",
+      "caption": "Ger\u00e4te suchen",
+      "onClick": "FAHDISC_DiscoverDevices($id);"
+    }
+  ],
+  "status": []
+}

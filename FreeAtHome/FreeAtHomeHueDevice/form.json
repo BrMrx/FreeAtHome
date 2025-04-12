@@ -1,0 +1,14 @@
+{
+  "elements": [
+    {
+      "type": "ValidationTextBox",
+      "name": "DeviceID",
+      "caption": "Hue-Ger\u00e4te-ID"
+    },
+    {
+      "type": "Label",
+      "caption": "Diese Instanz steuert ein \u00fcber free@home eingebundenes Hue-Ger\u00e4t."
+    }
+  ],
+  "status": []
+}

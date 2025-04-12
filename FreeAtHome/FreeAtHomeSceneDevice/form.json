@@ -1,0 +1,14 @@
+{
+  "elements": [
+    {
+      "type": "ValidationTextBox",
+      "name": "DeviceID",
+      "caption": "Szenen-ID"
+    },
+    {
+      "type": "Label",
+      "caption": "Diese Instanz kann verwendet werden, um Szenen auszul\u00f6sen."
+    }
+  ],
+  "status": []
+}
