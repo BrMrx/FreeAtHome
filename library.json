@@ -1,9 +1,11 @@
 {
-  "id": "{5A499B28-ABF4-4E71-A33B-4AA213FA2782}",
+  "id": "{41A31231-E2EB-775C-EF90-F8E7E7BC7144}",
   "name": "FreeAtHome",
   "author": "Bruno Marx",
   "url": "https://github.com/BrMrx/FreeAtHome",
   "version": "0.1",
+  "build": 0,
+  "date": 0,
   "compatibility": {
     "version": "6.0"
   }
