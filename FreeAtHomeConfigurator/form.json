@@ -1,19 +1,39 @@
 {
   "elements": [
     {
+      "type": "ValidationTextBox",
+      "name": "Host",
+      "caption": "SysAP IP-Adresse"
+    },
+    {
+      "type": "ValidationTextBox",
+      "name": "Username",
+      "caption": "Benutzername"
+    },
+    {
+      "type": "PasswordTextBox",
+      "name": "Password",
+      "caption": "Passwort"
+    },
+    {
       "type": "SelectLocation",
       "name": "DeviceCategory",
-      "caption": "Kategorie f\u00fcr Ger\u00e4te"
+      "caption": "Kategorie für Geräte"
     },
     {
       "type": "SelectLocation",
       "name": "SceneCategory",
-      "caption": "Kategorie f\u00fcr Szenen"
+      "caption": "Kategorie für Szenen"
     },
     {
       "type": "SelectLocation",
       "name": "HueCategory",
-      "caption": "Kategorie f\u00fcr Hue-Komponenten"
+      "caption": "Kategorie für Hue-Komponenten"
+    },
+    {
+      "type": "Button",
+      "caption": "Geräte suchen",
+      "onClick": "FAHCONF_DiscoverDevices($id);"
     }
   ],
   "status": []

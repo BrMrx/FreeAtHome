@@ -1,0 +1,20 @@
+{
+  "elements": [
+    {
+      "type": "SelectLocation",
+      "name": "DeviceCategory",
+      "caption": "Kategorie f\u00fcr Ger\u00e4te"
+    },
+    {
+      "type": "SelectLocation",
+      "name": "SceneCategory",
+      "caption": "Kategorie f\u00fcr Szenen"
+    },
+    {
+      "type": "SelectLocation",
+      "name": "HueCategory",
+      "caption": "Kategorie f\u00fcr Hue-Komponenten"
+    }
+  ],
+  "status": []
+}

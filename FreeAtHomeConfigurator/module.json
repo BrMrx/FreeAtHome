@@ -1,13 +1,11 @@
 {
-  "id": "{B5AFEDD9-461B-B00B-A57B-2F05C226A795}",
+  "id": "{EB263C56-6DFF-58D8-1A4F-EED03F1A7CD7}",
   "name": "FreeAtHomeConfigurator",
-  "type": 4,
+  "type": 5,
   "vendor": "BuschJaeger",
   "aliases": ["FreeAtHome Konfigurator"],
-  "version": "1.0",
   "parentRequirements": [],
   "childRequirements": [],
-  "implemented": [],
+  "implemented": [], 
   "prefix": "FAHCONF"
-} 
-  
+ }
