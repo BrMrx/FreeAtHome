@@ -345,6 +345,11 @@ class FreeAtHomeBridge extends IPSModule
         $Answer = $this->sendRequest( 'sysap' );
         $this->SendDebug(__FUNCTION__ . ' Json:', json_encode($Answer ), 0);
 
+        if( $Answer === false)
+        {
+            return false;
+        }
+        
         $this->WriteAttributeString( 'SysAPName', $Answer->sysapName);
         $this->WriteAttributeString( 'SysAPFirmware',$Answer->version);
 
