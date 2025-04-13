@@ -1,0 +1,15 @@
+{
+  "translations": {
+    "de": {
+      "Seconds": "Sekunden",
+      "Username": "Benutzername",
+      "Password": "Passwort",
+      "IP-Adress SysAP": "IP-Adresse des System Access Points",
+      "Register IP-Symcon": "Registriere IP-Symcon",
+      "Invalid JSON": "Ungültiges JSON",
+      "HUE Bridge unreachable": "System Accespoint nicht erreichbar",
+      "Registration complete": "Registrierung abgeschlossen",
+      "Registration incomplete, more Information in IP-Symcon Log": "Registrierung unvollständig, weitere Informationen im IP-Symcon Log"
+    }
+  }
+}

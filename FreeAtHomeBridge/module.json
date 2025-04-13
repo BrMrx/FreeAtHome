@@ -1,0 +1,11 @@
+{
+  "id": "{9AFFB383-D756-8422-BCA0-EFD3BB1E3E29}",
+  "name": "FreeAtHomeBridge",
+  "type": 2,
+  "vendor": "BuschJaeger",
+  "aliases": ["FreeAtHome Bridge"],
+  "parentRequirements": [],
+  "childRequirements": ["{7CF9826D-7E05-C7A2-1B73-32CC11F80D2E}"],
+  "implemented": ["{1781E31C-08A8-E176-F197-1B03FCB1F59E}"],
+  "prefix": "FAHBR"
+}
