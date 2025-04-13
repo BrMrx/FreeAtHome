@@ -14,12 +14,12 @@
     "name": "Password",
     "caption": "Password"
   },
- {
+  {
       "name": "UpdateInterval",
       "type": "IntervalBox",
       "caption": "Seconds"
-    },
-    {
+  },
+  {
       "type": "ValidationTextBox",
       "enabled": false,
      "name": "SysAPName",
