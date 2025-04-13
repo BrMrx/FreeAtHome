@@ -1,7 +1,10 @@
 # Free@Home Modul für IP-Symcon
 
 **Autor**: Bruno Marx  
-**Version**: 1.0
+**Version**: 0.1
+
+**ACHTUNG** Der Treiber ist noch nicht lauffähig und befindet sich noch in der Entwicklung!!
+
 
 ## Beschreibung
 
