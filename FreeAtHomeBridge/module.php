@@ -14,7 +14,9 @@ class FreeAtHomeBridge extends IPSModule
         $this->RegisterPropertyString('SysAPName', '');
         $this->RegisterPropertyString('SysAPFirmware', '');
         $this->RegisterPropertyInteger('UpdateInterval', 10);
-
+        $this->RegisterAttributeString('SysAPName', '');
+        $this->RegisterAttributeString('SysAPFirmware', '');
+      
         $this->RegisterTimer('FAHBR_UpdateState', 0, 'FAHBR_UpdateState($_IPS[\'TARGET\']);');
      }
 
@@ -354,7 +356,8 @@ class FreeAtHomeBridge extends IPSModule
 
         $this->WriteAttributeString( 'SysAPName', $Answer->sysapName);
         $this->WriteAttributeString( 'SysAPFirmware',$Answer->version);
-
+        IPS_SetProperty( $this->InstanceID,'SysAPName', $Answer->sysapName );
+        IPS_SetProperty( $this->InstanceID,'SysAPFirmware',$Answer->version );
 
         return false;
     }
