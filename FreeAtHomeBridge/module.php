@@ -14,6 +14,7 @@ class FreeAtHomeBridge extends IPSModule
         $this->RegisterPropertyString('SysAPName', '');
         $this->RegisterPropertyString('SysAPFirmware', '');
         $this->RegisterPropertyInteger('UpdateInterval', 10);
+  
         $this->RegisterAttributeString('SysAPName', '');
         $this->RegisterAttributeString('SysAPFirmware', '');
       
