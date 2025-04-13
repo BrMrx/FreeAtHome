@@ -343,15 +343,17 @@ class FreeAtHomeBridge extends IPSModule
     private function BridgeConnected()
     {
         $Answer = $this->sendRequest( 'sysap' );
-        $this->SendDebug(__FUNCTION__ . ' Json:', json_encode($Answer ), 0);
-
+  
         if( $Answer === false)
         {
             return false;
         }
+        $this->SendDebug(__FUNCTION__ . ' Json:', json_encode($Answer ), 0);
+        $this->SendDebug(__FUNCTION__ . ' Json:', $Answer->sysapName, 0);
+        $this->SendDebug(__FUNCTION__ . ' Json:', $Answer->version, 0);
 
-        $this->WriteAttributeString( 'SysAPName', $Answer->{'sysapName'});
-        $this->WriteAttributeString( 'SysAPFirmware',$Answer->{'version'});
+        $this->WriteAttributeString( 'SysAPName', $Answer->sysapName);
+        $this->WriteAttributeString( 'SysAPFirmware',$Answer->version);
 
 
         return false;
