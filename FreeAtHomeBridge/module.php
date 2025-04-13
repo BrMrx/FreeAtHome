@@ -349,9 +349,9 @@ class FreeAtHomeBridge extends IPSModule
         {
             return false;
         }
-        
-        $this->WriteAttributeString( 'SysAPName', $Answer->sysapName);
-        $this->WriteAttributeString( 'SysAPFirmware',$Answer->version);
+
+        $this->WriteAttributeString( 'SysAPName', $Answer->{'sysapName'});
+        $this->WriteAttributeString( 'SysAPFirmware',$Answer->{'version'});
 
 
         return false;
