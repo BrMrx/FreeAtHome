@@ -360,7 +360,7 @@ class FreeAtHomeBridge extends IPSModule
 
         IPS_SetProperty( $this->InstanceID,'SysAPName', $Answer->sysapName );
         IPS_SetProperty( $this->InstanceID,'SysAPFirmware',$Answer->version );
-   //    IPS_ApplyChanges( $this->InstanceID);
+        IPS_ApplyChanges( $this->InstanceID);
 
         return false;
     }
