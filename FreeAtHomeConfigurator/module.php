@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-class HUEConfigurator extends IPSModule
+class FreeAtHomeConfigurator extends IPSModule
 {
     public function Create()
     {
         //Never delete this line!
         parent::Create();
-        $this->ConnectParent('{6EFF1F3C-DF5F-43F7-DF44-F87EFF149566}');
+        $this->ConnectParent('{BC9334EC-8C5C-61C2-C5DD-96FE9368F38D}');
         $this->RegisterPropertyString('Serialnumber', '');
         $this->RegisterPropertyInteger('TargetCategory', 0);
 

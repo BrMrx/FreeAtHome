@@ -1,11 +1,11 @@
 {
   "id": "{EE92367A-BB8B-494F-A4D2-FAD77290CCF4}",
-  "name": "HUEConfigurator",
+  "name": "FreeAtHomeConfigurator",
   "type": 4,
-  "vendor": "Philips",
-  "aliases": ["Philips Hue Configurator"],
-  "parentRequirements": ["{03995C27-F41C-4E0C-85C9-099084294C3B}"],
+  "vendor": "BuschJaeger",
+  "aliases": ["FreeAtHome Configurator"],
+  "parentRequirements": ["{BC9334EC-8C5C-61C2-C5DD-96FE9368F38D}"],
   "childRequirements": [],
-  "implemented": ["{6C33FAE0-8FF8-4CAE-B5E9-89A2D24D067D}"],
-  "prefix": "PHUE"
+  "implemented": ["{7E471B91-3407-F7EE-347B-64B459E33D76}"],
+  "prefix": "FAHCONF"
 }

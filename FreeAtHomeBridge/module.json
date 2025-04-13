@@ -5,7 +5,7 @@
   "vendor": "BuschJaeger",
   "aliases": ["FreeAtHome Bridge"],
   "parentRequirements": [],
-  "childRequirements": ["{7CF9826D-7E05-C7A2-1B73-32CC11F80D2E}"],
-  "implemented": ["{1781E31C-08A8-E176-F197-1B03FCB1F59E}"],
+  "childRequirements": ["{7E471B91-3407-F7EE-347B-64B459E33D76}"],
+  "implemented": ["{BC9334EC-8C5C-61C2-C5DD-96FE9368F38D}"],
   "prefix": "FAHBR"
 }
