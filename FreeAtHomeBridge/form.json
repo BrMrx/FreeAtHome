@@ -34,7 +34,7 @@
    ],
   "actions":
   [
-    { "type": "Button", "label": "Check Connection", "onClick": "FAHBR_BridgeConnected($id);" }
+    { "type": "Button", "label": "Check Connection", "onClick": "FAHBR_CheckConnection($id);" }
   ],
   "status": [
     {

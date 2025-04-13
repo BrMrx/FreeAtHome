@@ -36,6 +36,19 @@ class FreeAtHomeBridge extends IPSModule
         $this->SetTimerInterval('FAHBR_UpdateState', $this->ReadPropertyInteger('UpdateInterval') * 1000);
     }
 
+    public function CheckConnection()
+    {
+        if( !$this->BridgeConnected() )
+        {
+            $this->SetStatus(200);
+
+            $this->LogMessage('Error: Loggin incomplete, please fill in correct informations for SysAP.', KL_ERROR);
+            $this->SetTimerInterval('FAHBR_UpdateState', 0);
+            return;          
+        }
+        $this->SetTimerInterval('FAHBR_UpdateState', $this->ReadPropertyInteger('UpdateInterval') * 1000);
+    }
+
     public function ForwardData($JSONString)
     {
         $this->SendDebug(__FUNCTION__, $JSONString, 0);
@@ -137,7 +150,10 @@ class FreeAtHomeBridge extends IPSModule
 
     public function UpdateState()
     {
+        $this->SendDebug(__FUNCTION__ , 'update SysAP States', 0);
+
         return;
+
         $Data['DataID'] = '{7CF9826D-7E05-C7A2-1B73-32CC11F80D2E}';
 
         $Buffer['Lights'] = $this->getAllLights();
@@ -352,18 +368,31 @@ class FreeAtHomeBridge extends IPSModule
             return false;
         }
         $this->SendDebug(__FUNCTION__ . ' Json:', json_encode($Answer ), 0);
-        $this->SendDebug(__FUNCTION__ . ' Json:', $Answer->sysapName, 0);
-        $this->SendDebug(__FUNCTION__ . ' Json:', $Answer->version, 0);
 
-        $this->WriteAttributeString( 'SysAPName', $Answer->sysapName);
-        $this->WriteAttributeString( 'SysAPFirmware',$Answer->version);
-
-        if( $Answer->sysapName != $this->ReadPropertyString("SysAPName") || 
-            $Answer->version   != $this->ReadPropertyString("SysAPFirmware") )
+        if( isset($Answer->sysapName) && isset($Answer->version) )
         {
-            IPS_SetProperty( $this->InstanceID,'SysAPName', $Answer->sysapName );
-            IPS_SetProperty( $this->InstanceID,'SysAPFirmware',$Answer->version );
-            IPS_ApplyChanges( $this->InstanceID);
+            $this->SendDebug(__FUNCTION__ . ' Json:', $Answer->sysapName, 0);
+            $this->SendDebug(__FUNCTION__ . ' Json:', $Answer->version, 0);
+
+            $this->WriteAttributeString( 'SysAPName', $Answer->sysapName);
+            $this->WriteAttributeString( 'SysAPFirmware',$Answer->version);
+
+            if( $Answer->sysapName != $this->ReadPropertyString("SysAPName") || 
+                $Answer->version   != $this->ReadPropertyString("SysAPFirmware") )
+            {
+                if( $Answer->sysapName != $this->ReadPropertyString("SysAPName") )
+                {
+                    $this->SendDebug(__FUNCTION__ . ' SysAP Name changed:', $this->ReadPropertyString("SysAPName").' -> '.$Answer->sysapName, 0);
+                    IPS_SetProperty( $this->InstanceID,'SysAPName', $Answer->sysapName );
+                }
+                if( $Answer->version != $this->ReadPropertyString("SysAPFirmware") )
+                {
+                    $this->SendDebug(__FUNCTION__ . ' SysAP version changed:', $this->ReadPropertyString("SysAPFirmware").' -> '.$Answer->version, 0);
+                    IPS_SetProperty( $this->InstanceID,'SysAPFirmware',$Answer->version );
+                }
+                IPS_ApplyChanges( $this->InstanceID);
+            }
+            return true;
         }
 
         return false;
