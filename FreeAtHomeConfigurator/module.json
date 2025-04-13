@@ -1,7 +1,7 @@
 {
   "id": "{EB263C56-6DFF-58D8-1A4F-EED03F1A7CD7}",
   "name": "FreeAtHomeConfigurator",
-  "type": 5,
+  "type": 4,
   "vendor": "BuschJaeger",
   "aliases": ["FreeAtHome Konfigurator"],
   "parentRequirements": [],

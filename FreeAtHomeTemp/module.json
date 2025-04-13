@@ -1,7 +1,7 @@
 {
   "id": "{B5AFEDD9-461B-B00B-A57B-2F05C226A795}",
   "name": "FreeAtHomeTemp",
-  "type": 4,
+  "type": 5,
   "vendor": "BuschJaeger",
   "aliases": ["FreeAtHome Temp-Konfigurator"],
   "version": "1.0",
