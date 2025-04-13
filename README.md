@@ -3,9 +3,9 @@
 **Autor**: Bruno Marx  
 **Version**: 0.1
 
-##**ACHTUNG** 
+## ACHTUNG 
 
-Der Treiber ist noch nicht lauffähig und befindet sich noch in der Entwicklung!!
+**Der Treiber ist noch nicht lauffähig und befindet sich noch in der Entwicklung!!**
 
 
 ## Beschreibung
