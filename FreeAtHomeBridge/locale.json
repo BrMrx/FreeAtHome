@@ -4,6 +4,8 @@
       "Seconds": "Sekunden",
       "Username": "Benutzername",
       "Password": "Passwort",
+      "SysAP name": "System Access Point Name",
+      "SysAP firmware": "System Access Point Firmware",
       "IP-Adress SysAP": "IP-Adresse des System Access Points",
       "Register IP-Symcon": "Registriere IP-Symcon",
       "Invalid JSON": "Ungültiges JSON",

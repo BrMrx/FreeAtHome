@@ -18,11 +18,23 @@
       "name": "UpdateInterval",
       "type": "IntervalBox",
       "caption": "Seconds"
-    }
+    },
+    {
+      "type": "ValidationTextBox",
+      "enabled": false,
+     "name": "SysAPName",
+      "caption": "SysAP name"
+    },
+    {
+      "type": "ValidationTextBox",
+      "enabled": false,
+      "name": "SysAPFirmware",
+      "caption": "SysAP firmware"
+    } 
    ],
   "actions":
   [
-    { "type": "Button", "label": "Register IP-Symcon", "onClick": "PHUE_registerUser($id);" }
+    { "type": "Button", "label": "Check Connection", "onClick": "FAHBR_BridgeConnected($id);" }
   ],
   "status": [
     {
