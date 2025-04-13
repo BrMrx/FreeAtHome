@@ -38,7 +38,8 @@ class FreeAtHomeBridge extends IPSModule
 
     public function CheckConnection()
     {
-        if( !$this->BridgeConnected() )
+       $this->SendDebug(__FUNCTION__ , "Instanve ID:".$this->InstanceID, 0);
+       if( !$this->BridgeConnected() )
         {
             $this->SetStatus(200);
 
