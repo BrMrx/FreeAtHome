@@ -3,14 +3,15 @@
 **Autor**: Bruno Marx  
 **Version**: 0.1
 
-**ACHTUNG** Der Treiber ist noch nicht lauffähig und befindet sich noch in der Entwicklung!!
+##**ACHTUNG** 
+
+Der Treiber ist noch nicht lauffähig und befindet sich noch in der Entwicklung!!
 
 
 ## Beschreibung
 
 Dieses Modul ermöglicht die Integration von Busch-Jaeger free@home in IP-Symcon. Es bietet eine Discovery-Funktion, automatische Gerätekonfiguration, Szenensteuerung und Unterstützung für Philips Hue-Komponenten über den SysAP.
 
-Dieses Modul wurde mit Unterstützung von **ChatGPT** entwickelt.
 
 ## Funktionen
 
