@@ -59,6 +59,7 @@ class FreeAtHomeBridge extends IPSModule
         switch ($data->Buffer->Command) {
             case 'getAllDevices':
                 $result = $this->getAllDevices();
+                $result = $result->devices;
                 break;
             case 'getLightState':
                 $DeviceID = $data->Buffer->DeviceID;
