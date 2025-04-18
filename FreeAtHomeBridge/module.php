@@ -41,7 +41,9 @@ class FreeAtHomeBridge extends IPSModule
     const FID_DIMMING_ACTUATOR_TYPE0                            = 0x1810;   // A wireless dimming actuator */
 
 
-    const mSupportedFunctionIDs = array(FID_SWITCH_ACTUATOR,FID_DIMMING_ACTUATOR_TYPE0);
+    const mSupportedFunctionIDs = array(
+        self::FID_SWITCH_ACTUATOR,
+        self::FID_DIMMING_ACTUATOR_TYPE0);
 
 
     public function Create()
