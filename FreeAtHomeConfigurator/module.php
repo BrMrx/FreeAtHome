@@ -545,7 +545,7 @@ class FreeAtHomeConfigurator extends IPSModule
         $Buffer = [];
 
         $Data['DataID'] = self::mBridgeDataId;
-        $Buffer['Command'] = 'getAllLights';
+        $Buffer['Command'] = 'getAllDevices';
         $Buffer['Params'] = '';
         $Data['Buffer'] = $Buffer;
         $Data = json_encode($Data);

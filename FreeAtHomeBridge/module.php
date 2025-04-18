@@ -55,8 +55,8 @@ class FreeAtHomeBridge extends IPSModule
         $this->SendDebug(__FUNCTION__, $JSONString, 0);
         $data = json_decode($JSONString);
         switch ($data->Buffer->Command) {
-            case 'getAllLights':
-                $result = $this->getAllLights();
+            case 'getAllDevices':
+                $result = $this->getAllDevices();
                 break;
             case 'getLightState':
                 $DeviceID = $data->Buffer->DeviceID;
@@ -168,6 +168,10 @@ class FreeAtHomeBridge extends IPSModule
     }
 
 
+    public function getAllDevices()
+    {
+        return $this->sendRequest( 'configuration' );
+    }
 
     //Functions for Lights
 
