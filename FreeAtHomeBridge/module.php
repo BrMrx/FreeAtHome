@@ -209,7 +209,7 @@ class FreeAtHomeBridge extends IPSModule
         $this->SendDataToChildren($Data);
     }
 
-    public function FilterSupportedDevices( $a_Devices )
+    private function FilterSupportedDevices( $a_Devices )
     {
         $lRetValue = new stdClass();
 
@@ -246,7 +246,7 @@ class FreeAtHomeBridge extends IPSModule
     public function getAllDevices()
     {
         $lResult = $this->sendRequest( 'configuration' );
-        return FilterSupportedDevices( $lResult->{self::mSysApId}->devices );
+        return $this->FilterSupportedDevices( $lResult->{self::mSysApId}->devices );
     }
 
     //Functions for Lights
