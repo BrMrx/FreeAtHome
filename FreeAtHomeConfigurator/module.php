@@ -8,6 +8,11 @@ class FreeAtHomeConfigurator extends IPSModule
     const mDeviceModuleId   = '{83354C26-2732-427C-A781-B3F5CDF758B1}';      // Device Modul Id 
     const mParentId         = '{9AFFB383-D756-8422-BCA0-EFD3BB1E3E29}';      // Parent Id (Bridge)
 
+    const m_Types = array( 
+        "RF" -> "free@home wireless",
+        "hue" -> "Phillips HUE");
+
+
     public function Create()
     {
         //Never delete this line!
@@ -34,6 +39,9 @@ class FreeAtHomeConfigurator extends IPSModule
         $Devices = $this->FilterDeviceList( $AllDevices, 'RF');
         $HueDevices = new stdClass(); // = $this->FilterDeviceList( $AllDevices, 'hue'); 
         $Scenes = new stdClass(); 
+
+
+        IPS_LogMessage( $this->InstanceID, __FUNCTION__.": ".json_encode($Devices) );
 
  //      $HueDevices = $this->getHUEDevices();
  //      $Scenes = $this->getFAHScenes();
@@ -86,6 +94,8 @@ class FreeAtHomeConfigurator extends IPSModule
  //           $ValuesAllDevices[] = $AddValueAllDevicesLights;
 
             foreach ($Devices as $key => $lDevice) {
+
+
   //              $instanceID = $this->getHUEDeviceInstances($key, 'lights');
                 $AddValueLights = [
                     'parent'                => 1,
@@ -94,7 +104,7 @@ class FreeAtHomeConfigurator extends IPSModule
                     'name'                  => '-',
                     'Type'                  => $lDevice->deviceId,
                     'ModelID'               => '-',
-                    'Manufacturername'      => ((array_key_exists($lDevice->interface, $self::m_Types)) ? $self::m_Types[$lDevice->interface] : '-'),
+                    'Manufacturername'      => ((array_key_exists($lDevice->interface, $self::m_Types)) ? $self::m_Types[$lDevice->interface] : '?'.$lDevice->interface.'?'),
                     'Productname'           => '-',
                     'instanceID'            => $key
                 ];
