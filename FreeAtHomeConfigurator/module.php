@@ -71,7 +71,7 @@ class FreeAtHomeConfigurator extends IPSModule
 
         $location = $this->getPathOfCategory($this->ReadPropertyInteger('TargetCategory'));
         //Lights
-        if (count($Devices) > 0) {
+ //       if (count($Devices) > 0) {
  //           $AddValueLights = [
  //               'id'                    => 1,
  //               'ID'                    => '',
@@ -129,7 +129,7 @@ class FreeAtHomeConfigurator extends IPSModule
                 $Values[] = $AddValueLights;
                 $ValuesAllDevices[] = $AddValueAllDevicesLights;
             }
-        }
+ //       }
 
         //Sensors
         if (count($Scenes) > 0) {
