@@ -13,7 +13,7 @@ class FreeAtHomeConfigurator extends IPSModule
         $this->RegisterPropertyInteger('TargetCategory', 0);
 
         $this->RegisterAttributeInteger('ProgressStatus', -1);
-        $this->RegisterTimer('ProgressNewDevices', 0, 'PHUE_ProgressUpdateNewDevicesList(' . $this->InstanceID . ');');
+        $this->RegisterTimer('ProgressNewDevices', 0, 'FAHCONF_ProgressUpdateNewDevicesList(' . $this->InstanceID . ');');
     }
 
     public function ApplyChanges()
@@ -25,34 +25,37 @@ class FreeAtHomeConfigurator extends IPSModule
     public function GetConfigurationForm()
     {
         $Form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
-        $Lights = $this->getHUELights();
-        //$Groups = json_decode('{"1":{"name":"wohnzimmer","lights":["3","7","16"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Living room","action":{"on":false,"bri":77,"hue":8402,"sat":140,"effect":"none","xy":[0.4575,0.4099],"ct":366,"alert":"select","colormode":"xy"}},"2":{"name":"arbeitszimmer","lights":["20","5","8","10","13","14","15","19"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Office","action":{"on":false,"bri":116,"ct":184,"alert":"select","colormode":"ct"}},"3":{"name":"flur-eg","lights":["35","24","25","26","28","29","21","22","23"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Hallway","action":{"on":false,"bri":57,"hue":50964,"sat":247,"effect":"none","xy":[0.2763,0.1067],"ct":153,"alert":"select","colormode":"xy"}},"4":{"name":"kueche","lights":["34","27"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Kitchen","action":{"on":false,"bri":254,"ct":366,"alert":"select","colormode":"ct"}},"5":{"name":"esszimmer","lights":["4","6","11","12","17","18"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Dining","action":{"on":false,"bri":77,"ct":366,"alert":"select","colormode":"ct"}},"6":{"name":"gaesteklo","lights":["1"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Toilet","action":{"on":false,"bri":254,"ct":153,"alert":"select","colormode":"ct"}},"8":{"name":"wohnzimmer-sofa","lights":["3","7","16"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Living room","action":{"on":false,"bri":77,"hue":8402,"sat":140,"effect":"none","xy":[0.4575,0.4099],"ct":366,"alert":"select","colormode":"xy"}},"13":{"name":"hauseingang","lights":["32"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Front door","action":{"on":false,"bri":254,"hue":42235,"sat":67,"effect":"none","xy":[0.3215,0.3289],"ct":165,"alert":"select","colormode":"xy"}},"17":{"name":"veranda","lights":["30","31"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Terrace","action":{"on":false,"bri":254,"hue":8381,"sat":141,"effect":"none","xy":[0.4583,0.4099],"ct":366,"alert":"select","colormode":"xy"}},"18":{"name":"garten","lights":[],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Garden","action":{"on":false,"alert":"none"}},"19":{"name":"garage","lights":[],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Driveway","action":{"on":false,"alert":"none"}},"20":{"name":"carport","lights":[],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Carport","action":{"on":false,"alert":"none"}},"21":{"name":"gartenhaus","lights":[],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Porch","action":{"on":false,"alert":"none"}},"22":{"name":"vorgarten","lights":[],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Garden","action":{"on":false,"alert":"none"}},"23":{"name":"vorratsraum","lights":["2","9"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Kitchen","action":{"on":false,"bri":127,"ct":366,"alert":"select","colormode":"ct"}},"25":{"name":"arbeitszimmer-decke","lights":["20","5","8","10","13","14","15","19"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Office","action":{"on":false,"bri":116,"ct":184,"alert":"select","colormode":"ct"}},"26":{"name":"esszimmer-decke","lights":["4","6","11","12","17","18"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Dining","action":{"on":false,"bri":77,"ct":366,"alert":"select","colormode":"ct"}},"27":{"name":"flur-eg-decke","lights":["35","24","25","26","28","29","21","22","23"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Hallway","action":{"on":false,"bri":57,"hue":50964,"sat":247,"effect":"none","xy":[0.2763,0.1067],"ct":153,"alert":"select","colormode":"xy"}},"28":{"name":"gaesteklo-decke","lights":["1"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Bathroom","action":{"on":false,"bri":254,"ct":153,"alert":"select","colormode":"ct"}},"29":{"name":"hauseingang-decke","lights":["32"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Front door","action":{"on":false,"bri":254,"hue":42235,"sat":67,"effect":"none","xy":[0.3215,0.3289],"ct":165,"alert":"select","colormode":"xy"}},"30":{"name":"kueche-decke","lights":["34","27"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Kitchen","action":{"on":false,"bri":254,"ct":366,"alert":"select","colormode":"ct"}},"31":{"name":"veranda-wand","lights":["30","31"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Porch","action":{"on":false,"bri":254,"hue":8381,"sat":141,"effect":"none","xy":[0.4583,0.4099],"ct":366,"alert":"select","colormode":"xy"}},"32":{"name":"vorratsraum-decke","lights":["2","9"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Kitchen","action":{"on":false,"bri":127,"ct":366,"alert":"select","colormode":"ct"}}}',true);
-        $Groups = $this->getHUEGroups();
-        $Sensors = $this->getHUESensors();
+        $Devices = $this->getPAHDevices();
+        //$HueDevices = json_decode('{"1":{"name":"wohnzimmer","lights":["3","7","16"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Living room","action":{"on":false,"bri":77,"hue":8402,"sat":140,"effect":"none","xy":[0.4575,0.4099],"ct":366,"alert":"select","colormode":"xy"}},"2":{"name":"arbeitszimmer","lights":["20","5","8","10","13","14","15","19"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Office","action":{"on":false,"bri":116,"ct":184,"alert":"select","colormode":"ct"}},"3":{"name":"flur-eg","lights":["35","24","25","26","28","29","21","22","23"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Hallway","action":{"on":false,"bri":57,"hue":50964,"sat":247,"effect":"none","xy":[0.2763,0.1067],"ct":153,"alert":"select","colormode":"xy"}},"4":{"name":"kueche","lights":["34","27"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Kitchen","action":{"on":false,"bri":254,"ct":366,"alert":"select","colormode":"ct"}},"5":{"name":"esszimmer","lights":["4","6","11","12","17","18"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Dining","action":{"on":false,"bri":77,"ct":366,"alert":"select","colormode":"ct"}},"6":{"name":"gaesteklo","lights":["1"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Toilet","action":{"on":false,"bri":254,"ct":153,"alert":"select","colormode":"ct"}},"8":{"name":"wohnzimmer-sofa","lights":["3","7","16"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Living room","action":{"on":false,"bri":77,"hue":8402,"sat":140,"effect":"none","xy":[0.4575,0.4099],"ct":366,"alert":"select","colormode":"xy"}},"13":{"name":"hauseingang","lights":["32"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Front door","action":{"on":false,"bri":254,"hue":42235,"sat":67,"effect":"none","xy":[0.3215,0.3289],"ct":165,"alert":"select","colormode":"xy"}},"17":{"name":"veranda","lights":["30","31"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Terrace","action":{"on":false,"bri":254,"hue":8381,"sat":141,"effect":"none","xy":[0.4583,0.4099],"ct":366,"alert":"select","colormode":"xy"}},"18":{"name":"garten","lights":[],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Garden","action":{"on":false,"alert":"none"}},"19":{"name":"garage","lights":[],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Driveway","action":{"on":false,"alert":"none"}},"20":{"name":"carport","lights":[],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Carport","action":{"on":false,"alert":"none"}},"21":{"name":"gartenhaus","lights":[],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Porch","action":{"on":false,"alert":"none"}},"22":{"name":"vorgarten","lights":[],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Garden","action":{"on":false,"alert":"none"}},"23":{"name":"vorratsraum","lights":["2","9"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Kitchen","action":{"on":false,"bri":127,"ct":366,"alert":"select","colormode":"ct"}},"25":{"name":"arbeitszimmer-decke","lights":["20","5","8","10","13","14","15","19"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Office","action":{"on":false,"bri":116,"ct":184,"alert":"select","colormode":"ct"}},"26":{"name":"esszimmer-decke","lights":["4","6","11","12","17","18"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Dining","action":{"on":false,"bri":77,"ct":366,"alert":"select","colormode":"ct"}},"27":{"name":"flur-eg-decke","lights":["35","24","25","26","28","29","21","22","23"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Hallway","action":{"on":false,"bri":57,"hue":50964,"sat":247,"effect":"none","xy":[0.2763,0.1067],"ct":153,"alert":"select","colormode":"xy"}},"28":{"name":"gaesteklo-decke","lights":["1"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Bathroom","action":{"on":false,"bri":254,"ct":153,"alert":"select","colormode":"ct"}},"29":{"name":"hauseingang-decke","lights":["32"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Front door","action":{"on":false,"bri":254,"hue":42235,"sat":67,"effect":"none","xy":[0.3215,0.3289],"ct":165,"alert":"select","colormode":"xy"}},"30":{"name":"kueche-decke","lights":["34","27"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Kitchen","action":{"on":false,"bri":254,"ct":366,"alert":"select","colormode":"ct"}},"31":{"name":"veranda-wand","lights":["30","31"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Porch","action":{"on":false,"bri":254,"hue":8381,"sat":141,"effect":"none","xy":[0.4583,0.4099],"ct":366,"alert":"select","colormode":"xy"}},"32":{"name":"vorratsraum-decke","lights":["2","9"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Kitchen","action":{"on":false,"bri":127,"ct":366,"alert":"select","colormode":"ct"}}}',true);
+ //      $HueDevices = $this->getHUEDevices();
+ //      $Scenes = $this->getFAHScenes();
 
-        if (array_key_exists('error', $Lights)) {
-            $this->LogMessage('HUE Configuration Error: ' . $Lights['error']['type'] . ': ' . $Lights['error']['description'], KL_ERROR);
-            return $Form;
-        }
-        if (array_key_exists('error', $Groups)) {
-            $this->LogMessage('HUE Configuration Error: ' . $Groups['error']['type'] . ': ' . $Groups['error']['description'], KL_ERROR);
-            return $Form;
-        }
-        if (array_key_exists('error', $Sensors)) {
-            $this->LogMessage('HUE Configuration Error: ' . $Sensors['error']['type'] . ': ' . $Sensors['error']['description'], KL_ERROR);
-            return $Form;
-        }
+ //      if (array_key_exists('error', $Devices)) {
+ //          $this->LogMessage('FAH Configuration Error: ' . $Devices['error']['type'] . ': ' . $Devices['error']['description'], KL_ERROR);
+ //          return $Form;
+ //      }
+ //      if (array_key_exists('error', $HueDevices)) {
+ //          $this->LogMessage('FAH Configuration Error: ' . $HueDevices['error']['type'] . ': ' . $HueDevices['error']['description'], KL_ERROR);
+ //          return $Form;
+ //      }
+ //      if (array_key_exists('error', $Scenes)) {
+ //          $this->LogMessage('FAH Configuration Error: ' . $Scenes['error']['type'] . ': ' . $Scenes['error']['description'], KL_ERROR);
+ //          return $Form;
+ //      }
 
-        $this->SendDebug(__FUNCTION__ . ' Lights', json_encode($Lights), 0);
-        $this->SendDebug(__FUNCTION__ . ' Groups', json_encode($Groups), 0);
-        $this->SendDebug(__FUNCTION__ . ' Sensors', json_encode($Sensors), 0);
+        $this->SendDebug(__FUNCTION__ . ' Devises', json_encode($Devices), 0);
+
+        return;
+
+        $this->SendDebug(__FUNCTION__ . ' HUE-Devices', json_encode($HueDevices), 0);
+        $this->SendDebug(__FUNCTION__ . ' Scenes', json_encode($Scenes), 0);
 
         $Values = [];
         $ValuesAllDevices = [];
 
         $location = $this->getPathOfCategory($this->ReadPropertyInteger('TargetCategory'));
         //Lights
-        if (count($Lights) > 0) {
+        if (count($Devices) > 0) {
             $AddValueLights = [
                 'id'                    => 1,
                 'ID'                    => '',
@@ -74,7 +77,7 @@ class FreeAtHomeConfigurator extends IPSModule
             $Values[] = $AddValueLights;
             $ValuesAllDevices[] = $AddValueAllDevicesLights;
 
-            foreach ($Lights as $key => $light) {
+            foreach ($Devices as $key => $light) {
                 $instanceID = $this->getHUEDeviceInstances($key, 'lights');
                 $AddValueLights = [
                     'parent'                => 1,
@@ -111,7 +114,7 @@ class FreeAtHomeConfigurator extends IPSModule
         }
 
         //Sensors
-        if (count($Sensors) > 0) {
+        if (count($Scenes) > 0) {
             $AddValueSensors = [
                 'id'                    => 2,
                 'ID'                    => '',
@@ -133,7 +136,7 @@ class FreeAtHomeConfigurator extends IPSModule
             $Values[] = $AddValueSensors;
             $ValuesAllDevices[] = $AddValueAllDevicesSensors;
 
-            foreach ($Sensors as $key => $sensor) {
+            foreach ($Scenes as $key => $sensor) {
                 $instanceID = $this->getHUEDeviceInstances($key, 'sensors');
                 $AddValueSensors = [
                     'parent'                => 2,
@@ -174,7 +177,7 @@ class FreeAtHomeConfigurator extends IPSModule
         $Form['actions'][1]['items'][6]['values'] = $ValuesAllDevices;
 
         //Groups
-        if (count($Groups) > 0) {
+        if (count($HueDevices) > 0) {
             $AddValueGroups = [
                 'id'                    => 3,
                 'ID'                    => '',
@@ -186,7 +189,7 @@ class FreeAtHomeConfigurator extends IPSModule
                 'Productname'           => ''
             ];
             $Values[] = $AddValueGroups;
-            foreach ($Groups as $key => $group) {
+            foreach ($HueDevices as $key => $group) {
                 $instanceID = $this->getHUEDeviceInstances($key, 'groups');
 
                 if ($group['type'] != 'Entertainment') {
@@ -221,11 +224,11 @@ class FreeAtHomeConfigurator extends IPSModule
 
     public function reloadAllDevices()
     {
-        $Lights = $this->getHUELights();
-        $Sensors = $this->getHUESensors();
+        $Devices = $this->getPAHDevices();
+        $Scenes = $this->getFAHScenes();
 
         //Lights
-        if (count($Lights) > 0) {
+        if (count($Devices) > 0) {
             $AddValueAllDevicesLights = [
                 'id'                    => 99999,
                 'DeviceID'              => '',
@@ -236,7 +239,7 @@ class FreeAtHomeConfigurator extends IPSModule
         }
         $ValuesAllDevices[] = $AddValueAllDevicesLights;
 
-        foreach ($Lights as $key => $light) {
+        foreach ($Devices as $key => $light) {
             $AddValueAllDevicesLights = [
                 'parent'                => 99999,
                 'id'                    => $key,
@@ -247,7 +250,7 @@ class FreeAtHomeConfigurator extends IPSModule
             $ValuesAllDevices[] = $AddValueAllDevicesLights;
         }
         //Sensors
-        if (count($Sensors) > 0) {
+        if (count($Scenes) > 0) {
             $AddValueAllDevicesSensors = [
                 'id'                    => 99998,
                 'DeviceID'              => '',
@@ -256,7 +259,7 @@ class FreeAtHomeConfigurator extends IPSModule
                 'expanded'              => true
             ];
             $ValuesAllDevices[] = $AddValueAllDevicesSensors;
-            foreach ($Sensors as $key => $sensor) {
+            foreach ($Scenes as $key => $sensor) {
                 $AddValueAllDevicesSensors = [
                     'parent'                => 99998,
                     'id'                    => $key,
@@ -532,7 +535,7 @@ class FreeAtHomeConfigurator extends IPSModule
         return 0;
     }
 
-    private function getHUELights()
+    private function getPAHDevices()
     {
         $Data = [];
         $Buffer = [];
@@ -549,7 +552,7 @@ class FreeAtHomeConfigurator extends IPSModule
         return $result;
     }
 
-    private function getHUEGroups()
+    private function getHUEDevices()
     {
         $Data = [];
         $Buffer = [];
@@ -566,7 +569,7 @@ class FreeAtHomeConfigurator extends IPSModule
         return $result;
     }
 
-    private function getHUESensors()
+    private function getFAHScenes()
     {
         $Data = [];
         $Buffer = [];
@@ -609,8 +612,8 @@ class FreeAtHomeConfigurator extends IPSModule
 
         $Options[] = $Option;
 
-        $Groups = $this->getHUEGroups();
-        foreach ($Groups as $key => $group) {
+        $HueDevices = $this->getHUEDevices();
+        foreach ($HueDevices as $key => $group) {
             if ($group['type'] != 'Entertainment') {
                 $Option = [
                     'caption'   => $group['name'],
@@ -624,8 +627,8 @@ class FreeAtHomeConfigurator extends IPSModule
 
     private function UpdateLightsForNewGroup()
     {
-        $Lights = $this->getHUELights();
-        foreach ($Lights as $key => $light) {
+        $Devices = $this->getPAHDevices();
+        foreach ($Devices as $key => $light) {
             $Value = [
                 'DeviceID'   => $key,
                 'DeviceName' => $light['name']
