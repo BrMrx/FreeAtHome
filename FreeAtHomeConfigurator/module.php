@@ -37,8 +37,8 @@ class FreeAtHomeConfigurator extends IPSModule
         $AllDevices = $this->getFAH_AllDevices();
 
         $Devices = $this->FilterDeviceList( $AllDevices, 'RF');
-        $HueDevices = new stdClass(); // = $this->FilterDeviceList( $AllDevices, 'hue'); 
-        $Scenes = new stdClass(); 
+        $HueDevices = array(); // = $this->FilterDeviceList( $AllDevices, 'hue'); 
+        $Scenes = array(); 
 
 
         IPS_LogMessage( $this->InstanceID, __FUNCTION__.": ".json_encode($Devices) );
@@ -69,7 +69,7 @@ class FreeAtHomeConfigurator extends IPSModule
 
         $location = $this->getPathOfCategory($this->ReadPropertyInteger('TargetCategory'));
         //Lights
-        if (count($Devices) > 0) {
+ //       if (count($Devices) > 0) {
  //           $AddValueLights = [
  //               'id'                    => 1,
  //               'ID'                    => '',
@@ -128,7 +128,7 @@ class FreeAtHomeConfigurator extends IPSModule
                 $Values[] = $AddValueLights;
                 $ValuesAllDevices[] = $AddValueAllDevicesLights;
             }
-        }
+//        }
 
         //Sensors
         if (count($Scenes) > 0) {
