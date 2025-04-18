@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 class FreeAtHomeConfigurator extends IPSModule
 {
-    const mBridgeDataId     = '{03995C27-F41C-4E0C-85C9-099084294C3B}';      // DatenId der Bridge
+    const mBridgeDataId     = '{BC9334EC-8C5C-61C2-C5DD-96FE9368F38D}';      // DatenId der Bridge
     const mDeviceModuleId   = '{83354C26-2732-427C-A781-B3F5CDF758B1}';      // Device Modul Id 
     const mParentId         = '{9AFFB383-D756-8422-BCA0-EFD3BB1E3E29}';      // Parent Id (Bridge)
 
