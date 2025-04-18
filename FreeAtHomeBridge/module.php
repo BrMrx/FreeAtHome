@@ -6,6 +6,44 @@ class FreeAtHomeBridge extends IPSModule
 {
     const mSysApId = '00000000-0000-0000-0000-000000000000';
 
+    // Function ID's
+    const FID_SWITCH_ACTUATOR                                   = 0x0007;   // A (binary) switch actuator  
+    const FID_ROOM_TEMPERATURE_CONTROLLER_MASTER_WITHOUT_FAN    = 0x0023;   // A master room temperature controller that does not include a fan */
+    const FID_DIMMING_ACTUATOR                                  = 0x0012;   // A dimming actuator  */
+    const FID_RGB_W_ACTUATOR                                    = 0x002E;   // A dimming actuator that can also control the light hue */
+    const FID_RGB_ACTUATOR                                      = 0x002F;   // A dimming actuator that can also control the light hue */
+    const FID_DES_AUTOMATIC_DOOR_OPENER_ACTUATOR                = 0x0020;   // An automatic door opener */
+    const FID_SMOKE_DETECTOR                                    = 0x007D;   // A smoke detector */
+    const FID_MOVEMENT_DETECTOR                                 = 0x0011;   // A motion detector */
+    const FID_DES_DOOR_OPENER_ACTUATOR                          = 0x001A;   // A door opener */
+    const FID_SHUTTER_ACTUATOR                                  = 0x0009;   // A shutter actuator */
+    const FID_BLIND_ACTUATOR                                    = 0x0061;   // A roller blind actuator */
+    const FID_ATTIC_WINDOW_ACTUATOR                             = 0x0062;   // An attic window actuator  */
+    const FID_AWNING_ACTUATOR                                   = 0x0063;   // An awning actuator */
+    const FID_WINDOW_DOOR_SENSOR                                = 0x000F;   // A binary door or window sensor */
+    const FID_WINDOW_DOOR_POSITION_SENSOR                       = 0x0064;   // A door or window sensor that also reports the door or window position */
+    const FID_SWITCH_SENSOR                                     = 0x0000;   // A (binary) switch sensor */
+    const FID_DIMMING_SENSOR                                    = 0x0001;   // A dimming sensor */
+    const FID_LIGHT_GROUP                                       = 0x4000;   // A light group */
+    const FID_SCENE                                             = 0x4800;   // A scene */
+    const FID_SPECIAL_SCENE_PANIC                               = 0x4801;   // The special panic scene */
+    const FID_SPECIAL_SCENE_ALL_OFF                             = 0x4802;   // The special all-off scene */
+    const FID_SPECIAL_SCENE_ALL_BLINDS_UP                       = 0x4803;   // The special all blinds up scene */
+    const FID_SPECIAL_SCENE_ALL_BLINDS_DOWN                     = 0x4804;   // The special all blinds down scene */
+    const FID_SCENE_SENSOR                                      = 0x0006;   // A scene sensor */
+    const FID_STAIRCASE_LIGHT_SENSOR                            = 0x0004;   // A staircase light sensor */
+    const FID_TRIGGER                                           = 0x0045;   // A generic trigger */
+    const FID_BRIGHTNESS_SENSOR                                 = 0x0041;   // A brightness sensor */
+    const FID_TEMPERATURE_SENSOR                                = 0x0043;   // A temperature sensor */
+    const FID_RADIATOR_ACTUATOR_MASTER                          = 0x003E;   // A master radiator actuator */
+    const FID_DIMMING_SENSOR_ROCKER_TYPE0                       = 0x1010;   // A wireless rocker type dimming sensor */
+    const FID_DIMMING_SENSOR_PUSHBUTTON_TYPE2                   = 0x101A;   // A wireless push button type dimming sensor */
+    const FID_DIMMING_ACTUATOR_TYPE0                            = 0x1810;   // A wireless dimming actuator */
+
+
+    const mSupportedFunctionIDs = array(FID_SWITCH_ACTUATOR,FID_DIMMING_ACTUATOR_TYPE0);
+
+
     public function Create()
     {
         //Never delete this line!
@@ -169,11 +207,44 @@ class FreeAtHomeBridge extends IPSModule
         $this->SendDataToChildren($Data);
     }
 
+    private function FilterSupportedDevices( $a_Devices )
+    {
+        $lRetValue = new stdClass();
+
+        foreach($a_Devices as $lDeviceId => $DeviceValue)
+        {        
+            $lAddToList = false;
+            if( isset($DeviceValue['channels'] ) )
+            {
+                foreach($DeviceValue['channels'] as $lChannelNr => $lChannelValue)
+                {
+                    if( isset($lChannelValue['functionID'] )  )
+                    {
+                        $lFunctionId = hexdec( $lChannelValue['functionID'] );
+                        if( in_array($lFunctionId, self::mSupportedFunctionIDs ) )
+                        {
+                            $lAddToList = true;
+                            break;
+                        }
+                    }
+                }
+
+                if( $lAddToList )
+                {
+                    $lRetValue->$lDeviceId = $DeviceValue;
+                }
+            }
+        }
+
+        IPS_LogMessage( $this->InstanceID, __FUNCTION__.": ".json_encode($lRetValue) );
+
+        return $lRetValue;
+    }
 
     public function getAllDevices()
     {
         $lResult = $this->sendRequest( 'configuration' );
-        return $lResult->{self::mSysApId}->devices;
+        return FilterSupportedDevices( $lResult->{self::mSysApId}->devices );
     }
 
     //Functions for Lights
