@@ -549,6 +549,7 @@ class FreeAtHomeConfigurator extends IPSModule
         $Buffer['Params'] = '';
         $Data['Buffer'] = $Buffer;
         $Data = json_encode($Data);
+        IPS_LogMessage( $_IPS['SELF'], __FUNCTION__ . " Data". $Data );
         $result = json_decode($this->SendDataToParent($Data), true);
         if (!$result) {
             return [];

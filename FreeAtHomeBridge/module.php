@@ -52,6 +52,8 @@ class FreeAtHomeBridge extends IPSModule
 
     public function ForwardData($JSONString)
     {
+        IPS_LogMessage( $_IPS['SELF'], __FUNCTION__ . " ". $JSONString );
+
         $this->SendDebug(__FUNCTION__, $JSONString, 0);
         $data = json_decode($JSONString);
         switch ($data->Buffer->Command) {
