@@ -82,7 +82,6 @@ class FreeAtHomeBridge extends IPSModule
 
     public function CheckConnection()
     {
-       $this->SendDebug(__FUNCTION__ , "Instanve ID:".$this->InstanceID, 0);
        if( !$this->BridgeConnected() )
         {
             $this->SetStatus(200);
@@ -485,6 +484,7 @@ class FreeAtHomeBridge extends IPSModule
             }
             foreach( $Answer as $key => $lArrayDeviceID  )
             {
+                $this->WriteAttributeString( 'SysAP_GUID',$key);
                 if( $key != $this->ReadPropertyString("SysAP_GUID") )
                 {
                     $this->SendDebug(__FUNCTION__ . ' SysAP_GUID changed:', $this->ReadPropertyString("SysAPName").' -> '.$key, 0);

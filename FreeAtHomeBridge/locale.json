@@ -6,10 +6,11 @@
       "Password": "Passwort",
       "SysAP name": "System Access Point Name",
       "SysAP firmware": "System Access Point Firmware",
+      "SysAP GUID": "System Access Point GUID",
       "IP-Adress SysAP": "IP-Adresse des System Access Points",
       "Register IP-Symcon": "Registriere IP-Symcon",
       "Invalid JSON": "Ungültiges JSON",
-      "HUE Bridge unreachable": "System Accespoint nicht erreichbar",
+      "free@home Bridge unreachable": "free@home System Accespoint nicht erreichbar",
       "Registration complete": "Registrierung abgeschlossen",
       "Registration incomplete, more Information in IP-Symcon Log": "Registrierung unvollständig, weitere Informationen im IP-Symcon Log"
     }

@@ -58,7 +58,7 @@
     },
     { "code": 202,
       "icon": "error",
-      "caption": "HUE Bridge unreachable"
+      "caption": "free@home Bridge unreachable"
     }
   ]  
 }
