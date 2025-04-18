@@ -122,7 +122,7 @@ class FreeAtHomeConfigurator extends IPSModule
 
                 IPS_LogMessage( $this->InstanceID, __FUNCTION__.": ".$key." -> ".json_encode($lDevice) );
 
-  //              $instanceID = $this->getHUEDeviceInstances($key, 'lights');
+                $instanceID = $this->getFAHDeviceInstances($key, 'lights');
                 $AddValueLights = [
                     'parent'                => 1,
                     'ID'                    => $key,
@@ -132,7 +132,7 @@ class FreeAtHomeConfigurator extends IPSModule
                     'ModelID'               => '-',
                     'Manufacturername'      => ((array_key_exists($lDevice['interface'], self::m_Types)) ? self::m_Types[$lDevice['interface']] : '?'.$lDevice->interface.'?'),
                     'Productname'           => '-',
-                    'instanceID'            => $key
+                    'instanceID'            => $instanceID
                 ];
 
                 $AddValueAllDevicesLights = [
@@ -181,7 +181,7 @@ class FreeAtHomeConfigurator extends IPSModule
             $ValuesAllDevices[] = $AddValueAllDevicesSensors;
 
             foreach ($Scenes as $key => $sensor) {
-                $instanceID = $this->getHUEDeviceInstances($key, 'sensors');
+                $instanceID = $this->getFAHDeviceInstances($key, 'sensors');
                 $AddValueSensors = [
                     'parent'                => 2,
                     'ID'                    => $key,
@@ -234,7 +234,7 @@ class FreeAtHomeConfigurator extends IPSModule
             ];
             $Values[] = $AddValueGroups;
             foreach ($HueDevices as $key => $group) {
-                $instanceID = $this->getHUEDeviceInstances($key, 'groups');
+                $instanceID = $this->getFAHDeviceInstances($key, 'groups');
 
                 if ($group['type'] != 'Entertainment') {
                     $AddValueGroups = [
@@ -566,16 +566,16 @@ class FreeAtHomeConfigurator extends IPSModule
         }
     }
 
-    private function getHUEDeviceInstances($HueDeviceID, $DeviceType)
+    private function getFAHDeviceInstances($HueDeviceID, $DeviceType)
     {
-        $InstanceIDs = IPS_GetInstanceListByModuleID(self::mDeviceModuleId); //HUEDevice
-        foreach ($InstanceIDs as $id) {
-            if (IPS_GetProperty($id, 'HUEDeviceID') == $HueDeviceID && IPS_GetProperty($id, 'DeviceType') == $DeviceType) {
-                if (IPS_GetInstance($id)['ConnectionID'] == IPS_GetInstance($this->InstanceID)['ConnectionID']) {
-                    return $id;
-                }
-            }
-        }
+  //     $InstanceIDs = IPS_GetInstanceListByModuleID(self::mDeviceModuleId); //HUEDevice
+  //     foreach ($InstanceIDs as $id) {
+  //         if (IPS_GetProperty($id, 'FAHDeviceID') == $HueDeviceID && IPS_GetProperty($id, 'DeviceType') == $DeviceType) {
+  //             if (IPS_GetInstance($id)['ConnectionID'] == IPS_GetInstance($this->InstanceID)['ConnectionID']) {
+  //                 return $id;
+  //             }
+  //         }
+  //     }
         return 0;
     }
 
