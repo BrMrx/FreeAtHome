@@ -545,7 +545,7 @@ class FreeAtHomeConfigurator extends IPSModule
 
     private function FilterDeviceList( $AllDevices, $a_InterfaceType )
     {
-        $lRetValue = = new stdClass();
+        $lRetValue = new stdClass();
 
         foreach($AllDevices as $lDeviceId => $DeviceValue)
         {        
