@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 class FreeAtHomeBridge extends IPSModule
 {
+    const mSysApId = '00000000-0000-0000-0000-000000000000';
+
     public function Create()
     {
         //Never delete this line!
@@ -52,14 +54,11 @@ class FreeAtHomeBridge extends IPSModule
 
     public function ForwardData($JSONString)
     {
-        IPS_LogMessage( $_IPS['SELF'], __FUNCTION__ . " ". $JSONString );
-
-        $this->SendDebug(__FUNCTION__, $JSONString, 0);
+         $this->SendDebug(__FUNCTION__, $JSONString, 0);
         $data = json_decode($JSONString);
         switch ($data->Buffer->Command) {
             case 'getAllDevices':
                 $result = $this->getAllDevices();
-                $result = $result->devices;
                 break;
             case 'getLightState':
                 $DeviceID = $data->Buffer->DeviceID;
@@ -173,7 +172,13 @@ class FreeAtHomeBridge extends IPSModule
 
     public function getAllDevices()
     {
-        return $this->sendRequest( 'configuration' );
+        $lResult = $this->sendRequest( 'configuration' );
+        IPS_LogMessage( $_IPS['SELF'], __FUNCTION__ . " ". json_encode($lResult) );
+
+        $lResult = $lResult[self::mSysApId]->devices;
+        IPS_LogMessage( $_IPS['SELF'], __FUNCTION__ . " ". json_encode($lResult) );
+
+
     }
 
     //Functions for Lights
