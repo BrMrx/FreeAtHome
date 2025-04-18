@@ -9,8 +9,8 @@ class FreeAtHomeConfigurator extends IPSModule
     const mParentId         = '{9AFFB383-D756-8422-BCA0-EFD3BB1E3E29}';      // Parent Id (Bridge)
 
     const m_Types = array( 
-        "RF" -> "free@home wireless",
-        "hue" -> "Phillips HUE");
+        'RF' => 'free@home wireless',
+        'hue' => 'Phillips HUE');
 
 
     public function Create()
