@@ -95,6 +95,7 @@ class FreeAtHomeConfigurator extends IPSModule
 
             foreach ($Devices as $key => $lDevice) {
 
+                IPS_LogMessage( $this->InstanceID, __FUNCTION__.": ".$key." -> ".json_encode($lDevice) );
 
   //              $instanceID = $this->getHUEDeviceInstances($key, 'lights');
                 $AddValueLights = [
