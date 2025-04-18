@@ -175,7 +175,8 @@ class FreeAtHomeBridge extends IPSModule
         $lResult = $this->sendRequest( 'configuration' );
         IPS_LogMessage( $_IPS['SELF'], __FUNCTION__ . " ". json_encode($lResult) );
 
-        $lResult = $lResult[self::mSysApId]->devices;
+        $lResult = $lResult->{self::mSysApId}->devices;
+        
         IPS_LogMessage( $_IPS['SELF'], __FUNCTION__ . " ". json_encode($lResult) );
 
 
