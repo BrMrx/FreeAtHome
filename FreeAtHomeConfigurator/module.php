@@ -550,6 +550,7 @@ class FreeAtHomeConfigurator extends IPSModule
         IPS_LogMessage( $this->InstanceID, "Filter:".$a_InterfaceType );
         foreach($AllDevices as $lDeviceId => $DeviceValue)
         {        
+            IPS_LogMessage( $this->InstanceID, "DeviceID: '".$lDeviceId."', ".json_encode($DeviceValue) );
             if( isset($DeviceValue->interface ) && $DeviceValue->interface == $a_InterfaceType )
             {
                 $lRetValue[$lDeviceId] = $DeviceValue;
