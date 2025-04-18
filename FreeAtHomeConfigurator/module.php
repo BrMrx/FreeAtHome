@@ -99,11 +99,11 @@ class FreeAtHomeConfigurator extends IPSModule
                 $AddValueLights = [
                     'parent'                => 1,
                     'ID'                    => $key,
-                    'DisplayName'           => $lDevice->displayName,
+                    'DisplayName'           => $lDevice['displayName'],
                     'name'                  => '-',
-                    'Type'                  => $lDevice->deviceId,
+                    'Type'                  => $lDevice['deviceId'],
                     'ModelID'               => '-',
-                    'Manufacturername'      => ((array_key_exists($lDevice->interface, $self::m_Types)) ? $self::m_Types[$lDevice->interface] : '?'.$lDevice->interface.'?'),
+                    'Manufacturername'      => ((array_key_exists($lDevice['interface'], $self::m_Types)) ? $self::m_Types[$lDevice['interface']] : '?'.$lDevice->interface.'?'),
                     'Productname'           => '-',
                     'instanceID'            => $key
                 ];
@@ -112,15 +112,15 @@ class FreeAtHomeConfigurator extends IPSModule
                     'parent'                => 99999,
                     'id'                    => $key,
                     'DeviceID'              => $key,
-                    'DeviceName'            => $lDevice->displayName,
-                    'DeviceType'            => $lDevice->deviceId
+                    'DeviceName'            => $lDevice['displayName'],
+                    'DeviceType'            => $lDevice['deviceId']
                 ];
 
                 $AddValueLights['create'] = [
                     'moduleID'      => self::mDeviceModuleId,
                     'configuration' => [
                         'FAHDeviceID'    => $key,
-                        'DeviceType'     => $lDevice->deviceId
+                        'DeviceType'     => $lDevice['deviceId']
                     ],
                     'location' => $location
                 ];
