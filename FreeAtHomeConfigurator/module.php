@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 class FreeAtHomeConfigurator extends IPSModule
 {
+    const mBridgeDataId     = '{03995C27-F41C-4E0C-85C9-099084294C3B}';      // DatenId der Bridge
+    const mDeviceModuleId   = '{83354C26-2732-427C-A781-B3F5CDF758B1}';      // Device Modul Id 
+    const mParentId         = '{9AFFB383-D756-8422-BCA0-EFD3BB1E3E29}';      // Parent Id (Bridge)
+
     public function Create()
     {
         //Never delete this line!
         parent::Create();
-        $this->ConnectParent('{BC9334EC-8C5C-61C2-C5DD-96FE9368F38D}');
+        $this->ConnectParent(self::mParentId);
         $this->RegisterPropertyString('Serialnumber', '');
         $this->RegisterPropertyInteger('TargetCategory', 0);
 
@@ -100,7 +104,7 @@ class FreeAtHomeConfigurator extends IPSModule
                 ];
 
                 $AddValueLights['create'] = [
-                    'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
+                    'moduleID'      => self::mDeviceModuleId,
                     'configuration' => [
                         'HUEDeviceID'    => strval($key),
                         'DeviceType'     => 'lights'
@@ -159,7 +163,7 @@ class FreeAtHomeConfigurator extends IPSModule
                 ];
 
                 $AddValueSensors['create'] = [
-                    'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
+                    'moduleID'      => self::mDeviceModuleId,
                     'configuration' => [
                         'HUEDeviceID'    => strval($key),
                         'DeviceType'     => 'sensors',
@@ -207,7 +211,7 @@ class FreeAtHomeConfigurator extends IPSModule
                     ];
 
                     $AddValueGroups['create'] = [
-                        'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
+                        'moduleID'      => self::mDeviceModuleId,
                         'configuration' => [
                             'HUEDeviceID'    => strval($key),
                             'DeviceType'     => 'groups'
@@ -279,7 +283,7 @@ class FreeAtHomeConfigurator extends IPSModule
     {
         $Data = [];
         $Buffer = [];
-        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
+        $Data['DataID'] = self::mBridgeDataId;
         $Buffer['Command'] = 'renameDevice';
         $Buffer['DeviceType'] = $DeviceType;
         $Buffer['DeviceID'] = $DeviceID;
@@ -298,7 +302,7 @@ class FreeAtHomeConfigurator extends IPSModule
     {
         $Data = [];
         $Buffer = [];
-        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
+        $Data['DataID'] = self::mBridgeDataId;
         $Buffer['Command'] = 'deleteDevice';
         $Buffer['DeviceType'] = $DeviceType;
         $Buffer['DeviceID'] = $DeviceID;
@@ -317,7 +321,7 @@ class FreeAtHomeConfigurator extends IPSModule
         $Data = [];
         $Buffer = [];
 
-        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
+        $Data['DataID'] = self::mBridgeDataId;
         $Buffer['Command'] = 'scanNewDevices';
         $Buffer['Params'] = '';
         $Data['Buffer'] = $Buffer;
@@ -337,7 +341,7 @@ class FreeAtHomeConfigurator extends IPSModule
         $Data = [];
         $Buffer = [];
 
-        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
+        $Data['DataID'] = self::mBridgeDataId;
 
         switch ($DeviceType) {
             case 'Lights':
@@ -364,7 +368,7 @@ class FreeAtHomeConfigurator extends IPSModule
     {
         $Data = [];
         $Buffer = [];
-        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
+        $Data['DataID'] = self::mBridgeDataId;
         $Buffer['Command'] = 'getGroupAttributes';
         $Buffer['Params'] = ['GroupID' => $id];
         $Data['Buffer'] = $Buffer;
@@ -458,7 +462,7 @@ class FreeAtHomeConfigurator extends IPSModule
             }
             $Buffer['Params'] = ['name' => $GroupName, 'type' => $GroupType, 'lights' => [strval($Light)]];
         }
-        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
+        $Data['DataID'] = self::mBridgeDataId;
         $Buffer['Command'] = 'createGroup';
         $Data['Buffer'] = $Buffer;
         $Data = json_encode($Data);
@@ -507,7 +511,7 @@ class FreeAtHomeConfigurator extends IPSModule
     {
         $Data = [];
         $Buffer = [];
-        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
+        $Data['DataID'] = self::mBridgeDataId;
         $Buffer['Command'] = 'deleteGroup';
         $Buffer['GroupID'] = $GroupID;
         $Data['Buffer'] = $Buffer;
@@ -524,7 +528,7 @@ class FreeAtHomeConfigurator extends IPSModule
 
     private function getHUEDeviceInstances($HueDeviceID, $DeviceType)
     {
-        $InstanceIDs = IPS_GetInstanceListByModuleID('{83354C26-2732-427C-A781-B3F5CDF758B1}'); //HUEDevice
+        $InstanceIDs = IPS_GetInstanceListByModuleID(self::mDeviceModuleId); //HUEDevice
         foreach ($InstanceIDs as $id) {
             if (IPS_GetProperty($id, 'HUEDeviceID') == $HueDeviceID && IPS_GetProperty($id, 'DeviceType') == $DeviceType) {
                 if (IPS_GetInstance($id)['ConnectionID'] == IPS_GetInstance($this->InstanceID)['ConnectionID']) {
@@ -540,7 +544,7 @@ class FreeAtHomeConfigurator extends IPSModule
         $Data = [];
         $Buffer = [];
 
-        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
+        $Data['DataID'] = self::mBridgeDataId;
         $Buffer['Command'] = 'getAllLights';
         $Buffer['Params'] = '';
         $Data['Buffer'] = $Buffer;
@@ -557,7 +561,7 @@ class FreeAtHomeConfigurator extends IPSModule
         $Data = [];
         $Buffer = [];
 
-        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
+        $Data['DataID'] = self::mBridgeDataId;
         $Buffer['Command'] = 'getAllGroups';
         $Buffer['Params'] = '';
         $Data['Buffer'] = $Buffer;
@@ -574,7 +578,7 @@ class FreeAtHomeConfigurator extends IPSModule
         $Data = [];
         $Buffer = [];
 
-        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
+        $Data['DataID'] = self::mBridgeDataId;
         $Buffer['Command'] = 'getAllSensors';
         $Buffer['Params'] = '';
         $Data['Buffer'] = $Buffer;
@@ -642,7 +646,7 @@ class FreeAtHomeConfigurator extends IPSModule
     {
         $Data = [];
         $Buffer = [];
-        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
+        $Data['DataID'] = self::mBridgeDataId;
         $Buffer['Command'] = 'setGroupAttributes';
         $Buffer['GroupID'] = $GroupID;
         $Buffer['Params'] = $params;
