@@ -30,6 +30,12 @@
       "enabled": false,
       "name": "SysAPFirmware",
       "caption": "SysAP firmware"
+    }, 
+    {
+      "type": "ValidationTextBox",
+      "enabled": false,
+      "name": "SysAP_GUID",
+      "caption": "SysAP GUID"
     } 
    ],
   "actions":

@@ -89,7 +89,7 @@ class FreeAtHomeConfigurator extends IPSModule
                 $AddValueAllDevicesLights = [
                     'id'                    => 99999,
                     'DeviceID'              => '',
-                    'DeviceName'            => $this->translate('free@home Devices'),
+                    'DeviceName'            => $this->translate('free@home devices'),
                     'DeviceType'            => ''
                 ];
 

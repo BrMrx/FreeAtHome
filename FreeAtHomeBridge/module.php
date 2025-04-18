@@ -55,10 +55,12 @@ class FreeAtHomeBridge extends IPSModule
         $this->RegisterPropertyString('Password', '');
         $this->RegisterPropertyString('SysAPName', '');
         $this->RegisterPropertyString('SysAPFirmware', '');
+        $this->RegisterPropertyString('SysAP_GUID', '');
         $this->RegisterPropertyInteger('UpdateInterval', 10);
   
         $this->RegisterAttributeString('SysAPName', '');
         $this->RegisterAttributeString('SysAPFirmware', '');
+        $this->RegisterAttributeString('SysAP_GUID', '');
       
         $this->RegisterTimer('FAHBR_UpdateState', 0, 'FAHBR_UpdateState($_IPS[\'TARGET\']);');
      }
@@ -448,6 +450,7 @@ class FreeAtHomeBridge extends IPSModule
         {
             return false;
         }
+        
         $this->SendDebug(__FUNCTION__ . ' Json:', json_encode($Answer ), 0);
 
         if( isset($Answer->sysapName) && isset($Answer->version) )
@@ -473,6 +476,16 @@ class FreeAtHomeBridge extends IPSModule
                 }
                 IPS_ApplyChanges( $this->InstanceID);
             }
+
+            // nun noch die GUID des SysAP bestimmen
+            $Answer = $this->sendRequest( 'devicelist' );
+            if( $Answer === false)
+            {
+                return false;
+            }
+     
+
+
             return true;
         }
 
