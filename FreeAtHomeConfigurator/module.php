@@ -545,25 +545,20 @@ class FreeAtHomeConfigurator extends IPSModule
 
     private function FilterDeviceList( $AllDevices, $a_InterfaceType )
     {
-        $lRetValue = array();
+        $lRetValue = = new stdClass();
 
-        IPS_LogMessage( $this->InstanceID, "Filter:".$a_InterfaceType );
         foreach($AllDevices as $lDeviceId => $DeviceValue)
         {        
-            IPS_LogMessage( $this->InstanceID, "DeviceID: '".$lDeviceId."', ".json_encode($DeviceValue) );
             if( isset($DeviceValue['interface'] ) )
             {
-                IPS_LogMessage( $this->InstanceID, "ist set: '".$lDeviceId);
                 if( $DeviceValue['interface'] == $a_InterfaceType )
                 {
-                    IPS_LogMessage( $this->InstanceID, "matches '".$a_InterfaceType);
-                    $lRetValue[$lDeviceId] = $DeviceValue;
+                    $lRetValue->$lDeviceId = $DeviceValue;
                 }
             }
         }
 
         IPS_LogMessage( $this->InstanceID, json_encode($lRetValue) );
- 
 
         return $lRetValue;
  }
