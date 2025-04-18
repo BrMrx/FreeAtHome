@@ -209,7 +209,7 @@ class FreeAtHomeBridge extends IPSModule
         $this->SendDataToChildren($Data);
     }
 
-    private function FilterSupportedDevices( $a_Devices )
+    public function FilterSupportedDevices( $a_Devices )
     {
         $lRetValue = new stdClass();
 
