@@ -40,9 +40,7 @@ class FreeAtHomeConfigurator extends IPSModule
         $HueDevices = array(); // = $this->FilterDeviceList( $AllDevices, 'hue'); 
         $Scenes = array(); 
 
-
-        IPS_LogMessage( $this->InstanceID, __FUNCTION__.": ".json_encode($Devices) );
-
+ 
  //      $HueDevices = $this->getHUEDevices();
  //      $Scenes = $this->getFAHScenes();
 
@@ -68,6 +66,8 @@ class FreeAtHomeConfigurator extends IPSModule
         $ValuesAllDevices = [];
 
         $location = $this->getPathOfCategory($this->ReadPropertyInteger('TargetCategory'));
+
+        $lAddTypeCategory = true;
         //Lights
  //       if (count($Devices) > 0) {
  //           $AddValueLights = [
@@ -92,6 +92,33 @@ class FreeAtHomeConfigurator extends IPSModule
  //           $ValuesAllDevices[] = $AddValueAllDevicesLights;
 
             foreach ($Devices as $key => $lDevice) {
+
+                // beim ersten Elemnent vorher die Typencategorie hinzufügen
+                if( $lAddTypeCategory  )
+                {
+                   $AddValueLights = [
+                       'id'                    => 1,
+                       'ID'                    => '',
+                       'name'                  => 'RF',
+                       'DisplayName'           => 'Busch Jäger Komponenten',
+                       'Type'                  => '',
+                       'ModelID'               => '',
+                       'Manufacturername'      => '',
+                       'Productname'           => ''
+                   ];
+       
+                   $AddValueAllDevicesLights = [
+                       'id'                    => 99999,
+                       'DeviceID'              => '',
+                       'DeviceName'            => 'Busch Jäger Komponenten',
+                       'DeviceType'            => ''
+                   ];
+
+                   $Values[] = $AddValueLights;
+                   $ValuesAllDevices[] = $AddValueAllDevicesLights;
+                   $lAddTypeCategory = false;
+                }
+
 
                 IPS_LogMessage( $this->InstanceID, __FUNCTION__.": ".$key." -> ".json_encode($lDevice) );
 
