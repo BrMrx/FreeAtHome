@@ -61,8 +61,6 @@ class FreeAtHomeConfigurator extends IPSModule
 
         $this->SendDebug(__FUNCTION__ . ' Devises', json_encode($Devices), 0);
 
-        return;
-
         $this->SendDebug(__FUNCTION__ . ' HUE-Devices', json_encode($HueDevices), 0);
         $this->SendDebug(__FUNCTION__ . ' Scenes', json_encode($Scenes), 0);
 
@@ -71,7 +69,7 @@ class FreeAtHomeConfigurator extends IPSModule
 
         $location = $this->getPathOfCategory($this->ReadPropertyInteger('TargetCategory'));
         //Lights
- //       if (count($Devices) > 0) {
+        if (count($Devices) > 0) {
  //           $AddValueLights = [
  //               'id'                    => 1,
  //               'ID'                    => '',
@@ -130,7 +128,7 @@ class FreeAtHomeConfigurator extends IPSModule
                 $Values[] = $AddValueLights;
                 $ValuesAllDevices[] = $AddValueAllDevicesLights;
             }
- //       }
+        }
 
         //Sensors
         if (count($Scenes) > 0) {
