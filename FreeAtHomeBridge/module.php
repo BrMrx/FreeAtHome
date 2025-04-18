@@ -483,10 +483,18 @@ class FreeAtHomeBridge extends IPSModule
             {
                 return false;
             }
-     
+            foreach( $Answer as $key => $lArrayDeviceID  )
+            {
+                if( $key != $this->ReadPropertyString("SysAP_GUID") )
+                {
+                    $this->SendDebug(__FUNCTION__ . ' SysAP_GUID changed:', $this->ReadPropertyString("SysAPName").' -> '.$key, 0);
+                    IPS_SetProperty( $this->InstanceID,'SysAP_GUID', $key );
+                    IPS_ApplyChanges( $this->InstanceID);
+                }
 
+                return true;
+            }
 
-            return true;
         }
 
         return false;
