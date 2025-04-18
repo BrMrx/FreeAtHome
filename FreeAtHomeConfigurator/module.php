@@ -19,7 +19,9 @@ class FreeAtHomeConfigurator extends IPSModule
         parent::Create();
         $this->ConnectParent(self::mParentId);
         $this->RegisterPropertyString('Serialnumber', '');
-        $this->RegisterPropertyInteger('TargetCategory', 0);
+        $this->RegisterPropertyInteger('RF_TargetCategory', 0);
+        $this->RegisterPropertyInteger('HUE_TargetCategory', 0);
+        $this->RegisterPropertyInteger('Scene_TargetCategory', 0);
 
         $this->RegisterAttributeInteger('ProgressStatus', -1);
         $this->RegisterTimer('ProgressNewDevices', 0, 'FAHCONF_ProgressUpdateNewDevicesList(' . $this->InstanceID . ');');
@@ -65,124 +67,102 @@ class FreeAtHomeConfigurator extends IPSModule
         $Values = [];
         $ValuesAllDevices = [];
 
-        $location = $this->getPathOfCategory($this->ReadPropertyInteger('TargetCategory'));
-
+        // Busch und Jäger Komponenten
+        $location = $this->getPathOfCategory($this->ReadPropertyInteger('RF_TargetCategory'));
         $lAddTypeCategory = true;
-        //Lights
- //       if (count($Devices) > 0) {
- //           $AddValueLights = [
- //               'id'                    => 1,
- //               'ID'                    => '',
- //               'name'                  => 'Lights',
- //               'DisplayName'           => $this->translate('Lights'),
- //               'Type'                  => '',
- //               'ModelID'               => '',
- //               'Manufacturername'      => '',
- //               'Productname'           => ''
- //           ];
-//
- //           $AddValueAllDevicesLights = [
- //               'id'                    => 99999,
- //               'DeviceID'              => '',
- //               'DeviceName'            => $this->translate('Lights'),
- //               'DeviceType'            => ''
- //           ];
+        foreach ($Devices as $key => $lDevice) {
 
- //           $Values[] = $AddValueLights;
- //           $ValuesAllDevices[] = $AddValueAllDevicesLights;
-
-            foreach ($Devices as $key => $lDevice) {
-
-                // beim ersten Elemnent vorher die Typencategorie hinzufügen
-                if( $lAddTypeCategory  )
-                {
-                   $AddValueLights = [
-                       'id'                    => 1,
-                       'ID'                    => '',
-                       'name'                  => 'RF',
-                       'DisplayName'           => 'Busch Jäger Komponenten',
-                       'Type'                  => '',
-                       'ModelID'               => '',
-                       'Manufacturername'      => '',
-                       'Productname'           => ''
-                   ];
-       
-                   $AddValueAllDevicesLights = [
-                       'id'                    => 99999,
-                       'DeviceID'              => '',
-                       'DeviceName'            => 'Busch Jäger Komponenten',
-                       'DeviceType'            => ''
-                   ];
-
-                   $Values[] = $AddValueLights;
-                   $ValuesAllDevices[] = $AddValueAllDevicesLights;
-                   $lAddTypeCategory = false;
-                }
-
-
-                IPS_LogMessage( $this->InstanceID, __FUNCTION__.": ".$key." -> ".json_encode($lDevice) );
-
-                $instanceID = $this->getFAHDeviceInstances($key, 'lights');
+            // beim ersten Elemnent vorher die Typencategorie hinzufügen
+            if( $lAddTypeCategory  )
+            {
                 $AddValueLights = [
-                    'parent'                => 1,
-                    'ID'                    => $key,
-                    'DisplayName'           => $lDevice['displayName'],
-                    'name'                  => '-',
-                    'Type'                  => $lDevice['deviceId'],
-                    'ModelID'               => '-',
-                    'Manufacturername'      => ((array_key_exists($lDevice['interface'], self::m_Types)) ? self::m_Types[$lDevice['interface']] : '?'.$lDevice->interface.'?'),
-                    'Productname'           => '-',
-                    'instanceID'            => $instanceID
+                    'id'                    => 1,
+                    'ID'                    => '',
+                    'name'                  => 'devices',
+                    'DisplayName'           => $this->translate('free@home Devices'),
+                    'Type'                  => '',
+                    'ModelID'               => '',
+                    'Manufacturername'      => '',
+                    'Productname'           => ''
                 ];
-
+    
                 $AddValueAllDevicesLights = [
-                    'parent'                => 99999,
-                    'id'                    => $key,
-                    'DeviceID'              => $key,
-                    'DeviceName'            => $lDevice['displayName'],
-                    'DeviceType'            => $lDevice['deviceId']
-                ];
-
-                $AddValueLights['create'] = [
-                    'moduleID'      => self::mDeviceModuleId,
-                    'configuration' => [
-                        'FAHDeviceID'    => $key,
-                        'DeviceType'     => $lDevice['deviceId']
-                    ],
-                    'location' => $location
+                    'id'                    => 99999,
+                    'DeviceID'              => '',
+                    'DeviceName'            => $this->translate('free@home Devices'),
+                    'DeviceType'            => ''
                 ];
 
                 $Values[] = $AddValueLights;
                 $ValuesAllDevices[] = $AddValueAllDevicesLights;
+                $lAddTypeCategory = false;
             }
-//        }
 
-        //Sensors
+
+            IPS_LogMessage( $this->InstanceID, __FUNCTION__.": ".$key." -> ".json_encode($lDevice) );
+
+            $instanceID = $this->getFAHDeviceInstances($key, 'devices');
+            $AddValueLights = [
+                'parent'                => 1,
+                'ID'                    => $key,
+                'DisplayName'           => $lDevice['displayName'],
+                'name'                  => '-',
+                'Type'                  => $lDevice['deviceId'],
+                'ModelID'               => '-',
+                'Manufacturername'      => ((array_key_exists($lDevice['interface'], self::m_Types)) ? self::m_Types[$lDevice['interface']] : '?'.$lDevice->interface.'?'),
+                'Productname'           => '-',
+                'instanceID'            => $instanceID
+            ];
+
+            $AddValueAllDevicesLights = [
+                'parent'                => 99999,
+                'id'                    => $key,
+                'DeviceID'              => $key,
+                'DeviceName'            => $lDevice['displayName'],
+                'DeviceType'            => $lDevice['deviceId']
+            ];
+
+            $AddValueLights['create'] = [
+                'moduleID'      => self::mDeviceModuleId,
+                'configuration' => [
+                    'FAHDeviceID'    => $key,
+                    'DeviceType'     => $lDevice['deviceId']
+                ],
+                'location' => $location
+            ];
+
+            $Values[] = $AddValueLights;
+            $ValuesAllDevices[] = $AddValueAllDevicesLights;
+        }
+
+        // Scenen Komponenten
+        $location = $this->getPathOfCategory($this->ReadPropertyInteger('Scene_TargetCategory'));
+        $lAddTypeCategory = true;
         if (count($Scenes) > 0) {
-            $AddValueSensors = [
+            $AddValueScenes = [
                 'id'                    => 2,
                 'ID'                    => '',
-                'name'                  => 'Sensors',
-                'DisplayName'           => $this->translate('Sensors'),
+                'name'                  => 'scene',
+                'DisplayName'           => $this->translate('Scenes'),
                 'Type'                  => '',
                 'ModelID'               => '',
                 'Manufacturername'      => '',
                 'Productname'           => ''
             ];
 
-            $AddValueAllDevicesSensors = [
+            $AddValueAllDevicesScenes = [
                 'id'                    => 99998,
                 'DeviceID'              => '',
-                'DeviceName'            => $this->translate('Sensors'),
+                'DeviceName'            => $this->translate('Scenes'),
                 'DeviceType'            => ''
             ];
 
-            $Values[] = $AddValueSensors;
-            $ValuesAllDevices[] = $AddValueAllDevicesSensors;
+            $Values[] = $AddValueScenes;
+            $ValuesAllDevices[] = $AddValueAllDevicesScenes;
 
             foreach ($Scenes as $key => $sensor) {
                 $instanceID = $this->getFAHDeviceInstances($key, 'sensors');
-                $AddValueSensors = [
+                $AddValueScenes = [
                     'parent'                => 2,
                     'ID'                    => $key,
                     'DisplayName'           => $sensor['name'],
@@ -194,26 +174,26 @@ class FreeAtHomeConfigurator extends IPSModule
                     'instanceID'            => $instanceID
                 ];
 
-                $AddValueAllDevicesSensors = [
+                $AddValueAllDevicesScenes = [
                     'parent'                => 99998,
                     'id'                    => $key,
                     'DeviceID'              => $key,
                     'DeviceName'            => $sensor['name'],
-                    'DeviceType'            => 'sensors'
+                    'DeviceType'            => 'scene'
                 ];
 
-                $AddValueSensors['create'] = [
+                $AddValueScenes['create'] = [
                     'moduleID'      => self::mDeviceModuleId,
                     'configuration' => [
-                        'HUEDeviceID'    => strval($key),
-                        'DeviceType'     => 'sensors',
+                        'FAHDeviceID'    => strval($key),
+                        'DeviceType'     => 'scene',
                         'SensorType'     => $sensor['type']
                     ],
                     'location' => $location
                 ];
 
-                $Values[] = $AddValueSensors;
-                $ValuesAllDevices[] = $AddValueAllDevicesSensors;
+                $Values[] = $AddValueScenes;
+                $ValuesAllDevices[] = $AddValueAllDevicesScenes;
             }
         }
 
@@ -226,7 +206,7 @@ class FreeAtHomeConfigurator extends IPSModule
                 'id'                    => 3,
                 'ID'                    => '',
                 'name'                  => 'Groups',
-                'DisplayName'           => $this->translate('Groups'),
+                'DisplayName'           => $this->translate('HUE devices'),
                 'Type'                  => '',
                 'ModelID'               => '',
                 'Manufacturername'      => '',
@@ -234,7 +214,7 @@ class FreeAtHomeConfigurator extends IPSModule
             ];
             $Values[] = $AddValueGroups;
             foreach ($HueDevices as $key => $group) {
-                $instanceID = $this->getFAHDeviceInstances($key, 'groups');
+                $instanceID = $this->getFAHDeviceInstances($key, 'scene');
 
                 if ($group['type'] != 'Entertainment') {
                     $AddValueGroups = [
@@ -243,7 +223,7 @@ class FreeAtHomeConfigurator extends IPSModule
                         'DisplayName'           => $group['name'],
                         'name'                  => $group['name'],
                         'Type'                  => $group['type'],
-                        'DeviceType'            => 'Group',
+                        'DeviceType'            => 'scene',
                         'ModelID'               => '-',
                         'Manufacturername'      => '-',
                         'Productname'           => '-',
@@ -253,8 +233,8 @@ class FreeAtHomeConfigurator extends IPSModule
                     $AddValueGroups['create'] = [
                         'moduleID'      => self::mDeviceModuleId,
                         'configuration' => [
-                            'HUEDeviceID'    => strval($key),
-                            'DeviceType'     => 'groups'
+                            'FAHDeviceID'    => strval($key),
+                            'DeviceType'     => 'scene'
                         ],
                         'location' => $location
                     ];
@@ -295,23 +275,23 @@ class FreeAtHomeConfigurator extends IPSModule
         }
         //Sensors
         if (count($Scenes) > 0) {
-            $AddValueAllDevicesSensors = [
+            $AddValueAllDevicesScenes = [
                 'id'                    => 99998,
                 'DeviceID'              => '',
                 'DeviceName'            => $this->translate('Sensors'),
                 'DeviceType'            => '',
                 'expanded'              => true
             ];
-            $ValuesAllDevices[] = $AddValueAllDevicesSensors;
+            $ValuesAllDevices[] = $AddValueAllDevicesScenes;
             foreach ($Scenes as $key => $sensor) {
-                $AddValueAllDevicesSensors = [
+                $AddValueAllDevicesScenes = [
                     'parent'                => 99998,
                     'id'                    => $key,
                     'DeviceID'              => $key,
                     'DeviceName'            => $sensor['name'],
                     'DeviceType'            => 'sensors'
                 ];
-                $ValuesAllDevices[] = $AddValueAllDevicesSensors;
+                $ValuesAllDevices[] = $AddValueAllDevicesScenes;
             }
         }
         $this->UpdateFormField('AllDevices', 'values', json_encode($ValuesAllDevices));

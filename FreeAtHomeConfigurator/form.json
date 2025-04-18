@@ -2,17 +2,22 @@
    "elements": [
       {
          "type": "Label",
-         "caption": "Configurator to find all HUE Devices"
-      },
-      {
-         "type": "ValidationTextBox",
-         "name": "Serialnumber",
-         "caption": "Serialnumber"
+         "caption": "Configurator to find all free@home devices"
       },
       {
          "type": "SelectCategory",
-         "name": "TargetCategory",
-         "caption": "Target Category"
+         "name": "RF_TargetCategory",
+         "caption": "Target Category - devices"
+      },
+      {
+         "type": "SelectCategory",
+         "name": "HUE_TargetCategory",
+         "caption": "Target Category - HUE devices"
+      },
+      {
+         "type": "SelectCategory",
+         "name": "Scene_TargetCategory",
+         "caption": "Target Category - scenes"
       }
    ],
    "actions": [

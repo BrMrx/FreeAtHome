@@ -1,16 +1,17 @@
 {
   "translations": {
     "de": {
-      "Serialnumber": "Seriennummer",
-      "Configurator to find all HUE Devices": "Konfigurator, um alle HUE-Geräte zu finden",
+      "Configurator to find all free@home devices": "Konfigurator, um alle free@home Geräte zu finden",
       "Configurator": "Konfigurator",
       "Manufacturername": "Herstellername",
       "Productname": "Produktname",
-      "Lights": "Lampen",
-      "Sensors": "Sensoren",
-      "Groups": "Gruppen",
+      "free@home devices": "free@home Geräte",
+      "scenes": "Szenen",
+      "hue_devices": "Phillips HUE Geräte",
       "Scenes": "Szenen",
-      "Target Category": "Zielkategorie",
+      "Target Category - devices": "Zielkategorie free@home Geräte",
+      "Target Category - HUE devices": "Zielkategorie - HUE Geräte",
+      "Target Category - scenes": "Zielkategorie - Scenen",
       "Device Management": "Geräteverwaltung",
       "Last Scan": "Letzter Scan",
       "active": "Aktiv",
