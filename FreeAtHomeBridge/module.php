@@ -216,13 +216,13 @@ class FreeAtHomeBridge extends IPSModule
         foreach($a_Devices as $lDeviceId => $DeviceValue)
         {        
             $lAddToList = false;
-            if( isset($DeviceValue['channels'] ) )
+            if( isset($DeviceValue->channels ) )
             {
-                foreach($DeviceValue['channels'] as $lChannelNr => $lChannelValue)
+                foreach($DeviceValue->channels as $lChannelNr => $lChannelValue)
                 {
-                    if( isset($lChannelValue['functionID'] )  )
+                    if( isset($lChannelValue->functionID )  )
                     {
-                        $lFunctionId = hexdec( $lChannelValue['functionID'] );
+                        $lFunctionId = hexdec( $lChannelValue->functionID );
                         if( in_array($lFunctionId, self::mSupportedFunctionIDs ) )
                         {
                             $lAddToList = true;
