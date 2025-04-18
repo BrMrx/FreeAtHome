@@ -103,7 +103,7 @@ class FreeAtHomeConfigurator extends IPSModule
                     'name'                  => '-',
                     'Type'                  => $lDevice['deviceId'],
                     'ModelID'               => '-',
-                    'Manufacturername'      => ((array_key_exists($lDevice['interface'], $self::m_Types)) ? $self::m_Types[$lDevice['interface']] : '?'.$lDevice->interface.'?'),
+                    'Manufacturername'      => ((array_key_exists($lDevice['interface'], self::m_Types)) ? self::m_Types[$lDevice['interface']] : '?'.$lDevice->interface.'?'),
                     'Productname'           => '-',
                     'instanceID'            => $key
                 ];
