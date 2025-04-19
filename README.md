@@ -39,10 +39,9 @@ Dieses Modul ermöglicht die Integration von Busch-Jaeger free@home in IP-Symcon
 
 ## Verzeichnisstruktur
 
-- `FAHConfigurator/` – Gruppierter Konfigurator
+- `FreeAtHomeConfigurator/` – Gruppierter Konfigurator
 - `FreeAtHomeDevice/` – Gerät mit REST/WebSocket
-- `FreeAtHomeSceneDevice/` – Szenensteuerung
-- `FreeAtHomeHueDevice/` – Hue-Lichtsteuerung
+- `FreeAtHomeBridge/` – Zentrale Kommunikationsinstanz
 
 ## Lizenz
 
