@@ -102,7 +102,7 @@ class FreeAtHomeConfigurator extends IPSModule
 
             IPS_LogMessage( $this->InstanceID, __FUNCTION__.": ".$key." -> ".json_encode($lDevice) );
 
-            $instanceID = $this->getFAHDeviceInstances($key, 'devices');
+            $instanceID = $this->getFAHDeviceInstances($key, 'device');
             $AddValueLights = [
                 'parent'                => 1,
                 'ID'                    => $key,
@@ -120,14 +120,14 @@ class FreeAtHomeConfigurator extends IPSModule
                 'id'                    => $key,
                 'DeviceID'              => $key,
                 'DeviceName'            => $lDevice['displayName'],
-                'DeviceType'            => json_encode($lDevice['channels'])
+                'DeviceType'            => 'device'
             ];
 
             $AddValueLights['create'] = [
                 'moduleID'      => self::mDeviceModuleId,
                 'configuration' => [
                     'FAHDeviceID'    => $key,
-                    'DeviceType'     => json_encode($lDevice['channels'])
+                    'DeviceType'     => 'device'
                 ],
                 'location' => $location
             ];
@@ -547,11 +547,11 @@ class FreeAtHomeConfigurator extends IPSModule
         }
     }
 
-    private function getFAHDeviceInstances($HueDeviceID, $DeviceType)
+    private function getFAHDeviceInstances($DeviceID, $DeviceType)
     {
        $InstanceIDs = IPS_GetInstanceListByModuleID(self::mDeviceModuleId); //FAHDevice
        foreach ($InstanceIDs as $id) {
-           if (IPS_GetProperty($id, 'FAHDeviceID') == $HueDeviceID && IPS_GetProperty($id, 'DeviceType') == $DeviceType) {
+           if (IPS_GetProperty($id, 'FAHDeviceID') == $DeviceID && IPS_GetProperty($id, 'DeviceType') == $DeviceType) {
                if (IPS_GetInstance($id)['ConnectionID'] == IPS_GetInstance($this->InstanceID)['ConnectionID']) {
                    return $id;
                }
