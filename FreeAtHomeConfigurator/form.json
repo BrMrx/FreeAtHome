@@ -154,7 +154,7 @@
             {
                "type": "Button",
                "label": "Scan new Devices",
-               "onClick": "PHUE_scanNewDevices($id);"
+               "onClick": "FAHCONF_scanNewDevices($id);"
             },
             {
                "type": "Tree",
@@ -198,12 +198,12 @@
                   {
                      "type": "Button",
                      "caption": "Rename",
-                     "onClick": "PHUE_renameDevice($id,$NewDeviceName, $AllDevices['DeviceID'], $AllDevices['DeviceType']);"
+                     "onClick": "FAHCONF_renameDevice($id,$NewDeviceName, $AllDevices['DeviceID'], $AllDevices['DeviceType']);"
                   },
                   {
                      "type": "Button",
                      "caption": "Delete",
-                     "onClick": "PHUE_deleteDevice($id,$AllDevices['DeviceID'], $AllDevices['DeviceType']);"
+                     "onClick": "FAHCONF_deleteDevice($id,$AllDevices['DeviceID'], $AllDevices['DeviceType']);"
                   }
                ]
             }
@@ -322,7 +322,7 @@
                   {
                      "type": "Button",
                      "caption": "Add",
-                     "onClick": "PHUE_createGroup($id,$GroupName,$GroupType,$Room,intval($AllLights['DeviceID']));"
+                     "onClick": "FAHCONF_createGroup($id,$GroupName,$GroupType,$Room,intval($AllLights['DeviceID']));"
                   }
                ]
             },
@@ -333,7 +333,7 @@
                      "type": "Select",
                      "name": "Groups",
                      "caption": "Group",
-                     "onChange": "PHUE_UpdateAllLightsInGroupsForConfiguration($id,$Groups);",
+                     "onChange": "FAHCONF_UpdateAllLightsInGroupsForConfiguration($id,$Groups);",
                      "options": [
                         {
                            "caption": "All",
@@ -345,13 +345,13 @@
                      "type": "Button",
                      "name": "LoadGroupConfiguration",
                      "caption": "Load Group Data",
-                     "onClick": "PHUE_LoadGroupConfigurationForm($id);"
+                     "onClick": "FAHCONF_LoadGroupConfigurationForm($id);"
                   },
                   {
                      "type": "Button",
                      "name": "DeleteGroup",
                      "caption": "Delete Group",
-                     "onClick": "PHUE_deleteGroup($id,$Groups);"
+                     "onClick": "FAHCONF_deleteGroup($id,$Groups);"
                   }
                ]
             },
@@ -411,12 +411,12 @@
                   {
                      "type": "Button",
                      "caption": "Add to Group",
-                     "onClick": "PHUE_addLightToGroup($id,$AllLights['DeviceID'],$Groups);"
+                     "onClick": "FAHCONF_addLightToGroup($id,$AllLights['DeviceID'],$Groups);"
                   },
                   {
                      "type": "Button",
                      "caption": "Delete from Group",
-                     "onClick": "PHUE_deleteLightFromGroup($id,$AllLightsInGroup['DeviceID'],$Groups);"
+                     "onClick": "FAHCONF_deleteLightFromGroup($id,$AllLightsInGroup['DeviceID'],$Groups);"
                   }
                ]
             }
