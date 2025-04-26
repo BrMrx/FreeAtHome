@@ -7,7 +7,7 @@ class HUEDevice extends IPSModule
 {
     use ColorHelper;
     const mBridgeDataId     = '{BC9334EC-8C5C-61C2-C5DD-96FE9368F38D}';      // DatenId der Bridge
-    const mDeviceModuleId   = '{83354C26-2732-427C-A781-B3F5CDF758B1}';      // Device Modul Id 
+    const mDeviceModuleId   = '{BDE4603B-E68A-D3AF-2510-9462C7374097}';      // Device Modul Id 
     const mParentId         = '{9AFFB383-D756-8422-BCA0-EFD3BB1E3E29}';      // Parent Id (Bridge)
 
     public function Create()
