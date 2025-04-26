@@ -33,6 +33,7 @@ class FreeAtHomeConfigurator extends IPSModule
         parent::ApplyChanges();
     }
 
+    
     public function GetConfigurationForm()
     {
         $Form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
@@ -107,7 +108,7 @@ class FreeAtHomeConfigurator extends IPSModule
                 'ID'                    => $key,
                 'DisplayName'           => $lDevice['displayName'],
                 'name'                  => $lDevice['displayName'],
-                'Type'                  => $lDevice['deviceId'],
+                'Type'                  => json_encode($lDevice['channels']),
                 'ModelID'               => '-',
                 'Manufacturername'      => ((array_key_exists($lDevice['interface'], self::m_Types)) ? self::m_Types[$lDevice['interface']] : '?'.$lDevice->interface.'?'),
                 'Productname'           => '-',
