@@ -3,7 +3,7 @@
 declare(strict_types=1);
 require_once __DIR__ . '/../libs/ColorHelper.php';
 
-class HUEDevice extends IPSModule
+class FreeAtHomeDevice extends IPSModule
 {
     use ColorHelper;
     const mBridgeDataId     = '{BC9334EC-8C5C-61C2-C5DD-96FE9368F38D}';      // DatenId der Bridge
