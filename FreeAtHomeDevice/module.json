@@ -1,0 +1,11 @@
+{
+  "id": "{83354C26-2732-427C-A781-B3F5CDF758B1}",
+  "name": "HUEDevice",
+  "type": 3,
+  "vendor": "Philips",
+  "aliases": ["Philips Hue Device"],
+  "parentRequirements": ["{BC9334EC-8C5C-61C2-C5DD-96FE9368F38D}"],
+  "childRequirements": [],
+  "implemented": ["{7E471B91-3407-F7EE-347B-64B459E33D76}"],
+  "prefix": "FAHDEV"
+}
