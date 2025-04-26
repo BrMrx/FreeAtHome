@@ -1,6 +1,6 @@
 {
   "id": "{BDE4603B-E68A-D3AF-2510-9462C7374097}",
-  "name": "FAHDevice",
+  "name": "FreeAtHomeDevice",
   "type": 3,
   "vendor": "BuschJaeger",
   "aliases": ["FreeAtHome Device"],
