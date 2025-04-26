@@ -10,12 +10,11 @@
 
 ## Beschreibung
 
-Dieses Modul ermöglicht die Integration von Busch-Jaeger free@home in IP-Symcon. Es bietet eine Discovery-Funktion, automatische Gerätekonfiguration, Szenensteuerung und Unterstützung für Philips Hue-Komponenten über den SysAP.
+Dieses Modul ermöglicht die Integration von Busch-Jaeger free@home in IP-Symcon. Es bietet eine automatische Gerätekonfiguration, Szenensteuerung und Unterstützung für Philips Hue-Komponenten über den SysAP.
 
 
 ## Funktionen
 
-- Geräte-Discovery per REST API
 - Gruppierter Konfigurator für:
   - free@home Geräte
   - Szenen
@@ -29,9 +28,8 @@ Dieses Modul ermöglicht die Integration von Busch-Jaeger free@home in IP-Symcon
 ## Installation
 
 1. Repository in IP-Symcon hinzufügen
-2. Discovery-Instanz erstellen
-3. Geräte über Discovery suchen
-4. Im Konfigurator Instanzen gruppiert anlegen
+2. Konfigurator-Instanz erstellen und Bridge Parameter ausfüllen
+3. Im Konfigurator Instanzen gruppiert anlegen
 
 ## Voraussetzungen
 
@@ -41,11 +39,9 @@ Dieses Modul ermöglicht die Integration von Busch-Jaeger free@home in IP-Symcon
 
 ## Verzeichnisstruktur
 
-- `FreeAtHomeDiscovery/` – REST-basierte Gerätesuche
 - `FreeAtHomeConfigurator/` – Gruppierter Konfigurator
-- `FreeAtHomeDevice/` – Standardgerät mit REST/WebSocket
-- `FreeAtHomeSceneDevice/` – Szenensteuerung
-- `FreeAtHomeHueDevice/` – Hue-Lichtsteuerung
+- `FreeAtHomeDevice/` – Gerät mit REST/WebSocket
+- `FreeAtHomeBridge/` – Zentrale Kommunikationsinstanz
 
 ## Lizenz
 
