@@ -86,7 +86,7 @@ class FreeAtHomeDevice extends IPSModule
             $this->UpdateSceneProfile();
         } else {
             $ParentID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
-            $ProfileName = 'HUE.GroupScene' . $ParentID . '_' . $this->ReadPropertyString('FAHDeviveID');
+            $ProfileName = 'HUE.GroupScene' . $ParentID . '_' . $this->ReadPropertyString('FAHDeviceID');
             if (!IPS_VariableProfileExists($ProfileName)) {
                 IPS_CreateVariableProfile($ProfileName, 1);
             }
@@ -144,7 +144,7 @@ class FreeAtHomeDevice extends IPSModule
 
         //Groups
         $ParentID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
-        $this->MaintainVariable('HUE_GroupScenes', $this->Translate('Scenes'), 1, 'HUE.GroupScene' . $ParentID . '_' . $this->ReadPropertyString('FAHDeviveID'), 0, $this->ReadPropertyString('DeviceType') == 'groups');
+        $this->MaintainVariable('HUE_GroupScenes', $this->Translate('Scenes'), 1, 'HUE.GroupScene' . $ParentID . '_' . $this->ReadPropertyString('FAHDeviceID'), 0, $this->ReadPropertyString('DeviceType') == 'groups');
 
         if ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups') {
             if ($this->ReadPropertyBoolean('ColorModeActive')) {
@@ -207,7 +207,7 @@ class FreeAtHomeDevice extends IPSModule
     public function ReceiveData($JSONString)
     {
         $this->SendDebug(__FUNCTION__ . ' Device Type', $this->ReadPropertyString('DeviceType'), 0);
-        $this->SendDebug(__FUNCTION__ . ' Device ID', $this->ReadPropertyString('FAHDeviveID'), 0);
+        $this->SendDebug(__FUNCTION__ . ' Device ID', $this->ReadPropertyString('FAHDeviceID'), 0);
         $this->SendDebug(__FUNCTION__, $JSONString, 0);
         $Data = json_decode($JSONString);
         $Buffer = json_decode($Data->Buffer);
@@ -220,17 +220,17 @@ class FreeAtHomeDevice extends IPSModule
         switch ($this->ReadPropertyString('DeviceType')) {
             case 'groups':
                 if (property_exists($Buffer, 'Groups')) {
-                    if (property_exists($Buffer->Groups, $this->ReadPropertyString('FAHDeviveID'))) {
-                        if (property_exists($Buffer->Groups->{$this->ReadPropertyString('FAHDeviveID')}, 'action')) {
-                            $DeviceState = $Buffer->Groups->{$this->ReadPropertyString('FAHDeviveID')}->action;
-                            $GroupState = $Buffer->Groups->{$this->ReadPropertyString('FAHDeviveID')}->state;
+                    if (property_exists($Buffer->Groups, $this->ReadPropertyString('FAHDeviceID'))) {
+                        if (property_exists($Buffer->Groups->{$this->ReadPropertyString('FAHDeviceID')}, 'action')) {
+                            $DeviceState = $Buffer->Groups->{$this->ReadPropertyString('FAHDeviceID')}->action;
+                            $GroupState = $Buffer->Groups->{$this->ReadPropertyString('FAHDeviceID')}->state;
                         }
                     } else {
-                        if ($this->ReadPropertyString('FAHDeviveID') == 0) {
+                        if ($this->ReadPropertyString('FAHDeviceID') == 0) {
                             $this->SendDebug('Group 0', 'No Data', 0);
                             return;
                         }
-                        $this->LogMessage('Group Device ID: ' . $this->ReadPropertyString('FAHDeviveID') . ' invalid', 10204);
+                        $this->LogMessage('Group Device ID: ' . $this->ReadPropertyString('FAHDeviceID') . ' invalid', 10204);
                         return;
                     }
                 }
@@ -238,45 +238,45 @@ class FreeAtHomeDevice extends IPSModule
 
             case 'lights':
                 if (property_exists($Buffer, 'Lights')) {
-                    if (property_exists($Buffer->Lights, $this->ReadPropertyString('FAHDeviveID'))) {
-                        if (property_exists($Buffer->Lights->{$this->ReadPropertyString('FAHDeviveID')}, 'state')) {
-                            $DeviceState = $Buffer->Lights->{$this->ReadPropertyString('FAHDeviveID')}->state;
+                    if (property_exists($Buffer->Lights, $this->ReadPropertyString('FAHDeviceID'))) {
+                        if (property_exists($Buffer->Lights->{$this->ReadPropertyString('FAHDeviceID')}, 'state')) {
+                            $DeviceState = $Buffer->Lights->{$this->ReadPropertyString('FAHDeviceID')}->state;
                         }
-                        if (property_exists($Buffer->Lights->{$this->ReadPropertyString('FAHDeviveID')}, 'config')) {
-                            $DeviceConfig = $Buffer->Lights->{$this->ReadPropertyString('FAHDeviveID')}->config;
+                        if (property_exists($Buffer->Lights->{$this->ReadPropertyString('FAHDeviceID')}, 'config')) {
+                            $DeviceConfig = $Buffer->Lights->{$this->ReadPropertyString('FAHDeviceID')}->config;
                         }
                     } else {
-                        $this->LogMessage('Device ID: ' . $this->ReadPropertyString('FAHDeviveID') . ' invalid', 10204);
+                        $this->LogMessage('Device ID: ' . $this->ReadPropertyString('FAHDeviceID') . ' invalid', 10204);
                         return;
                     }
                 }
                 break;
             case 'plugs':
                 if (property_exists($Buffer, 'Lights')) {
-                    if (property_exists($Buffer->Lights, $this->ReadPropertyString('FAHDeviveID'))) {
-                        if (property_exists($Buffer->Lights->{$this->ReadPropertyString('FAHDeviveID')}, 'state')) {
-                            $DeviceState = $Buffer->Lights->{$this->ReadPropertyString('FAHDeviveID')}->state;
+                    if (property_exists($Buffer->Lights, $this->ReadPropertyString('FAHDeviceID'))) {
+                        if (property_exists($Buffer->Lights->{$this->ReadPropertyString('FAHDeviceID')}, 'state')) {
+                            $DeviceState = $Buffer->Lights->{$this->ReadPropertyString('FAHDeviceID')}->state;
                         }
-                        if (property_exists($Buffer->Lights->{$this->ReadPropertyString('FAHDeviveID')}, 'config')) {
-                            $DeviceConfig = $Buffer->Lights->{$this->ReadPropertyString('FAHDeviveID')}->config;
+                        if (property_exists($Buffer->Lights->{$this->ReadPropertyString('FAHDeviceID')}, 'config')) {
+                            $DeviceConfig = $Buffer->Lights->{$this->ReadPropertyString('FAHDeviceID')}->config;
                         }
                     } else {
-                        $this->LogMessage('Device ID: ' . $this->ReadPropertyString('FAHDeviveID') . ' invalid', 10204);
+                        $this->LogMessage('Device ID: ' . $this->ReadPropertyString('FAHDeviceID') . ' invalid', 10204);
                         return;
                     }
                 }
                 break;
             case 'sensors':
                 if (property_exists($Buffer, 'Sensors')) {
-                    if (property_exists($Buffer->Sensors, $this->ReadPropertyString('FAHDeviveID'))) {
-                        if (property_exists($Buffer->Sensors->{$this->ReadPropertyString('FAHDeviveID')}, 'state')) {
-                            $DeviceState = $Buffer->Sensors->{$this->ReadPropertyString('FAHDeviveID')}->state;
+                    if (property_exists($Buffer->Sensors, $this->ReadPropertyString('FAHDeviceID'))) {
+                        if (property_exists($Buffer->Sensors->{$this->ReadPropertyString('FAHDeviceID')}, 'state')) {
+                            $DeviceState = $Buffer->Sensors->{$this->ReadPropertyString('FAHDeviceID')}->state;
                         }
-                        if (property_exists($Buffer->Sensors->{$this->ReadPropertyString('FAHDeviveID')}, 'config')) {
-                            $DeviceConfig = $Buffer->Sensors->{$this->ReadPropertyString('FAHDeviveID')}->config;
+                        if (property_exists($Buffer->Sensors->{$this->ReadPropertyString('FAHDeviceID')}, 'config')) {
+                            $DeviceConfig = $Buffer->Sensors->{$this->ReadPropertyString('FAHDeviceID')}->config;
                         }
                     } else {
-                        $this->LogMessage('Device ID: ' . $this->ReadPropertyString('FAHDeviveID') . ' invalid', 10204);
+                        $this->LogMessage('Device ID: ' . $this->ReadPropertyString('FAHDeviceID') . ' invalid', 10204);
                         return;
                     }
                 }
@@ -520,7 +520,7 @@ class FreeAtHomeDevice extends IPSModule
                 return;
             }
         }
-        $this->LogMessage('Scene Name (' . $Value . ') for Group ' . $this->ReadPropertyString('FAHDeviveID') . ' invalid', 10204);
+        $this->LogMessage('Scene Name (' . $Value . ') for Group ' . $this->ReadPropertyString('FAHDeviceID') . ' invalid', 10204);
     }
 
     public function SceneSetEx(string $Value, array $params)
@@ -532,7 +532,7 @@ class FreeAtHomeDevice extends IPSModule
                 return;
             }
         }
-        $this->LogMessage('Scene Name (' . $Value . ') for Group ' . $this->ReadPropertyString('FAHDeviveID') . ' invalid', 10204);
+        $this->LogMessage('Scene Name (' . $Value . ') for Group ' . $this->ReadPropertyString('FAHDeviceID') . ' invalid', 10204);
     }
 
     public function AlertSet(string $Value)
@@ -632,7 +632,7 @@ class FreeAtHomeDevice extends IPSModule
                 if ($this->ReadPropertyString('DeviceType') == 'groups') {
                     //If DeviceType Group Key 1 is Brightness
                     if (array_key_exists('success', $result[1])) {
-                        $this->SetValue('HUE_Brightness', $result[1]['success']['/groups/' . $this->ReadPropertyString('FAHDeviveID') . '/action/bri']);
+                        $this->SetValue('HUE_Brightness', $result[1]['success']['/groups/' . $this->ReadPropertyString('FAHDeviceID') . '/action/bri']);
                     }
                     //If DeviceType is Group Key 2 is Color
                     if (array_key_exists('success', $result[2])) {
@@ -645,7 +645,7 @@ class FreeAtHomeDevice extends IPSModule
                     }
                     //If DeviceType is Lights Key 2 is Brightness
                     if (array_key_exists('success', $result[2])) {
-                        $this->SetValue('HUE_Brightness', $result[2]['success']['/lights/' . $this->ReadPropertyString('FAHDeviveID') . '/state/bri']);
+                        $this->SetValue('HUE_Brightness', $result[2]['success']['/lights/' . $this->ReadPropertyString('FAHDeviceID') . '/state/bri']);
                     }
                 }
                 break;
@@ -738,9 +738,9 @@ class FreeAtHomeDevice extends IPSModule
         $Object = IPS_GetObject($this->InstanceID);
         if ($this->ReadPropertyString('DeviceType') == 'groups') {
             //TODO Map Profile to Attribute
-            $scenes = $this->sendData('getScenesFromGroup', ['GroupID' => $this->ReadPropertyString('FAHDeviveID')]);
+            $scenes = $this->sendData('getScenesFromGroup', ['GroupID' => $this->ReadPropertyString('FAHDeviceID')]);
             $ParentID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
-            $ProfileName = 'HUE.GroupScene' . $ParentID . '_' . $this->ReadPropertyString('FAHDeviveID');
+            $ProfileName = 'HUE.GroupScene' . $ParentID . '_' . $this->ReadPropertyString('FAHDeviceID');
             if (!IPS_VariableProfileExists($ProfileName)) {
                 IPS_CreateVariableProfile($ProfileName, 1);
             } else {
@@ -763,7 +763,7 @@ class FreeAtHomeDevice extends IPSModule
             if (!empty($scenesAttribute)) {
                 $this->WriteAttributeString('Scenes', json_encode($scenesAttribute));
             }
-            $this->MaintainVariable('HUE_GroupScenes', $this->Translate('Scenes'), 1, 'HUE.GroupScene' . $ParentID . '_' . $this->ReadPropertyString('FAHDeviveID'), 0, $this->ReadPropertyString('DeviceType') == 'groups');
+            $this->MaintainVariable('HUE_GroupScenes', $this->Translate('Scenes'), 1, 'HUE.GroupScene' . $ParentID . '_' . $this->ReadPropertyString('FAHDeviceID'), 0, $this->ReadPropertyString('DeviceType') == 'groups');
         }
     }
 
@@ -812,7 +812,7 @@ class FreeAtHomeDevice extends IPSModule
 
         $Data['DataID'] = self::mBridgeDataId;
         $Buffer['Command'] = $command;
-        $Buffer['DeviceID'] = $this->ReadPropertyString('FAHDeviveID');
+        $Buffer['DeviceID'] = $this->ReadPropertyString('FAHDeviceID');
         $Buffer['Endpoint'] = $DeviceType;
         $Buffer['Params'] = $params;
         $Data['Buffer'] = $Buffer;
