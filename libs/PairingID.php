@@ -48,7 +48,11 @@ class PID
 	
 		foreach( $a_Types as $lType )			
 		{
-			array_push($lResult, FilterSupportedType( $a_Channel,$lType));
+			$lResultType = FilterSupportedType( $a_Channel,$lType);
+			if( !empty( $lResultType) )
+			{			
+				array_push($lResult, $lResultType );
+			}
 		}
 		return $lResult;				
 	}
