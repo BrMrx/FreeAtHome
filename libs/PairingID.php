@@ -31,8 +31,9 @@ class PID
 		
 	public static function FilterSupportedType( $a_Channel, string $a_Type )	
 	{
+		$lChannelObj = (object)$a_Channel;
 		$lResult = array();
-		foreach($a_Channel->{$a_Type} as $lChannelNr => $lChannelValue)			
+		foreach($lChannelObj->{$a_Type} as $lChannelNr => $lChannelValue)			
 		{             			
 			if( isset($lChannelValue->pairingID )  )
             {
