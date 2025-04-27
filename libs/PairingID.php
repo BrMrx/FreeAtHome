@@ -50,6 +50,28 @@ class PID
 		return $lResult;
 	}
 	
+	public static function FilterSupportedType2( $a_Channel, string $a_Type )	
+	{
+		$lChannelObj = (object)$a_Channel;
+		IPS_LogMessage( 0, __FUNCTION__.' ChannelData:'. json_encode($lChannelObj) );
+
+		$lResult = array();
+		foreach($lChannelObj->{$a_Type} as $lChannelNr => $lChannelValue)			
+		{    
+			if( isset($lChannelValue->pairingID )  )
+            {
+				$lPairingId = $lChannelValue->pairingID;
+
+                if( in_array($lPairingId, self::SupportedIDs ) )
+                {
+                    $lResult[$lChannelNr]= $lPairingId;
+                }
+            }
+        }	
+
+		return $lResult;
+	}
+	
 	public static function FilterSupported( $a_Channel, array $a_Types = ['inputs','outputs'])	
 	{
 		$lResult = array();
