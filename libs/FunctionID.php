@@ -70,8 +70,9 @@ class FID
 	public static function FilterSupportedChannels( $a_Channels )	
 	{
         $lResult = array();
-		foreach($a_Channels as $lChannelNr => $lChannelValue)			
+		foreach($a_Channels as $lChannelNr => $lValue)			
 		{             			
+            $lChannelValue = (object)$lValue;
             IPS_LogMessage( 0, __FUNCTION__.":  ".json_encode($lChannelValue) );
 			if( isset($lChannelValue->functionID )  )
             {
