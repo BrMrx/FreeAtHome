@@ -28,7 +28,7 @@ class PID
 																																													'type'  => 0,
 																																													'profile' => '~Switch'],
 		self::INFO_ACTUAL_DIMMING_VALUE     	=> [ 'name' => 'INFO_ACTUAL_DIMMING_VALUE',
-																																													'info'  => 'Intensity',
+																																													'info'  => 'Brightness',
 																																													'type'  => 1,
 																																													'profile' => '~Intensity.255'],
 	];
@@ -54,7 +54,40 @@ class PID
         }
         return '['.$a_Id.']';      
     }
+				
+				public static function GetType( $a_Id )
+    {
+        $lFunctionId = $a_Id;
 
+        if( isset( self::mMapNames[$lFunctionId] ) )
+        {
+            return self::mMapNames[$lFunctionId]['type'];
+        }
+        return 0;      
+    }
+
+				public static function GetInfo( $a_Id )
+    {
+        $lFunctionId = $a_Id;
+
+        if( isset( self::mMapNames[$lFunctionId] ) )
+        {
+            return self::mMapNames[$lFunctionId]['info'];
+        }
+        return '?'.$a_Id.'?';      
+    }
+				
+				public static function GetProfile( $a_Id )
+    {
+        $lFunctionId = $a_Id;
+
+        if( isset( self::mMapNames[$lFunctionId] ) )
+        {
+            return self::mMapNames[$lFunctionId]['profile'];
+        }
+        return '';      
+    }
+				
 
 	public static function FilterSupportedType( $a_Channel, string $a_Type )	
 	{
