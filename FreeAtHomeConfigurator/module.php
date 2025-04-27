@@ -105,7 +105,7 @@ class FreeAtHomeConfigurator extends IPSModule
             }
 
 
-            IPS_LogMessage( $this->InstanceID, __FUNCTION__.": ".$key." -> ".json_encode($lListFunctionIds) );
+            IPS_LogMessage( $this->InstanceID, __FUNCTION__.": ".$key." -> count:".count($lListFunctionIds)." ".json_encode($lListFunctionIds) );
 
             $instanceID = $this->getFAHDeviceInstances($key, 'device');
             $AddValueLights = [
