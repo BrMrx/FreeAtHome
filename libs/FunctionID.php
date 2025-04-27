@@ -37,7 +37,7 @@ class FID
     const DIMMING_ACTUATOR_TYPE0                            = 0x1810;   // A wireless dimming actuator */
 
 	
-	const Name = [
+	const mMapNames = [
 		self::SWITCH_ACTUATOR        => 'SWITCH_ACTUATOR',
 		self::DIMMING_ACTUATOR_TYPE0 => 'DIMMING_ACTUATOR_TYPE0',
 	];
@@ -49,7 +49,16 @@ class FID
         self::SWITCH_ACTUATOR,
         self::DIMMING_ACTUATOR_TYPE0,
     ];
-		
+	
+    public static function GetName( string $a_Id )
+    {
+        $lFunctionId = hexdec( $a_Id );
+        if( in_array($lFunctionId, self::mMapNames )
+        {
+            return self::Name[$lFunctionId];
+        }
+        return '['.$a_Id.']';      
+    }
 		
     public static function IsSupportedID( string $a_Id )
     {

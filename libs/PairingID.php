@@ -42,16 +42,15 @@ class PID
 		return $lResult;
 	}
 	
-	public static function FilterSupported( $a_Channel, string $a_Type = '')	
+	public static function FilterSupported( $a_Channel, array $a_Types = ['inputs','outputs'])	
 	{
-		if($a_Type == '')
+		$lResult = array();
+	
+		foreach( $a_Types as $lType )			
 		{
-			$lResult = FilterSupportedInputs($a_Channel,'inputs');
-			array_push($lResult, FilterSupportedInputs( $a_Channel,'outputs'));
-			return $lResult;				
+			array_push($lResult, FilterSupportedInputs( $a_Channel,$lType));
 		}
-		return FilterSupportedInputs($a_Channel,$a_Type);
-
+		return $lResult;				
 	}
 }
 
