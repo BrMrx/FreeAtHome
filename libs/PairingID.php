@@ -33,27 +33,17 @@ class PID
 	{
 		$lChannelObj = (object)$a_Channel;
 
-		IPS_LogMessage( 0, __FUNCTION__.' ChannelData:'. json_encode($lChannelObj) );
-
-
 		$lResult = array();
 		foreach($lChannelObj->{$a_Type} as $lChannelNr => $lChannelValue)			
 		{    
-			IPS_LogMessage( 0, __FUNCTION__.' ChannelNr:'.$lChannelNr . json_encode($lChannelValue) );
-         			
 			if( isset($lChannelValue->pairingID )  )
             {
 				$lPairingId = $lChannelValue->pairingID;
 
                 if( in_array($lPairingId, self::SupportedIDs ) )
                 {
-					IPS_LogMessage( 0, __FUNCTION__.' is supported:'.$lChannelNr .':'. $lPairingId );
-                    $lResult[$lChannelNr]= $lChannelValue;
+                    $lResult[$lChannelNr]= $lPairingId;
                 }
-				else
-				{
-					IPS_LogMessage( 0, __FUNCTION__.' is not supported:'.$lChannelNr .':'. $lPairingId );
-				}
             }
         }	
 		return $lResult;
