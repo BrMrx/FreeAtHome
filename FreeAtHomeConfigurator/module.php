@@ -76,69 +76,71 @@ class FreeAtHomeConfigurator extends IPSModule
         foreach ($Devices as $key => $lDevice) {
             $lListFunctionIds = FID::FilterSupportedChannels( (object)$lDevice['channels'] );
             
-
-
-            // beim ersten Elemnent vorher die Typencategorie hinzufügen
-            if( $lAddTypeCategory  )
+            foreach( $lListFunctionIds as $lChannel => $lChannelValue )
             {
+                $lChannelData = (object)$lChannelValue;
+                // beim ersten Elemnent vorher die Typencategorie hinzufügen
+                if( $lAddTypeCategory  )
+                {
+                    $AddValueLights = [
+                        'id'                    => 1,
+                        'ID'                    => '',
+                        'name'                  => 'devices',
+                        'DisplayName'           => $this->translate('free@home Devices'),
+                        'Type'                  => '',
+                        'ModelID'               => '',
+                        'Manufacturername'      => '',
+                        'Productname'           => ''
+                    ];
+        
+                    $AddValueAllDevicesLights = [
+                        'id'                    => 99999,
+                        'DeviceID'              => '',
+                        'DeviceName'            => $this->translate('free@home devices'),
+                        'DeviceType'            => ''
+                    ];
+
+                    $Values[] = $AddValueLights;
+                    $ValuesAllDevices[] = $AddValueAllDevicesLights;
+                    $lAddTypeCategory = false;
+                }
+
+
+                IPS_LogMessage( $this->InstanceID, __FUNCTION__.": ".$key." -> count:".count($lListFunctionIds)." ".json_encode($lListFunctionIds) );
+
+                $instanceID = $this->getFAHDeviceInstances($key, FID::GetName($lChannelData->functionID) );
                 $AddValueLights = [
-                    'id'                    => 1,
-                    'ID'                    => '',
-                    'name'                  => 'devices',
-                    'DisplayName'           => $this->translate('free@home Devices'),
-                    'Type'                  => '',
-                    'ModelID'               => '',
-                    'Manufacturername'      => '',
-                    'Productname'           => ''
+                    'parent'                => 1,
+                    'ID'                    => $key,
+                    'DisplayName'           => $lDevice['displayName'],
+                    'name'                  => $lDevice['displayName'],
+                    'Type'                  => FID::GetName($lChannelData->functionID),
+                    'ModelID'               => '-',
+                    'Manufacturername'      => ((array_key_exists($lDevice['interface'], self::m_Types)) ? self::m_Types[$lDevice['interface']] : '?'.$lDevice->interface.'?'),
+                    'Productname'           => '-',
+                    'instanceID'            => $instanceID
                 ];
-    
+
                 $AddValueAllDevicesLights = [
-                    'id'                    => 99999,
-                    'DeviceID'              => '',
-                    'DeviceName'            => $this->translate('free@home devices'),
-                    'DeviceType'            => ''
+                    'parent'                => 99999,
+                    'id'                    => $key,
+                    'DeviceID'              => $key,
+                    'DeviceName'            => $lDevice['displayName'],
+                    'DeviceType'            => FID::GetName($lChannelData->functionID)
+                ];
+
+                $AddValueLights['create'] = [
+                    'moduleID'      => self::mDeviceModuleId,
+                    'configuration' => [
+                        'FAHDeviceID'    => $key,
+                        'DeviceType'     => FID::GetName($lChannelData->functionID)
+                    ],
+                    'location' => $location
                 ];
 
                 $Values[] = $AddValueLights;
                 $ValuesAllDevices[] = $AddValueAllDevicesLights;
-                $lAddTypeCategory = false;
             }
-
-
-            IPS_LogMessage( $this->InstanceID, __FUNCTION__.": ".$key." -> count:".count($lListFunctionIds)." ".json_encode($lListFunctionIds) );
-
-            $instanceID = $this->getFAHDeviceInstances($key, 'device');
-            $AddValueLights = [
-                'parent'                => 1,
-                'ID'                    => $key,
-                'DisplayName'           => $lDevice['displayName'],
-                'name'                  => $lDevice['displayName'],
-                'Type'                  => json_encode($lDevice['channels']),
-                'ModelID'               => '-',
-                'Manufacturername'      => ((array_key_exists($lDevice['interface'], self::m_Types)) ? self::m_Types[$lDevice['interface']] : '?'.$lDevice->interface.'?'),
-                'Productname'           => '-',
-                'instanceID'            => $instanceID
-            ];
-
-            $AddValueAllDevicesLights = [
-                'parent'                => 99999,
-                'id'                    => $key,
-                'DeviceID'              => $key,
-                'DeviceName'            => $lDevice['displayName'],
-                'DeviceType'            => 'device'
-            ];
-
-            $AddValueLights['create'] = [
-                'moduleID'      => self::mDeviceModuleId,
-                'configuration' => [
-                    'FAHDeviceID'    => $key,
-                    'DeviceType'     => 'device'
-                ],
-                'location' => $location
-            ];
-
-            $Values[] = $AddValueLights;
-            $ValuesAllDevices[] = $AddValueAllDevicesLights;
         }
 
         // Scenen Komponenten
