@@ -15,7 +15,7 @@ class PID
 																	  //		1: on
 																	  //		0: off
 	
-	const Name = [
+	const mMapNames = [
 		self::SWITCH_ON_OFF           => 'SWITCH_ON_OFF',
 		self::TIMED_START_STOP        => 'TIMED_START_STOP',
 		self::INFO_ON_OFF        	  => 'INFO_ON_OFF',
@@ -29,6 +29,19 @@ class PID
 		self::INFO_ON_OFF,
 	);
 		
+
+	public static function GetName( $a_Id )
+    {
+        $lFunctionId = $a_Id;
+
+        if( isset( self::mMapNames[$lFunctionId] ) )
+        {
+            return self::mMapNames[$lFunctionId];
+        }
+        return '['.$a_Id.']';      
+    }
+
+
 	public static function FilterSupportedType( $a_Channel, string $a_Type )	
 	{
 		$lChannelObj = (object)$a_Channel;
