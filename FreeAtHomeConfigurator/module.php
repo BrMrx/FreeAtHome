@@ -72,6 +72,9 @@ class FreeAtHomeConfigurator extends IPSModule
         $location = $this->getPathOfCategory($this->ReadPropertyInteger('RF_TargetCategory'));
         $lAddTypeCategory = true;
         foreach ($Devices as $key => $lDevice) {
+            $lListFunctionIds = FilterSupportedChannels( $lDevice['channels'] );
+            
+
 
             // beim ersten Elemnent vorher die Typencategorie hinzufügen
             if( $lAddTypeCategory  )
@@ -100,7 +103,7 @@ class FreeAtHomeConfigurator extends IPSModule
             }
 
 
-            IPS_LogMessage( $this->InstanceID, __FUNCTION__.": ".$key." -> ".json_encode($lDevice) );
+            IPS_LogMessage( $this->InstanceID, __FUNCTION__.": ".$key." -> ".json_encode($lListFunctionIds) );
 
             $instanceID = $this->getFAHDeviceInstances($key, 'device');
             $AddValueLights = [
