@@ -1,11 +1,11 @@
 <?php
 
 declare(strict_types=1);
+require_once __DIR__ . '/../libs/FunctionID.php';
+require_once __DIR__ . '/../libs/PairingID.php';
 
 class FreeAtHomeBridge extends IPSModule
 {
-    const mSysApId = '00000000-0000-0000-0000-000000000000';
-
     // Function ID's
     const FID_SWITCH_ACTUATOR                                   = 0x0007;   // A (binary) switch actuator  
     const FID_ROOM_TEMPERATURE_CONTROLLER_MASTER_WITHOUT_FAN    = 0x0023;   // A master room temperature controller that does not include a fan */
@@ -247,7 +247,7 @@ class FreeAtHomeBridge extends IPSModule
     public function getAllDevices()
     {
         $lResult = $this->sendRequest( 'configuration' );
-        return $this->FilterSupportedDevices( $lResult->{self::mSysApId}->devices );
+        return $this->FilterSupportedDevices( $lResult->{$this->ReadPropertyString("SysAP_GUID")}->devices );
     }
 
     //Functions for Lights
