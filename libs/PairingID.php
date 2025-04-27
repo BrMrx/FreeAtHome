@@ -11,11 +11,14 @@ class PID
                        												  // 	1: start
 																	  //	0: stop
 	
-
+	const INFO_ON_OFF										= 0x0100; // Reflects the binary state of the actuator
+																	  //		1: on
+																	  //		0: off
 	
 	const Name = [
 		self::SWITCH_ON_OFF           => 'SWITCH_ON_OFF',
 		self::TIMED_START_STOP        => 'TIMED_START_STOP',
+		self::INFO_ON_OFF        	  => 'INFO_ON_OFF',
 	];
 	
 	
@@ -32,7 +35,7 @@ class PID
 		{             			
 			if( isset($lChannelValue->pairingID )  )
             {
-                $lFunctionId = hexdec( $lChannelValue->pairingID );
+                $lFunctionId = $lChannelValue->pairingID;
                 if( in_array($lFunctionId, self::SupportedIDs ) )
                 {
                     $lResult[$lChannelNr]= $lChannelValue;
