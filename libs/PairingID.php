@@ -26,6 +26,7 @@ class PID
 	// aktuell unterstützte Funktions ID's
 	const SupportedIDs = array(
         self::SWITCH_ON_OFF,
+		self::INFO_ON_OFF,
 	);
 		
 	public static function FilterSupportedType( $a_Channel, string $a_Type )	
