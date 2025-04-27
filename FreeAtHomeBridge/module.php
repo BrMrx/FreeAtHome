@@ -195,7 +195,7 @@ class FreeAtHomeBridge extends IPSModule
                             else
                             {
                                 // Supported Pairing ID's but functionID not Supported
-                                IPS_LogMessage( $this->InstanceID, __FUNCTION__.": supported pairingID's but FID::".FID::GetName($lChannelValue->functionID)." not supported" );
+                                $this->SendDebug( __FUNCTION__.": supported pairingID's but FID::".FID::GetName($lChannelValue->functionID)." not supported", 'no data', 0 );
                             }
                         }
                     }

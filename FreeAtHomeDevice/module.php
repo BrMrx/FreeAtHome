@@ -47,7 +47,6 @@ class FreeAtHomeDevice extends IPSModule
 
         // Variablen für alle Outputs (des Devises) anlegen
         $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
-        IPS_LogMessage( $this->InstanceID, __FUNCTION__.' '.$this->ReadPropertyString('Outputs') );
  
         foreach( $lOutputs as $lOdp => $lPairingId  )
         {
