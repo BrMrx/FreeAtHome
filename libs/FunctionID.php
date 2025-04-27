@@ -57,7 +57,7 @@ class FID
         IPS_LogMessage( 0, __FUNCTION__.": 0x".$a_Id."->".json_encode(self::mMapNames) );
 
 
-        if( isset( self::mMapNames[$lFunctionId] )
+        if( isset( self::mMapNames[$lFunctionId] ) )
         {
             return self::mMapNames[$lFunctionId];
         }
