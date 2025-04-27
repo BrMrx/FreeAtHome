@@ -2,13 +2,16 @@
   "elements":
   [
     {"type": "ValidationTextBox", "enabled": false, "name": "FAHDeviceID", "caption": "free@home Device ID"},
-    {"type": "ValidationTextBox", "enabled": false, "name": "DeviceType", "caption": "Device Type" }
+    {"type": "ValidationTextBox", "enabled": false, "name": "DeviceType", "caption": "Device Type" },
+    {"type": "ValidationTextBox", "enabled": false, "name": "Channel", "caption": "Channel" },
+    {"type": "ValidationTextBox", "enabled": false, "name": "Inputs", "caption": "Inputs" },
+    {"type": "ValidationTextBox", "enabled": false, "name": "Outputs", "caption": "Outputs" }
   ],
   "actions": [
-    {
+   {
       "type": "Button",
       "caption": "Update Scene Profile",
       "onClick": "FAHDEV_UpdateSceneProfile($id);"
-    }
+   }
 ]
 }

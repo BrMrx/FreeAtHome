@@ -112,6 +112,10 @@ class FreeAtHomeConfigurator extends IPSModule
                 }
                 $lDeviceType = FID::GetName($lChannelData->functionID);
 
+                $lInputs = json_encode(PID::FilterSupportedType($lChannelValue,'inputs'));
+                $lOutputs = json_encode(PID::FilterSupportedType($lChannelValue,'outputs'));
+
+
                 $instanceID = $this->getFAHDeviceInstances($key, $lDeviceType );
                 $AddValueLights = [
                     'parent'                => 1,
@@ -130,15 +134,21 @@ class FreeAtHomeConfigurator extends IPSModule
                     'id'                    => $key,
                     'DeviceID'              => $key,
                     'DeviceName'            => $lDeviceName,
-                    'DeviceType'            => $lDeviceType
+                    'DeviceType'            => $lDeviceType,
+                    'Channel'               => $lChannel,
+                    'Inputs'                => $lInputs,
+                    'Outputs'               => $lOutputs
                 ];
 
                 $AddValueLights['create'] = [
                     'moduleID'      => self::mDeviceModuleId,
                     'configuration' => [
                         'FAHDeviceID'    => $key,
-                        'DeviceType'     => $lDeviceType
-                    ],
+                        'DeviceType'     => $lDeviceType,
+                        'Channel'        => $lChannel,
+                        'Inputs'         => $lInputs,
+                        'Outputs'        => $lOutputs
+                        ],
                     'location' => $location
                 ];
 

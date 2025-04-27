@@ -17,6 +17,9 @@ class FreeAtHomeDevice extends IPSModule
         $this->ConnectParent(self::mParentId);
         $this->RegisterPropertyString('FAHDeviceID', '');
         $this->RegisterPropertyString('DeviceType', '');
+        $this->RegisterPropertyString('Channel', '');
+        $this->RegisterPropertyString('Inputs', '');
+        $this->RegisterPropertyString('Outputs', '');
  
         $this->RegisterAttributeString('DeviceType', '');
     }
