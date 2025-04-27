@@ -21,10 +21,16 @@ class PID
 																			// 1. Byte
 	
 	const mMapNames = [
-		self::SWITCH_ON_OFF           							=> 'SWITCH_ON_OFF',
-		self::TIMED_START_STOP        							=> 'TIMED_START_STOP',
-		self::INFO_ON_OFF        	  									=> 'INFO_ON_OFF',
-		self::INFO_ACTUAL_DIMMING_VALUE     	=> 'INFO_ACTUAL_DIMMING_VALUE',
+		self::SWITCH_ON_OFF           							=> [ 'name' => 'SWITCH_ON_OFF'],
+		self::TIMED_START_STOP        							=> [ 'name' => 'TIMED_START_STOP'],
+		self::INFO_ON_OFF        	  									=> [ 'name' => 'INFO_ON_OFF',
+																																													'info'  => 'State',
+																																													'type'  => 0,
+																																													'profile' => '~Switch'],
+		self::INFO_ACTUAL_DIMMING_VALUE     	=> [ 'name' => 'INFO_ACTUAL_DIMMING_VALUE',
+																																													'info'  => 'Intensity',
+																																													'type'  => 1,
+																																													'profile' => '~Intensity.255'],
 	];
 	
 	
@@ -44,7 +50,7 @@ class PID
 
         if( isset( self::mMapNames[$lFunctionId] ) )
         {
-            return self::mMapNames[$lFunctionId];
+            return self::mMapNames[$lFunctionId]['name'];
         }
         return '['.$a_Id.']';      
     }
