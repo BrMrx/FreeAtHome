@@ -52,9 +52,9 @@ class FID
 	
     public static function GetName( string $a_Id )
     {
-        $lFunctionId = hexdec( $a_Id );
+        $lFunctionId = strval(hexdec( $a_Id ));
 
-        IPS_LogMessage( 0, __FUNCTION__.": ".$lFunctionId."->".json_encode(self::mMapNames) );
+        IPS_LogMessage( 0, __FUNCTION__.": 0x".$a_Id."->".json_encode(self::mMapNames) );
 
 
         if( in_array($lFunctionId, self::mMapNames ) )
