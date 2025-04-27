@@ -56,8 +56,9 @@ class PID
 		IPS_LogMessage( 0, __FUNCTION__.' ChannelData :'. json_encode($lChannelObj) );
 
 		$lResult = array();
-		foreach($lChannelObj->{$a_Type} as $lChannelNr => $lChannelValue)			
+		foreach($lChannelObj->{$a_Type} as $lChannelNr => $lValue)			
 		{    
+			$lChannelValue = (object)$lValue;
 			IPS_LogMessage( 0, __FUNCTION__.' ChannelData '.$a_Type.':'. json_encode($lChannelValue) );
 
 			if( isset($lChannelValue->pairingID )  )
