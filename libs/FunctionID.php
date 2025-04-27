@@ -45,7 +45,7 @@ class FID
 	
 	
 	// aktuell unterstützte Funktions ID's
-	public const SupportedIDs = [
+	const SupportedIDs = [
         self::SWITCH_ACTUATOR,
         self::DIMMING_ACTUATOR_TYPE0,
     ];
@@ -53,6 +53,10 @@ class FID
     public static function GetName( string $a_Id )
     {
         $lFunctionId = hexdec( $a_Id );
+
+        IPS_LogMessage( 0, __FUNCTION__.": ".$lFunctionId."->".json_encode(self::mMapNames) );
+
+
         if( in_array($lFunctionId, self::mMapNames ) )
         {
             return self::mMapNames[$lFunctionId];
