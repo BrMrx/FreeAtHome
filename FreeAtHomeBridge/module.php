@@ -188,7 +188,7 @@ class FreeAtHomeBridge extends IPSModule
                         {
 
                             $SupportedChanneld = PID::FilterSupported($lChannelValue);
-                            if( !empty(SupportedChanneld) )
+                            if( !empty($SupportedChanneld) )
                             {
                                 $lAddToList = true;
                                 break;
