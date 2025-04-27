@@ -1,6 +1,8 @@
 <?php
 
 declare(strict_types=1);
+require_once __DIR__ . '/../libs/FunctionID.php';
+require_once __DIR__ . '/../libs/PairingID.php';
 
 class FreeAtHomeConfigurator extends IPSModule
 {
