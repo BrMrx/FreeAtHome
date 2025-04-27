@@ -69,7 +69,6 @@ class FID
 
 	public static function FilterSupportedChannels( $a_Channels )	
 	{
-        IPS_LogMessage( 0, __FUNCTION__.":  ".json_encode($a_Channels) );
         $lResult = array();
 		foreach($a_Channels as $lChannelNr => $lChannelValue)			
 		{             			
@@ -79,10 +78,12 @@ class FID
                 $lFunctionId = hexdec( $lChannelValue->functionID );
                 if( in_array($lFunctionId, self::SupportedIDs ) )
                 {
+                    IPS_LogMessage( 0, __FUNCTION__.": channel supported ".json_encode($lChannelValue) );
                     $lResult[$lChannelNr]= $lChannelValue;
                 }
             }
         }	
+        IPS_LogMessage( 0, __FUNCTION__.":  ".json_encode($lResult) );
 		return $lResult;
 	}
 }
