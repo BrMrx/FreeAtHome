@@ -188,9 +188,11 @@ class FreeAtHomeBridge extends IPSModule
                         {
 
                             $SupportedChanneld = PID::FilterSupported($lChannelValue);
-                            IPS_LogMessage( $this->InstanceID, __FUNCTION__.": ".FID::GetName($lChannelValue->functionID).json_encode($SupportedChanneld) );
-
-                            $lAddToList = true;
+                            if( !empty(SupportedChanneld) )
+                            {
+                                $lAddToList = true;
+                                break;
+                            }
                         }
                     }
                 }
