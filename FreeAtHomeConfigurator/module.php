@@ -74,7 +74,7 @@ class FreeAtHomeConfigurator extends IPSModule
         $location = $this->getPathOfCategory($this->ReadPropertyInteger('RF_TargetCategory'));
         $lAddTypeCategory = true;
         foreach ($Devices as $key => $lDevice) {
-            $lListFunctionIds = FID::FilterSupportedChannels( $lDevice['channels'] );
+            $lListFunctionIds = FID::FilterSupportedChannels( (object)$lDevice['channels'] );
             
 
 
