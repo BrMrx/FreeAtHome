@@ -7,11 +7,6 @@ require_once __DIR__ . '/../libs/PairingID.php';
 class FreeAtHomeBridge extends IPSModule
 {
 
-    const mSupportedFunctionIDs = array(
-        self::FID_SWITCH_ACTUATOR,
-        self::FID_DIMMING_ACTUATOR_TYPE0);
-
-
     public function Create()
     {
         //Never delete this line!
