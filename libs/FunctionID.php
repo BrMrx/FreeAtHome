@@ -55,7 +55,7 @@ class FID
         $lFunctionId = hexdec( $a_Id );
         if( in_array($lFunctionId, self::mMapNames )
         {
-            return self::Name[$lFunctionId];
+            return self::mMapNames[$lFunctionId];
         }
         return '['.$a_Id.']';      
     }
