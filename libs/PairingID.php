@@ -48,7 +48,7 @@ class PID
 	
 		foreach( $a_Types as $lType )			
 		{
-			$lResultType = FilterSupportedType( $a_Channel,$lType);
+			$lResultType = self::FilterSupportedType( $a_Channel,$lType);
 			if( !empty( $lResultType) )
 			{			
 				array_push($lResult, $lResultType );
