@@ -17,60 +17,7 @@ class FreeAtHomeDevice extends IPSModule
         $this->ConnectParent(self::mParentId);
         $this->RegisterPropertyString('FAHDeviceID', '');
         $this->RegisterPropertyString('DeviceType', '');
-        $this->RegisterPropertyString('SensorType', '');
-
-        $this->RegisterPropertyBoolean('ColorModeActive', true);
-        $this->RegisterPropertyBoolean('ColorActive', true);
-        $this->RegisterPropertyBoolean('KelvinActive', true);
-        $this->RegisterPropertyBoolean('SaturationActive', true);
-
-        $this->RegisterPropertyBoolean('GroupStateAnyOn', false);
-
-        $this->RegisterAttributeString('Scenes', '');
-
-        if (!IPS_VariableProfileExists('HUE.ColorMode')) {
-            IPS_CreateVariableProfile('HUE.ColorMode', 1);
-        }
-        IPS_SetVariableProfileAssociation('HUE.ColorMode', 0, $this->Translate('Color'), '', 0x000000);
-        IPS_SetVariableProfileAssociation('HUE.ColorMode', 1, $this->Translate('Color Temperature'), '', 0x000000);
-        IPS_SetVariableProfileIcon('HUE.ColorMode', 'ArrowRight');
-
-        if (!IPS_VariableProfileExists('HUE.ColorMode')) {
-            IPS_CreateVariableProfile('HUE.ColorMode', 1);
-        }
-
-        if (!IPS_VariableProfileExists('HUE.Reachable')) {
-            IPS_CreateVariableProfile('HUE.Reachable', 0);
-        }
-        IPS_SetVariableProfileAssociation('HUE.Reachable', true, $this->Translate('Yes'), '', 0x00FF00);
-        IPS_SetVariableProfileAssociation('HUE.Reachable', false, $this->Translate('No'), '', 0xFF0000);
-        IPS_SetVariableProfileIcon('HUE.ColorMode', 'Information');
-
-        if (!IPS_VariableProfileExists('HUE.ColorTemperature')) {
-            IPS_CreateVariableProfile('HUE.ColorTemperature', 1);
-        }
-        IPS_SetVariableProfileDigits('HUE.ColorTemperature', 0);
-        IPS_SetVariableProfileIcon('HUE.ColorTemperature', 'Bulb');
-        IPS_SetVariableProfileText('HUE.ColorTemperature', '', ' Mired');
-        IPS_SetVariableProfileValues('HUE.ColorTemperature', 153, 500, 1);
-
-        if (!IPS_VariableProfileExists('HUE.ColorTemperatureKelvin')) {
-            IPS_CreateVariableProfile('HUE.ColorTemperatureKelvin', 1);
-        }
-        IPS_SetVariableProfileDigits('HUE.ColorTemperatureKelvin', 0);
-        IPS_SetVariableProfileIcon('HUE.ColorTemperatureKelvin', 'Bulb');
-        IPS_SetVariableProfileText('HUE.ColorTemperatureKelvin', '', ' Kelvin');
-        IPS_SetVariableProfileValues('HUE.ColorTemperatureKelvin', 2000, 6535, 1);
-
-        if (!IPS_VariableProfileExists('HUE.Intensity')) {
-            IPS_CreateVariableProfile('HUE.Intensity', 1);
-        }
-        IPS_SetVariableProfileDigits('HUE.Intensity', 0);
-        IPS_SetVariableProfileIcon('HUE.Intensity', 'Intensity');
-        IPS_SetVariableProfileText('HUE.Intensity', '', '%');
-        //153 (6500K) to 500 (2000K)
-        IPS_SetVariableProfileValues('HUE.Intensity', -1, 254, 1);
-
+ 
         $this->RegisterAttributeString('DeviceType', '');
     }
 
@@ -185,22 +132,6 @@ class FreeAtHomeDevice extends IPSModule
     {
         $jsonForm = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
 
-        if ($this->ReadAttributeString('DeviceType') == 'sensors') {
-            $jsonForm['elements'][2]['visible'] = true;
-        } else {
-            $jsonForm['elements'][2]['visible'] = false;
-        }
-        if ($this->ReadAttributeString('DeviceType') == 'lights' || $this->ReadAttributeString('DeviceType') == 'groups') {
-            $jsonForm['elements'][3]['visible'] = true;
-            $jsonForm['elements'][4]['visible'] = true;
-            $jsonForm['elements'][5]['visible'] = true;
-            $jsonForm['elements'][6]['visible'] = true;
-        } else {
-            $jsonForm['elements'][3]['visible'] = false;
-            $jsonForm['elements'][4]['visible'] = false;
-            $jsonForm['elements'][5]['visible'] = false;
-            $jsonForm['elements'][6]['visible'] = false;
-        }
         return json_encode($jsonForm);
     }
 
