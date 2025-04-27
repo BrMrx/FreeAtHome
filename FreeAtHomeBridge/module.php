@@ -184,7 +184,7 @@ class FreeAtHomeBridge extends IPSModule
                 {
                     if( isset($lChannelValue->functionID )  )
                     {
-                        if( IsSupportedID( $lChannelValue->functionID ) )
+                        if( FID::IsSupportedID( $lChannelValue->functionID ) )
                         {
                             $lAddToList = true;
                             break;
