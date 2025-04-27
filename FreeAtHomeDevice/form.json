@@ -1,8 +1,8 @@
 {
   "elements":
   [
-    {"type": "ValidationTextBox", "name": "FAHDeviceID", "caption": "free@home Device ID"},
-    {"type": "ValidationTextBox", "name": "DeviceType", "caption": "Device Type", "onChange": "FAHDEV_ReloadConfigurationFormDeviceType($id,$DeviceType);"}
+    {"type": "ValidationTextBox", "enabled": false, "name": "FAHDeviceID", "caption": "free@home Device ID"},
+    {"type": "ValidationTextBox", "enabled": false, "name": "DeviceType", "caption": "Device Type" }
   ],
   "actions": [
     {

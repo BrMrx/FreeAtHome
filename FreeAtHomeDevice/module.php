@@ -39,93 +39,89 @@ class FreeAtHomeDevice extends IPSModule
             }
         }
 
-        //Sensors
-        $sensor = $this->ReadPropertyString('DeviceType') == 'sensors';
-        $this->MaintainVariable('HUE_Battery', $this->Translate('Battery'), 1, '~Battery.100', 0, $sensor == true);
+        if(0)
+        {
+            //Sensors
+            $sensor = $this->ReadPropertyString('DeviceType') == 'sensors';
+            $this->MaintainVariable('HUE_Battery', $this->Translate('Battery'), 1, '~Battery.100', 0, $sensor == true);
 
-        //Presence
-        $Presence = false;
-        switch ($this->ReadPropertyString('SensorType')) {
-            case 'ZLLPresence':
-            case 'CLIPPresence':
-            case 'Geofence':
-                $Presence = true;
-                break;
-        }
+            //Presence
+            $Presence = false;
+    
+            $this->MaintainVariable('HUE_Presence', $this->Translate('Presence'), 0, '~Presence', 0, $Presence == true && $sensor == true);
+            //$this->MaintainVariable('HUE_Presence', $this->Translate('Presence'), 0, '~Presence', 0, ($this->ReadPropertyString('SensorType') == 'ZLLPresence' || $this->ReadPropertyString('SensorType') == 'CLIPPresence') && $sensor == 'sensors');
+            //$this->MaintainVariable('HUE_PresenceState', $this->Translate('Sensor State'), 0, '~Switch', 0, $this->ReadPropertyString('SensorType') == 'ZLLPresence' && $this->ReadPropertyString('DeviceType') == 'sensors');
+            $this->MaintainVariable('HUE_PresenceState', $this->Translate('Sensor State'), 0, '~Switch', 0, $Presence == true && $sensor == true);
 
-        $this->MaintainVariable('HUE_Presence', $this->Translate('Presence'), 0, '~Presence', 0, $Presence == true && $sensor == true);
-        //$this->MaintainVariable('HUE_Presence', $this->Translate('Presence'), 0, '~Presence', 0, ($this->ReadPropertyString('SensorType') == 'ZLLPresence' || $this->ReadPropertyString('SensorType') == 'CLIPPresence') && $sensor == 'sensors');
-        //$this->MaintainVariable('HUE_PresenceState', $this->Translate('Sensor State'), 0, '~Switch', 0, $this->ReadPropertyString('SensorType') == 'ZLLPresence' && $this->ReadPropertyString('DeviceType') == 'sensors');
-        $this->MaintainVariable('HUE_PresenceState', $this->Translate('Sensor State'), 0, '~Switch', 0, $Presence == true && $sensor == true);
-
-        if ($Presence == true && $sensor == true) {
-            $this->EnableAction('HUE_PresenceState');
-        }
-
-        $this->MaintainVariable('HUE_CLIPGenericState', $this->Translate('State'), 0, '~Switch', 0, $this->ReadPropertyString('SensorType') == 'CLIPGenericStatus' && $sensor == true);
-        if ($this->ReadPropertyString('SensorType') == 'CLIPGenericStatus' && $this->ReadPropertyString('DeviceType') == 'sensors') {
-            $this->EnableAction('HUE_CLIPGenericState');
-        }
-
-        $this->MaintainVariable('HUE_Lightlevel', $this->Translate('Lightlevel'), 1, '~Illumination', 0, $this->ReadPropertyString('SensorType') == 'ZLLLightLevel' && $sensor == true);
-        $this->MaintainVariable('HUE_Dark', $this->Translate('Dark'), 0, '', 0, $this->ReadPropertyString('SensorType') == 'ZLLLightLevel' && $sensor == true);
-        $this->MaintainVariable('HUE_Daylight', $this->Translate('Daylight'), 0, '', 0, ($this->ReadPropertyString('SensorType') == 'ZLLLightLevel') || ($this->ReadPropertyString('SensorType') == 'Daylight') && $sensor == true);
-
-        $this->MaintainVariable('HUE_Temperature', $this->Translate('Temperature'), 2, '~Temperature', 0, $this->ReadPropertyString('SensorType') == 'ZLLTemperature' && $sensor == true);
-
-        $this->MaintainVariable('HUE_Buttonevent', $this->Translate('Buttonevent'), 1, '', 0, ($this->ReadPropertyString('SensorType') == 'ZGPSwitch' || $this->ReadPropertyString('SensorType') == 'ZLLSwitch') && $sensor == true);
-
-        //Lights and Groups
-        $this->MaintainVariable('HUE_ColorMode', $this->Translate('Color Mode'), 1, 'HUE.ColorMode', 0, ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups') && $this->ReadPropertyBoolean('ColorModeActive') == true);
-
-        $this->MaintainVariable('HUE_State', $this->Translate('State'), 0, '~Switch', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups' || $this->ReadPropertyString('DeviceType') == 'plugs');
-
-        $this->MaintainVariable('HUE_Brightness', $this->Translate('Brightness'), 1, 'HUE.Intensity', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
-
-        $this->MaintainVariable('HUE_Color', $this->Translate('Color'), 1, 'HexColor', 0, ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups') && $this->ReadPropertyBoolean('ColorActive') == true);
-
-        $this->MaintainVariable('HUE_Saturation', $this->Translate('Saturation'), 1, 'HUE.Intensity', 0, ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups') && $this->ReadPropertyBoolean('SaturationActive') == true);
-
-        $this->MaintainVariable('HUE_ColorTemperature', $this->Translate('Color Temperature'), 1, 'HUE.ColorTemperature', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
-        $this->MaintainVariable('HUE_ColorTemperatureKelvin', $this->Translate('Color Temperature Kelvin'), 1, 'HUE.ColorTemperatureKelvin', 0, ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups') && $this->ReadPropertyBoolean('KelvinActive') == true);
-
-        //Groups
-        $ParentID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
-        $this->MaintainVariable('HUE_GroupScenes', $this->Translate('Scenes'), 1, 'HUE.GroupScene' . $ParentID . '_' . $this->ReadPropertyString('FAHDeviceID'), 0, $this->ReadPropertyString('DeviceType') == 'groups');
-
-        if ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups') {
-            if ($this->ReadPropertyBoolean('ColorModeActive')) {
-                $this->EnableAction('HUE_ColorMode');
+            if ($Presence == true && $sensor == true) {
+                $this->EnableAction('HUE_PresenceState');
             }
-            $this->EnableAction('HUE_State');
-            $this->EnableAction('HUE_Brightness');
-            if ($this->ReadPropertyBoolean('ColorActive')) {
-                $this->EnableAction('HUE_Color');
-            }
-            if ($this->ReadPropertyBoolean('SaturationActive')) {
-                $this->EnableAction('HUE_Saturation');
-            }
-            $this->EnableAction('HUE_ColorTemperature');
-            $this->EnableAction('HUE_ColorTemperatureKelvin');
 
-            if (@$this->GetIDForIdent('HUE_ColorMode') != false) {
-                $ColorMode = GetValue(IPS_GetObjectIDByIdent('HUE_ColorMode', $this->InstanceID));
-                $this->hideVariables($ColorMode);
+            $this->MaintainVariable('HUE_CLIPGenericState', $this->Translate('State'), 0, '~Switch', 0, $this->ReadPropertyString('SensorType') == 'CLIPGenericStatus' && $sensor == true);
+            if ($this->ReadPropertyString('SensorType') == 'CLIPGenericStatus' && $this->ReadPropertyString('DeviceType') == 'sensors') {
+                $this->EnableAction('HUE_CLIPGenericState');
             }
-        }
 
-        if ($this->ReadPropertyString('DeviceType') == 'groups') {
-            SetValue($this->GetIDForIdent('HUE_GroupScenes'), -1);
-            $this->EnableAction('HUE_GroupScenes');
-        }
+            $this->MaintainVariable('HUE_Lightlevel', $this->Translate('Lightlevel'), 1, '~Illumination', 0, $this->ReadPropertyString('SensorType') == 'ZLLLightLevel' && $sensor == true);
+            $this->MaintainVariable('HUE_Dark', $this->Translate('Dark'), 0, '', 0, $this->ReadPropertyString('SensorType') == 'ZLLLightLevel' && $sensor == true);
+            $this->MaintainVariable('HUE_Daylight', $this->Translate('Daylight'), 0, '', 0, ($this->ReadPropertyString('SensorType') == 'ZLLLightLevel') || ($this->ReadPropertyString('SensorType') == 'Daylight') && $sensor == true);
 
-        //Reachable for Lights and Sensors
-        if ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'plugs' || ($this->ReadPropertyString('DeviceType') == 'sensors' && $this->ReadPropertyString('SensorType') != 'ZGPSwitch' && $this->ReadPropertyString('SensorType') != 'Daylight')) {
-            $CreateVariableReachable = true;
-        } else {
-            $CreateVariableReachable = false;
+            $this->MaintainVariable('HUE_Temperature', $this->Translate('Temperature'), 2, '~Temperature', 0, $this->ReadPropertyString('SensorType') == 'ZLLTemperature' && $sensor == true);
+
+            $this->MaintainVariable('HUE_Buttonevent', $this->Translate('Buttonevent'), 1, '', 0, ($this->ReadPropertyString('SensorType') == 'ZGPSwitch' || $this->ReadPropertyString('SensorType') == 'ZLLSwitch') && $sensor == true);
+
+            //Lights and Groups
+            $this->MaintainVariable('HUE_ColorMode', $this->Translate('Color Mode'), 1, 'HUE.ColorMode', 0, ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups') && $this->ReadPropertyBoolean('ColorModeActive') == true);
+
+            $this->MaintainVariable('HUE_State', $this->Translate('State'), 0, '~Switch', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups' || $this->ReadPropertyString('DeviceType') == 'plugs');
+
+            $this->MaintainVariable('HUE_Brightness', $this->Translate('Brightness'), 1, 'HUE.Intensity', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
+
+            $this->MaintainVariable('HUE_Color', $this->Translate('Color'), 1, 'HexColor', 0, ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups') && $this->ReadPropertyBoolean('ColorActive') == true);
+
+            $this->MaintainVariable('HUE_Saturation', $this->Translate('Saturation'), 1, 'HUE.Intensity', 0, ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups') && $this->ReadPropertyBoolean('SaturationActive') == true);
+
+            $this->MaintainVariable('HUE_ColorTemperature', $this->Translate('Color Temperature'), 1, 'HUE.ColorTemperature', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
+            $this->MaintainVariable('HUE_ColorTemperatureKelvin', $this->Translate('Color Temperature Kelvin'), 1, 'HUE.ColorTemperatureKelvin', 0, ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups') && $this->ReadPropertyBoolean('KelvinActive') == true);
+
+            //Groups
+            $ParentID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
+            $this->MaintainVariable('HUE_GroupScenes', $this->Translate('Scenes'), 1, 'HUE.GroupScene' . $ParentID . '_' . $this->ReadPropertyString('FAHDeviceID'), 0, $this->ReadPropertyString('DeviceType') == 'groups');
+
+            if ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups') {
+                if ($this->ReadPropertyBoolean('ColorModeActive')) {
+                    $this->EnableAction('HUE_ColorMode');
+                }
+                $this->EnableAction('HUE_State');
+                $this->EnableAction('HUE_Brightness');
+                if ($this->ReadPropertyBoolean('ColorActive')) {
+                    $this->EnableAction('HUE_Color');
+                }
+                if ($this->ReadPropertyBoolean('SaturationActive')) {
+                    $this->EnableAction('HUE_Saturation');
+                }
+                $this->EnableAction('HUE_ColorTemperature');
+                $this->EnableAction('HUE_ColorTemperatureKelvin');
+
+                if (@$this->GetIDForIdent('HUE_ColorMode') != false) {
+                    $ColorMode = GetValue(IPS_GetObjectIDByIdent('HUE_ColorMode', $this->InstanceID));
+                    $this->hideVariables($ColorMode);
+                }
+            }
+
+            if ($this->ReadPropertyString('DeviceType') == 'groups') {
+                SetValue($this->GetIDForIdent('HUE_GroupScenes'), -1);
+                $this->EnableAction('HUE_GroupScenes');
+            }
+
+            //Reachable for Lights and Sensors
+            if ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'plugs' || ($this->ReadPropertyString('DeviceType') == 'sensors' && $this->ReadPropertyString('SensorType') != 'ZGPSwitch' && $this->ReadPropertyString('SensorType') != 'Daylight')) {
+                $CreateVariableReachable = true;
+            } else {
+                $CreateVariableReachable = false;
+            }
+            $this->MaintainVariable('HUE_Reachable', $this->Translate('Reachable'), 0, 'HUE.Reachable', 0, $CreateVariableReachable);
         }
-        $this->MaintainVariable('HUE_Reachable', $this->Translate('Reachable'), 0, 'HUE.Reachable', 0, $CreateVariableReachable);
     }
 
     public function GetConfigurationForm()
