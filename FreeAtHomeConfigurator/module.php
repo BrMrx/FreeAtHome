@@ -114,12 +114,12 @@ class FreeAtHomeConfigurator extends IPSModule
 
  
 
-    //            IPS_LogMessage( $this->InstanceID, __FUNCTION__.' outputs:'. count($lArrayOutputs).json_encode((object)$lArrayOutputs) );
+                IPS_LogMessage( $this->InstanceID, __FUNCTION__.' ChannelData:'. json_encode($lChannelData) );
                 $lInputs = json_encode((object)PID::FilterSupportedType($lChannelData,'inputs'));
                  IPS_LogMessage( $this->InstanceID, __FUNCTION__.' Inputs:'. $lInputs );
                  $lArrayOutputs = PID::FilterSupportedType($lChannelData,'outputs');
 
-                 IPS_LogMessage( $this->InstanceID, __FUNCTION__.' outputs:'. count($lArrayOutputs).json_encode((object)$lArrayOutputs) );
+                 IPS_LogMessage( $this->InstanceID, __FUNCTION__.' array outputs:'. count($lArrayOutputs).json_encode((object)$lArrayOutputs) );
                  $lOutputs = json_encode((object)$lArrayOutputs);
 
                  IPS_LogMessage( $this->InstanceID, __FUNCTION__.' Outputs:'. $lOutputs );
@@ -132,9 +132,9 @@ class FreeAtHomeConfigurator extends IPSModule
                     'DisplayName'           => $lDeviceName,
                     'name'                  => $lDeviceName,
                     'Type'                  => $lDeviceType,
-                    'ModelID'               => '-',
+                    'ModelID'               => $lInputs,
                     'Manufacturername'      => ((array_key_exists($lDevice['interface'], self::m_Types)) ? self::m_Types[$lDevice['interface']] : '?'.$lDevice->interface.'?'),
-                    'Productname'           => '-',
+                    'Productname'           => $lOutputs,
                     'instanceID'            => $instanceID
                 ];
 
