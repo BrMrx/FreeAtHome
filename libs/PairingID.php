@@ -53,11 +53,13 @@ class PID
 	public static function FilterSupportedType2( $a_Channel, string $a_Type )	
 	{
 		$lChannelObj = (object)$a_Channel;
-		IPS_LogMessage( 0, __FUNCTION__.' ChannelData:'. json_encode($lChannelObj) );
+		IPS_LogMessage( 0, __FUNCTION__.' ChannelData :'. json_encode($lChannelObj) );
 
 		$lResult = array();
 		foreach($lChannelObj->{$a_Type} as $lChannelNr => $lChannelValue)			
 		{    
+			IPS_LogMessage( 0, __FUNCTION__.' ChannelData '.$a_Type.':'. json_encode($lChannelValue) );
+
 			if( isset($lChannelValue->pairingID )  )
             {
 				$lPairingId = $lChannelValue->pairingID;
