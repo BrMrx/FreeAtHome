@@ -32,6 +32,7 @@ class PID
 	public static function FilterSupportedType( $a_Channel, string $a_Type )	
 	{
 		$lChannelObj = (object)$a_Channel;
+		IPS_LogMessage( 0, __FUNCTION__." Channel ".json_encode($lChannelObj) );
 
 		$lResult = array();
 		foreach($lChannelObj->{$a_Type} as $lChannelNr => $lChannelValue)			

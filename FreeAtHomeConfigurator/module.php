@@ -114,7 +114,8 @@ class FreeAtHomeConfigurator extends IPSModule
 
  
 
-                 $lInputs = json_encode((object)PID::FilterSupportedType($lChannelData,'inputs'));
+                IPS_LogMessage( $this->InstanceID, __FUNCTION__.' outputs:'. count($lArrayOutputs).json_encode((object)$lArrayOutputs) );
+                $lInputs = json_encode((object)PID::FilterSupportedType($lChannelData,'inputs'));
                  IPS_LogMessage( $this->InstanceID, __FUNCTION__.' Inputs:'. $lInputs );
                  $lArrayOutputs = PID::FilterSupportedType($lChannelData,'outputs');
 
