@@ -46,6 +46,8 @@ class PID
                 }
             }
         }	
+		IPS_LogMessage( $this->InstanceID, __FUNCTION__.' '.$a_Type.':'. $lResult );
+
 		return $lResult;
 	}
 	
