@@ -54,7 +54,7 @@ class FID
     public static function IsSupportedID( string $a_Id )
     {
         $lFunctionId = hexdec( $a_Id );
-        return  in_array($lFunctionId, self::SupportedIDs )
+        return in_array($lFunctionId, self::SupportedIDs );
     }
 
 	public static function FilterSupportedChannels( $a_Channels )	
