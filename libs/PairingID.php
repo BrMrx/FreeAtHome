@@ -33,13 +33,13 @@ class PID
 	{
 		$lChannelObj = (object)$a_Channel;
 
-		IPS_LogMessage( $this->InstanceID, __FUNCTION__.' ChannelData:'. json_encode($lChannelObj) );
+		IPS_LogMessage( 0, __FUNCTION__.' ChannelData:'. json_encode($lChannelObj) );
 
 
 		$lResult = array();
 		foreach($lChannelObj->{$a_Type} as $lChannelNr => $lChannelValue)			
 		{    
-			IPS_LogMessage( $this->InstanceID, __FUNCTION__.' ChannelNr:'.$lChannelNr . json_encode($lChannelValue) );
+			IPS_LogMessage( 0, __FUNCTION__.' ChannelNr:'.$lChannelNr . json_encode($lChannelValue) );
          			
 			if( isset($lChannelValue->pairingID )  )
             {
