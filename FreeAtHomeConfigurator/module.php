@@ -112,6 +112,10 @@ class FreeAtHomeConfigurator extends IPSModule
                 }
                 $lDeviceType = FID::GetName($lChannelData->functionID);
 
+                IPS_LogMessage( $this->InstanceID, __FUNCTION__.' CannelData:'. json_encode($lChannelValue) );
+
+
+
                 $lInputs = json_encode(PID::FilterSupportedType($lChannelValue,'inputs'));
                 $lOutputs = json_encode(PID::FilterSupportedType($lChannelValue,'outputs'));
 
