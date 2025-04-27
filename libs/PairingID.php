@@ -34,8 +34,9 @@ class PID
 		$lChannelObj = (object)$a_Channel;
 
 		$lResult = array();
-		foreach($lChannelObj->{$a_Type} as $lChannelNr => $lChannelValue)			
+		foreach($lChannelObj->{$a_Type} as $lChannelNr => $lValue)			
 		{    
+			$lChannelValue = (object)$lValue;
 			if( isset($lChannelValue->pairingID )  )
             {
 				$lPairingId = $lChannelValue->pairingID;
