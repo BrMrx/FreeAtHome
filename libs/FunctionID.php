@@ -53,7 +53,7 @@ class FID
     public static function GetName( string $a_Id )
     {
         $lFunctionId = hexdec( $a_Id );
-        if( in_array($lFunctionId, self::mMapNames )
+        if( in_array($lFunctionId, self::mMapNames ) )
         {
             return self::mMapNames[$lFunctionId];
         }
