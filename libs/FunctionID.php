@@ -73,20 +73,16 @@ class FID
 		foreach($a_Channels as $lChannelNr => $lValue)			
 		{             			
             $lChannelValue = (object)$lValue;
-            IPS_LogMessage( 0, __FUNCTION__.":  ".json_encode($lChannelValue) );
-			if( isset($lChannelValue->functionID )  )
+  			if( isset($lChannelValue->functionID )  )
             {
                 $lFunctionId = hexdec( $lChannelValue->functionID );
-                IPS_LogMessage( 0, __FUNCTION__.": check ".$lFunctionId."  ".FID::GetName($lFunctionId) );
                 if( in_array($lFunctionId, self::SupportedIDs ) )
                 {
-                    IPS_LogMessage( 0, __FUNCTION__.": channel supported ".json_encode($lChannelValue) );
                     $lResult[$lChannelNr]= $lChannelValue;
                 }
             }
         }	
-        IPS_LogMessage( 0, __FUNCTION__.":  ".json_encode($lResult) );
-		return $lResult;
+  		return $lResult;
 	}
 }
 
