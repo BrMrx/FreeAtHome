@@ -14,11 +14,17 @@ class PID
 	const INFO_ON_OFF										= 0x0100; // Reflects the binary state of the actuator
 																	  //		1: on
 																	  //		0: off
+				
+	const ABSOLUTE_SET_VALUE_CONTROL	= 0x0011; // Absolute control of the set value																		
+																			// 1. Byte
+	const INFO_ACTUAL_DIMMING_VALUE = 0x0110; // Reflects the actual value of the actuator
+																			// 1. Byte
 	
 	const mMapNames = [
-		self::SWITCH_ON_OFF           => 'SWITCH_ON_OFF',
-		self::TIMED_START_STOP        => 'TIMED_START_STOP',
-		self::INFO_ON_OFF        	  => 'INFO_ON_OFF',
+		self::SWITCH_ON_OFF           							=> 'SWITCH_ON_OFF',
+		self::TIMED_START_STOP        							=> 'TIMED_START_STOP',
+		self::INFO_ON_OFF        	  									=> 'INFO_ON_OFF',
+		self::INFO_ACTUAL_DIMMING_VALUE     	=> 'INFO_ACTUAL_DIMMING_VALUE',
 	];
 	
 	
@@ -27,6 +33,8 @@ class PID
 	const SupportedIDs = array(
         self::SWITCH_ON_OFF,
 		self::INFO_ON_OFF,
+		self::INFO_ACTUAL_DIMMING_VALUE,
+		self::ABSOLUTE_SET_VALUE_CONTROL,
 	);
 		
 
