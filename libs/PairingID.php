@@ -46,7 +46,6 @@ class PID
                 }
             }
         }	
-		IPS_LogMessage( 0, __FUNCTION__.' '.$a_Type.':'. count($lResult).json_encode((object)$lResult) );
 
 		return $lResult;
 	}
