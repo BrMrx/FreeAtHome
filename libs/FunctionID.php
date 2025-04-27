@@ -45,11 +45,18 @@ class FID
 	
 	
 	// aktuell unterstützte Funktions ID's
-	const SupportedIDs = array(
+	public const SupportedIDs = [
         self::SWITCH_ACTUATOR,
-        self::DIMMING_ACTUATOR_TYPE0);
+        self::DIMMING_ACTUATOR_TYPE0,
+    ];
 		
 		
+    public static function IsSupportedID( string $a_Id )
+    {
+        $lFunctionId = hexdec( $a_Id );
+        return  in_array($lFunctionId, self::SupportedIDs )
+    }
+
 	public static function FilterSupportedChannels( $a_Channels )	
 	{
 		$lResult = array();
