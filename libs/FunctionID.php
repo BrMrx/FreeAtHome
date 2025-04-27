@@ -76,6 +76,7 @@ class FID
 			if( isset($lChannelValue->functionID )  )
             {
                 $lFunctionId = hexdec( $lChannelValue->functionID );
+                IPS_LogMessage( 0, __FUNCTION__.": check ".$lFunctionId."  ".FID::GetName($lFunctionId) );
                 if( in_array($lFunctionId, self::SupportedIDs ) )
                 {
                     IPS_LogMessage( 0, __FUNCTION__.": channel supported ".json_encode($lChannelValue) );
