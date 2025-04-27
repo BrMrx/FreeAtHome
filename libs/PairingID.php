@@ -43,11 +43,17 @@ class PID
          			
 			if( isset($lChannelValue->pairingID )  )
             {
-                $lFunctionId = $lChannelValue->pairingID;
-                if( in_array($lFunctionId, self::SupportedIDs ) )
+				$lPairingId = $lChannelValue->pairingID;
+
+                if( in_array($lPairingId, self::SupportedIDs ) )
                 {
+					IPS_LogMessage( 0, __FUNCTION__.' is supported:'.$lChannelNr .':'. $lPairingId );
                     $lResult[$lChannelNr]= $lChannelValue;
                 }
+				else
+				{
+					IPS_LogMessage( 0, __FUNCTION__.' is not supported:'.$lChannelNr .':'. $lPairingId );
+				}
             }
         }	
 		return $lResult;
