@@ -158,6 +158,9 @@ class FreeAtHomeDevice extends IPSModule
         $this->SendDebug(__FUNCTION__ . ' Device Type', $this->ReadPropertyString('DeviceType'), 0);
         $this->SendDebug(__FUNCTION__ . ' Device ID', $this->ReadPropertyString('FAHDeviceID'), 0);
         $this->SendDebug(__FUNCTION__, $JSONString, 0);
+
+        return;
+
         $Data = json_decode($JSONString);
         $Buffer = json_decode($Data->Buffer);
 
