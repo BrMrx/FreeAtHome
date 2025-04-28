@@ -181,7 +181,7 @@ class FreeAtHomeBridge extends IPSModule
                 {
                     $lData .= $lDatapoint;
                     $this->SendDebug(__FUNCTION__ , 'datapoint:'.$id.' -> '.$lData , 0);
-                    push_arry( $lVectRet, $lData  );
+                    $lVectRet[] = $lData;
                 }                  
              }
         }
