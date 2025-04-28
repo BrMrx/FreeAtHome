@@ -51,7 +51,11 @@ class FreeAtHomeDevice extends IPSModule
         foreach( $lOutputs as $lOdp => $lPairingId  )
         {
             IPS_LogMessage( $this->InstanceID, __FUNCTION__.' '.$lOdp.":".$lPairingId.' - '.PID::GetName($lPairingId) );
-            $this->MaintainVariable(PID::GetName($lPairingId), $this->Translate(PID::GetInfo($lPairingId)), PID::GetType($lPairingId), PID::GetProfile($lPairingId), 0, true);          
+            $this->MaintainVariable(
+                PID::GetName($lPairingId), 
+                $this->Translate(PID::GetInfo($lPairingId)), 
+                PID::GetType($lPairingId), PID::GetProfile($lPairingId), 
+                0, true );          
         }
 
 
