@@ -199,7 +199,7 @@ class FreeAtHomeBridge extends IPSModule
             }
 
             $lRequestArray = explode('.',$lRequest);
-            $lDataObj->{$lRequestArray[0]}->{$lRequestArray[1]}->{$lRequestArray[2]} = $lDataAnswer->{$lGUID};
+            $lDataObj[$lRequestArray[0]][$lRequestArray[1]][$lRequestArray[2]] = $lDataAnswer->{$lGUID};
 
         }
         $this->SendDebug(__FUNCTION__ , 'Data answer: '.json_encode($lDataObj), 0);
