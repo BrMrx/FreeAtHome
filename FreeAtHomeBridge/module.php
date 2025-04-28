@@ -6,6 +6,7 @@ require_once __DIR__ . '/../libs/PairingID.php';
 
 class FreeAtHomeBridge extends IPSModule
 {
+    const mBridgeDataId     = '{BC9334EC-8C5C-61C2-C5DD-96FE9368F38D}';      // DatenId der Bridge
     const mDeviceModuleId   = '{BDE4603B-E68A-D3AF-2510-9462C7374097}';      // Device Modul Id 
     const mChildId          = '{7E471B91-3407-F7EE-347B-64B459E33D76}';      // Child Id 
 
@@ -205,8 +206,9 @@ class FreeAtHomeBridge extends IPSModule
 
         }
 
-        $lDataToChildren = json_encode($lDataObj);
-        $this->SendDebug(__FUNCTION__ , 'Data answer: '.$lDataToChildren, 0);
+        $Data['DataID'] = self::mBridgeDataId;
+        $Data['Buffer'] = json_encode($lDataObj);
+
         
         $lResultSend = $this->SendDataToChildren($lDataToChildren);
         $this->SendDebug(__FUNCTION__ , 'result send: '.json_encode($lResultSend), 0);
