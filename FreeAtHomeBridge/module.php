@@ -159,7 +159,9 @@ class FreeAtHomeBridge extends IPSModule
     {    
         $lVectRet = array();
 
+
         $InstanceIDs = IPS_GetInstanceListByModuleID(self::mDeviceModuleId); //FAHDevice
+        $this->SendDebug(__FUNCTION__ , json_encode($InstanceIDs) , 0);
         foreach ($InstanceIDs as $id) 
         {
             // Ist die Instanz mit dieser Bridge verbunden 
