@@ -159,7 +159,7 @@ class FreeAtHomeBridge extends IPSModule
     {    
         $lVectRet = array();
 
-        $InstanceIDs = IPS_GetInstanceListByModuleID(self::mDeviceModuleId); //FAHDevice
+        $InstanceIDs = (object)IPS_GetInstanceListByModuleID(self::mDeviceModuleId); //FAHDevice
         foreach ($InstanceIDs as $id) 
         {
             $this->SendDebug(__FUNCTION__ , 'Device ConnectionID:'.IPS_GetInstance($id)['ConnectionID'] , 0);
@@ -176,7 +176,9 @@ class FreeAtHomeBridge extends IPSModule
 
                 foreach( $lOutputs as $lDatapoint => $lPairingID  )
                 {
-                    push_arry( $lVectRet, $lData.$lDatapoint  );
+                    $lData .= $lDatapoint;
+                    $this->SendDebug(__FUNCTION__ , 'datapoint:'.$id.' -> '.$lData , 0);
+                    push_arry( $lVectRet, $lData  );
                 }                  
              }
         }
