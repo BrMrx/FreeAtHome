@@ -206,7 +206,7 @@ class FreeAtHomeBridge extends IPSModule
 
         }
 
-        $Data['DataID'] = self::mBridgeDataId;
+        $Data['DataID'] = self::mChildId;
         $Data['Buffer'] = json_encode($lDataObj);
 
         
