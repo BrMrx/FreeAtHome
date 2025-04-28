@@ -30,7 +30,7 @@ class PID
 		self::INFO_ACTUAL_DIMMING_VALUE     	=> [ 'name' => 'INFO_ACTUAL_DIMMING_VALUE',
 													 'info'  => 'Brightness',
 													 'type'  => 1,
-													 'profile' => '~Intensity.255'],
+													 'profile' => '~Intensity.100'],
 	];
 	
 	
