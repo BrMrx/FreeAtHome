@@ -186,7 +186,7 @@ class FreeAtHomeBridge extends IPSModule
 
         $lListRequest = $this->GetOutputDataPointsOfDevices();
         
-        $lDataObj = new stdClass;
+        $lDataObj = array();
         $lGUID = $this->ReadPropertyString("SysAP_GUID");
         foreach( $lListRequest as $lRequest )
         {
