@@ -186,9 +186,17 @@ class FreeAtHomeBridge extends IPSModule
 
         $lListRequest = $this->GetOutputDataPointsOfDevices();
         
+        $lGUID = $this->ReadPropertyString("SysAP_GUID");
         foreach( $lListRequest as $lRequest )
         {
-            $this->SendDebug(__FUNCTION__ , 'Request: '.$lRequest, 0);
+            $lDataAnswer = $this->sendRequest( 'datapoint/'.$lGUID.'/'.$lRequest );
+
+            if( $lDataAnswer === false)
+            {
+                $this->SendDebug(__FUNCTION__ , 'Request failed: '.$lRequest, 0);
+                continue;
+            }
+            $this->SendDebug(__FUNCTION__ , 'Data answer: '.$lRequest.' -> '.json_encode($lDataAnswer), 0);
         }
         
         
