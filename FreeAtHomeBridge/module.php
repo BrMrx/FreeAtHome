@@ -159,20 +159,20 @@ class FreeAtHomeBridge extends IPSModule
     {    
         $lVectRet = array();
 
-
         $InstanceIDs = IPS_GetInstanceListByModuleID(self::mDeviceModuleId); //FAHDevice
-        $this->SendDebug(__FUNCTION__ , json_encode($InstanceIDs) , 0);
         foreach ($InstanceIDs as $id) 
         {
             $this->SendDebug(__FUNCTION__ , 'Device ConnectionID:'.IPS_GetInstance($id)['ConnectionID'] , 0);
-            $this->SendDebug(__FUNCTION__ , 'Bridge ConnectionID:'.$this->InstanceID , 0);
-          
+           
             // Ist die Device Instanz mit dieser Bridge verbunden 
             if (IPS_GetInstance($id)['ConnectionID'] == $this->InstanceID ) 
             {
                 $lData = IPS_GetProperty($id, 'FAHDeviceID').'/'.IPS_GetProperty($id, 'Channel').'/';
 
+                $this->SendDebug(__FUNCTION__ , 'connected:'.$id.' -> '.$lData , 0);
+
                 $lOutputs = json_decode( IPS_GetProperty($id, 'Outputs') );
+                $this->SendDebug(__FUNCTION__ , json_encode($lOutputs) , 0);
 
                 foreach( $lOutputs as $lDatapoint => $lPairingID  )
                 {
