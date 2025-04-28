@@ -160,6 +160,9 @@ class FreeAtHomeBridge extends IPSModule
         $lVectRet = array();
 
         $InstanceIDs = (object)IPS_GetInstanceListByModuleID(self::mDeviceModuleId); //FAHDevice
+
+        $this->SendDebug(__FUNCTION__ , 'IDs:'.json_encode($InstanceIDs), 0);
+ 
         foreach ($InstanceIDs as $id) 
         {
             $this->SendDebug(__FUNCTION__ , 'Device ConnectionID:'.IPS_GetInstance($id)['ConnectionID'] , 0);
@@ -182,6 +185,9 @@ class FreeAtHomeBridge extends IPSModule
                 }                  
              }
         }
+ 
+        $this->SendDebug(__FUNCTION__ , 'return:'.json_encode($lVectRet), 0);
+      
         return $lVectRet;
     }
 
