@@ -166,7 +166,7 @@ class FreeAtHomeBridge extends IPSModule
             // Ist die Device Instanz mit dieser Bridge verbunden 
             if (IPS_GetInstance($id)['ConnectionID'] == $this->InstanceID ) 
             {
-                $lData = IPS_GetProperty($id, 'FAHDeviceID').'/'.IPS_GetProperty($id, 'Channel').'/';
+                $lData = IPS_GetProperty($id, 'FAHDeviceID').'.'.IPS_GetProperty($id, 'Channel').'.';
                 $lOutputs = json_decode( IPS_GetProperty($id, 'Outputs') );
 
                 foreach( $lOutputs as $lDatapoint => $lPairingID  )
