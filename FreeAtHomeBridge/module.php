@@ -169,7 +169,7 @@ class FreeAtHomeBridge extends IPSModule
 
                 $lOutputs = json_decode( IPS_GetProperty($id, 'Outputs') );
 
-                foreach( $lOutputs as $lDatapoint as $lPairingID  )
+                foreach( $lOutputs as $lDatapoint => $lPairingID  )
                 {
                     push_arry( $lVectRet, $lData.$lDatapoint  );
                 }                  
