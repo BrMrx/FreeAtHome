@@ -6,6 +6,8 @@ require_once __DIR__ . '/../libs/PairingID.php';
 
 class FreeAtHomeBridge extends IPSModule
 {
+    const mDeviceModuleId   = '{BDE4603B-E68A-D3AF-2510-9462C7374097}';      // Device Modul Id 
+    const mChildId          = '{7E471B91-3407-F7EE-347B-64B459E33D76}';      // Child Id 
 
     public function Create()
     {
@@ -153,13 +155,45 @@ class FreeAtHomeBridge extends IPSModule
         return json_encode($result);
     }
 
+    protected function GetOutputDataPointsOfDevices()
+    {    
+        $lVectRet = array();
+
+        $InstanceIDs = IPS_GetInstanceListByModuleID(self::mDeviceModuleId); //FAHDevice
+        foreach ($InstanceIDs as $id) 
+        {
+            // Ist die Instanz mit dieser Bridge verbunden 
+            if (IPS_GetInstance($id)['ConnectionID'] == IPS_GetInstance($this->InstanceID)['ConnectionID']) 
+            {
+                $lData = IPS_GetProperty($id, 'FAHDeviceID').'/'.IPS_GetProperty($id, 'Channel').'/';
+
+                $lOutputs = json_decode( IPS_GetProperty($id, 'Outputs') );
+
+                foreach( $lOutputs as $lDatapoint as $lPairingID  )
+                {
+                    push_arry( $lVectRet, $lData.$lDatapoint  );
+                }                  
+             }
+        }
+        return $lVectRet;
+    }
+
+
     public function UpdateState()
     {
         $this->SendDebug(__FUNCTION__ , 'update SysAP States', 0);
 
+        $lListRequest = GetOutputDataPointsOfDevices();
+        
+        foreach( $lListRequest as $lRequest )
+        {
+            $this->SendDebug(__FUNCTION__ , 'Request: '.$lRequest, 0);
+        }
+        
+        
         return;
 
-        $Data['DataID'] = '{7CF9826D-7E05-C7A2-1B73-32CC11F80D2E}';
+        $Data['DataID'] = self::mChildId;
 
         $Buffer['Lights'] = $this->getAllLights();
         $Buffer['Groups'] = $this->getAllGroups();
