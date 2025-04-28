@@ -163,7 +163,7 @@ class FreeAtHomeBridge extends IPSModule
 
         $this->SendDebug(__FUNCTION__ , 'IDs:'.json_encode($InstanceIDs), 0);
  
-        foreach ($InstanceIDs as $id) 
+        foreach ($InstanceIDs as $lKey => $id) 
         {
             $this->SendDebug(__FUNCTION__ , 'Device ConnectionID:'.IPS_GetInstance($id)['ConnectionID'] , 0);
            
