@@ -185,7 +185,7 @@ class FreeAtHomeBridge extends IPSModule
     {
         $this->SendDebug(__FUNCTION__ , 'update SysAP States', 0);
 
-        $lListRequest = GetOutputDataPointsOfDevices();
+        $lListRequest = $this->GetOutputDataPointsOfDevices();
         
         foreach( $lListRequest as $lRequest )
         {
