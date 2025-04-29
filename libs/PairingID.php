@@ -364,6 +364,15 @@ class PID
 		return 0;
 	}
 
+	public static function GetSettings( string $a_Name )
+	{
+		if( isset(self::mMapPairingID[$a_Name] ))
+		{
+			return 	self::mMapPairingID[$a_Name];
+		}
+		return array();
+	}
+
 	public static function GetName( $a_ID )
     {
  		foreach( self::mMapPairingID as $lName => $lVal )
