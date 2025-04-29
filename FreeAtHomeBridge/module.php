@@ -215,18 +215,6 @@ class FreeAtHomeBridge extends IPSModule
         $lResultSend = $this->SendDataToChildren($lData);
         $this->SendDebug(__FUNCTION__ , 'result: '.json_encode($lResultSend), 0);
         
-        return;
-
-        $Data['DataID'] = self::mChildId;
-
-        $Buffer['Lights'] = $this->getAllLights();
-        $Buffer['Groups'] = $this->getAllGroups();
-        $Buffer['Sensors'] = $this->getAllSensors();
-
-        $Data['Buffer'] = json_encode($Buffer);
-
-        $Data = json_encode($Data);
-        $this->SendDataToChildren($Data);
     }
 
     private function FilterSupportedDevices( $a_Devices )

@@ -162,15 +162,36 @@ class FreeAtHomeDevice extends IPSModule
 
         $lData = json_decode($JSONString );
         $lDataObj = json_decode($lData->Buffer );
- 
-        $this->SendDebug(__FUNCTION__ . ' Data', json_encode($lDataObj), 0);
 
-
-        if(isset( $lDataObj->{$lDeviceID} ))
+        // Daten für dieses Device dabei
+        if(!isset( $lDataObj->{$lDeviceID} ))
         {
-            $this->SendDebug(__FUNCTION__ . ' DataReseived ', json_encode($lDataObj->{$lDeviceID}), 0);
+            return;
         }
 
+        // Daten empfangen
+        $this->SendDebug(__FUNCTION__ . ' DataReseived ', json_encode($lDataObj->{$lDeviceID}), 0);
+
+        $lChannel = IPS_GetProperty($id, 'Channel');
+        $lOutputs = json_decode( IPS_GetProperty($id, 'Outputs') );
+
+        foreach( $lOutputs as $lDatapoint => $lPairingID  )
+        {
+            if( isset( $lDataObj->{$lDeviceID}->{$lChannel} ))
+            {
+                $lChannelData = $lDataObj->{$lDeviceID}->{$lChannel};
+
+                foreach( $lChannelData as $lDP => $lValue )
+                {
+                    if( $lDP == $lDatapoint )
+                    {
+                        $lValueId = PID::GetName( $lPairingID );
+
+                        $this->SendDebug(__FUNCTION__ . ' NewDate ', $lValueId.' - '.$lValue, 0);
+                    }
+                }
+            }
+        }                  
 
 
         return;
