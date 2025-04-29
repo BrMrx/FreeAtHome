@@ -188,6 +188,7 @@ class FreeAtHomeDevice extends IPSModule
                         $lValueId = PID::GetName( $lPairingID );
 
                         $this->SendDebug(__FUNCTION__ . ' NewDate ', $lValueId.' - '.$lValue, 0);
+                        $this->SetValue($lValueId, $lValue);
                     }
                 }
             }
