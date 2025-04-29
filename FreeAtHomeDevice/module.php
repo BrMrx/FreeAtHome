@@ -157,9 +157,21 @@ class FreeAtHomeDevice extends IPSModule
     {
         IPS_LogMessage( $this->InstanceID, __FUNCTION__.": ".$JSONString );
 
-        $this->SendDebug(__FUNCTION__ . ' Device Type', $this->ReadPropertyString('DeviceType'), 0);
-        $this->SendDebug(__FUNCTION__ . ' Device ID', $this->ReadPropertyString('FAHDeviceID'), 0);
-        $this->SendDebug(__FUNCTION__, $JSONString, 0);
+        $lDeviceID = $this->ReadPropertyString('FAHDeviceID');
+        $this->SendDebug(__FUNCTION__ . ' Device ', $lDeviceID.':'.$this->ReadPropertyString('DeviceType'), 0);
+
+        $lData = json_decode($JSONString );
+        $lDataObj = json_decode($lData->Buffer );
+ 
+        $this->SendDebug(__FUNCTION__ . ' Data', json_encode($lDataObj), 0);
+
+
+        if(isset( $lDataObj->{$lDeviceID} ))
+        {
+            $this->SendDebug(__FUNCTION__ . ' DataReseived ', json_encode($lDataObj->{$lDeviceID}), 0);
+        }
+
+
 
         return;
 
