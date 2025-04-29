@@ -57,14 +57,16 @@ class PID
 		'INFO_ON_OFF'                                   =>[ 'ID' => 0x0100,   // DPT_SWITCH	1BIT
 															'info'  	=> 'State',             // Zustand
 															'type'  	=> 0,                   // bool
-															'profile' 	=> '~Switch'],          // Darstellungsprofil
+															'profile' 	=> '~Switch',           // Darstellungsprofil
+															'action' 	=> 'SWITCH_ON_OFF'],    // Action die damit verbunden ist
 		'INFO_FORCE'                                    =>[ 'ID' => 0x0101 ], // DPT_ENUM_8	1BYTE	Indicates the cause of forced operation (0 = not forced)
 		'SYSAP_INFO_ON_OFF'                             =>[ 'ID' => 0x0105 ], // DPT_SWITCH	1BIT
 		'SYSAP_INFO_FORCE'                              =>[ 'ID' => 0x0106 ], // DPT_ENUM_8	1BYTE	Indicates whether the actuator group is forced (1) or not forced (0)
 		'INFO_ACTUAL_DIMMING_VALUE'                     =>[ 'ID' => 0x0110,   // DPT_SCALING	1BYTE	Reflects the actual value of the actuator
 															'info'  	=> 'Brightness',        // Helligkeit
 															'type'  	=> 1,                   // int
-															'profile' 	=> '~Intensity.100'],   // Helligkeit 0-100%
+															'profile' 	=> '~Intensity.100',    // Helligkeit 0-100%
+															'action' 	=> 'ABSOLUTE_SET_VALUE_CONTROL'],    // Helligkeit 0-100% setzen
 		'INFO_ERROR'                                    =>[ 'ID' => 0x0111 ], // DPT_BIT_SET_32	4BYTE	Indicates load failures / short circuits / etc
 		'SYSAP_INFO_ACTUAL_DIMMING_VALUE'               =>[ 'ID' => 0x0115 ], // DPT_SCALING	1BYTE	Reflects the actual value of the actuator group
 		'SYSAP_INFO_ERROR'                              =>[ 'ID' => 0x0116 ], // DPT_BIT_SET_32	4BYTE	Indicates load failures / short circuits / etc
@@ -407,6 +409,22 @@ class PID
 			if( $lVal['ID'] == $a_ID )
 			{
 				return $lVal['profile'];
+			}
+		}
+
+        return '';      
+    }
+	public static function GetAction( $a_ID )
+    {
+  		foreach( self::mMapPairingID as $lName => $lVal )
+		{
+			if( $lVal['ID'] == $a_ID )
+			{
+				if( isset($lVal['action']) )
+				{				
+					return $lVal['action'];
+				}
+				break;			
 			}
 		}
 

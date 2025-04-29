@@ -26,6 +26,23 @@ class FreeAtHomeDevice extends IPSModule
         $this->RegisterAttributeString('DeviceType', '');
     }
 
+    public function HasActionInput( string $a_Action )
+    {
+        // Variablen für alle Outputs (des Devises) anlegen
+        $lInputs = json_decode( $this->ReadPropertyString('Inputs') );
+
+        $lActionPairingId = PID::GetID($a_Action);
+
+        foreach( $lInputs as $lOdp => $lPairingId  )
+        {
+            if( $lActionPairingId == $lPairingId )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function ApplyChanges()
     {
         //Never delete this line!
@@ -33,31 +50,24 @@ class FreeAtHomeDevice extends IPSModule
         if ($this->ReadPropertyString('DeviceType') == '') {
             return;
         }
-        //Scene Profile for Groups
-        if ($this->HasActiveParent()) {
-            $this->UpdateSceneProfile();
-        } else {
-            $ParentID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
-            $ProfileName = 'HUE.GroupScene' . $ParentID . '_' . $this->ReadPropertyString('FAHDeviceID');
-            if (!IPS_VariableProfileExists($ProfileName)) {
-                IPS_CreateVariableProfile($ProfileName, 1);
-            }
-        }
-
 
         // Variablen für alle Outputs (des Devises) anlegen
         $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
  
         foreach( $lOutputs as $lOdp => $lPairingId  )
         {
-            IPS_LogMessage( $this->InstanceID, __FUNCTION__.' '.$lOdp.":".$lPairingId.' - '.PID::GetName($lPairingId) );
+            $lPIDName = PID::GetName($lPairingId);
+            IPS_LogMessage( $this->InstanceID, __FUNCTION__.' '.$lOdp.":".$lPairingId.' - '.$lPIDName );
             $this->MaintainVariable(
-                PID::GetName($lPairingId), 
+                $lPIDName, 
                 $this->Translate(PID::GetInfo($lPairingId)), 
                 PID::GetType($lPairingId), PID::GetProfile($lPairingId), 
                 0, true );          
+            // hat die Pairing ID ein Action Item
+            $Action = PID::GetAction($lPairingId);
+            // Prüfe ob das Action Item in den Inputs enthalten ist
+            $this->MaintainAction( $lPIDName, $this->HasActionInput($Action) );    
         }
-
 
 
 
@@ -200,6 +210,7 @@ class FreeAtHomeDevice extends IPSModule
         }
         return $this->sendData($command, $Value);
     }
+
 
     public function SwitchMode(bool $Value)
     {
@@ -412,6 +423,14 @@ class FreeAtHomeDevice extends IPSModule
 
     public function RequestAction($Ident, $Value)
     {
+     
+        // Daten empfangen
+        $this->SendDebug(__FUNCTION__, $Ident.' => '.$Value, 0);
+
+
+        return;
+
+
         switch ($Ident) {
             case 'HUE_State':
                 $result = $this->SwitchMode($Value);
