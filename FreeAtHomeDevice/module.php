@@ -155,6 +155,8 @@ class FreeAtHomeDevice extends IPSModule
 
     public function ReceiveData($JSONString)
     {
+        IPS_LogMessage( $this->InstanceID, __FUNCTION__.": ".$JSONString );
+
         $this->SendDebug(__FUNCTION__ . ' Device Type', $this->ReadPropertyString('DeviceType'), 0);
         $this->SendDebug(__FUNCTION__ . ' Device ID', $this->ReadPropertyString('FAHDeviceID'), 0);
         $this->SendDebug(__FUNCTION__, $JSONString, 0);
