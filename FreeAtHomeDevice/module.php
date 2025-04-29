@@ -172,8 +172,8 @@ class FreeAtHomeDevice extends IPSModule
         // Daten empfangen
         $this->SendDebug(__FUNCTION__ . ' DataReseived ', json_encode($lDataObj->{$lDeviceID}), 0);
 
-        $lChannel = IPS_GetProperty($id, 'Channel');
-        $lOutputs = json_decode( IPS_GetProperty($id, 'Outputs') );
+        $lChannel = $this->ReadPropertyString('Channel');
+        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
 
         foreach( $lOutputs as $lDatapoint => $lPairingID  )
         {
