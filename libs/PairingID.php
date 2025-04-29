@@ -406,7 +406,7 @@ class PID
 		{
 			if( $lVal['ID'] == $a_ID )
 			{
-				return $lVal['info'];
+				return $lVal['profile'];
 			}
 		}
 

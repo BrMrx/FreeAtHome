@@ -209,7 +209,7 @@ class FreeAtHomeBridge extends IPSModule
         $lData['DataID'] = self::mChildId;
         $lData['Buffer'] = json_encode($lDataObj);
 
-        $lData = json_encode($Data);
+        $lData = json_encode($lData);
         $this->SendDebug(__FUNCTION__ , 'send: '.$lData, 0);
    
         $lResultSend = $this->SendDataToChildren($lData);
