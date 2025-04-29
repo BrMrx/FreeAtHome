@@ -155,11 +155,7 @@ class FreeAtHomeDevice extends IPSModule
 
     public function ReceiveData($JSONString)
     {
-        IPS_LogMessage( $this->InstanceID, __FUNCTION__.": ".$JSONString );
-
         $lDeviceID = $this->ReadPropertyString('FAHDeviceID');
-        $this->SendDebug(__FUNCTION__ . ' Device ', $lDeviceID.':'.$this->ReadPropertyString('DeviceType'), 0);
-
         $lData = json_decode($JSONString );
         $lDataObj = json_decode($lData->Buffer );
 
@@ -170,7 +166,7 @@ class FreeAtHomeDevice extends IPSModule
         }
 
         // Daten empfangen
-        $this->SendDebug(__FUNCTION__ . ' DataReseived ', json_encode($lDataObj->{$lDeviceID}), 0);
+        $this->SendDebug(__FUNCTION__, json_encode($lDataObj->{$lDeviceID}), 0);
 
         $lChannel = $this->ReadPropertyString('Channel');
         $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
@@ -187,185 +183,12 @@ class FreeAtHomeDevice extends IPSModule
                     {
                         $lValueId = PID::GetName( $lPairingID );
 
-                        $this->SendDebug(__FUNCTION__ . ' NewDate ', $lValueId.' - '.$lValue, 0);
+                        $this->SendDebug(__FUNCTION__ , $lValueId.' => '.$lValue, 0);
                         $this->SetValue($lValueId, $lValue);
                     }
                 }
             }
         }                  
-
-
-        return;
-
-        $Data = json_decode($JSONString);
-        $Buffer = json_decode($Data->Buffer);
-
-        $this->SendDebug(__FUNCTION__ . ' Data Buffer', $Data->Buffer, 0);
-
-        $DeviceConfig = new stdClass();
-        $GroupState = new stdClass();
-
-        switch ($this->ReadPropertyString('DeviceType')) {
-            case 'groups':
-                if (property_exists($Buffer, 'Groups')) {
-                    if (property_exists($Buffer->Groups, $this->ReadPropertyString('FAHDeviceID'))) {
-                        if (property_exists($Buffer->Groups->{$this->ReadPropertyString('FAHDeviceID')}, 'action')) {
-                            $DeviceState = $Buffer->Groups->{$this->ReadPropertyString('FAHDeviceID')}->action;
-                            $GroupState = $Buffer->Groups->{$this->ReadPropertyString('FAHDeviceID')}->state;
-                        }
-                    } else {
-                        if ($this->ReadPropertyString('FAHDeviceID') == 0) {
-                            $this->SendDebug('Group 0', 'No Data', 0);
-                            return;
-                        }
-                        $this->LogMessage('Group Device ID: ' . $this->ReadPropertyString('FAHDeviceID') . ' invalid', 10204);
-                        return;
-                    }
-                }
-                break;
-
-            case 'lights':
-                if (property_exists($Buffer, 'Lights')) {
-                    if (property_exists($Buffer->Lights, $this->ReadPropertyString('FAHDeviceID'))) {
-                        if (property_exists($Buffer->Lights->{$this->ReadPropertyString('FAHDeviceID')}, 'state')) {
-                            $DeviceState = $Buffer->Lights->{$this->ReadPropertyString('FAHDeviceID')}->state;
-                        }
-                        if (property_exists($Buffer->Lights->{$this->ReadPropertyString('FAHDeviceID')}, 'config')) {
-                            $DeviceConfig = $Buffer->Lights->{$this->ReadPropertyString('FAHDeviceID')}->config;
-                        }
-                    } else {
-                        $this->LogMessage('Device ID: ' . $this->ReadPropertyString('FAHDeviceID') . ' invalid', 10204);
-                        return;
-                    }
-                }
-                break;
-            case 'plugs':
-                if (property_exists($Buffer, 'Lights')) {
-                    if (property_exists($Buffer->Lights, $this->ReadPropertyString('FAHDeviceID'))) {
-                        if (property_exists($Buffer->Lights->{$this->ReadPropertyString('FAHDeviceID')}, 'state')) {
-                            $DeviceState = $Buffer->Lights->{$this->ReadPropertyString('FAHDeviceID')}->state;
-                        }
-                        if (property_exists($Buffer->Lights->{$this->ReadPropertyString('FAHDeviceID')}, 'config')) {
-                            $DeviceConfig = $Buffer->Lights->{$this->ReadPropertyString('FAHDeviceID')}->config;
-                        }
-                    } else {
-                        $this->LogMessage('Device ID: ' . $this->ReadPropertyString('FAHDeviceID') . ' invalid', 10204);
-                        return;
-                    }
-                }
-                break;
-            case 'sensors':
-                if (property_exists($Buffer, 'Sensors')) {
-                    if (property_exists($Buffer->Sensors, $this->ReadPropertyString('FAHDeviceID'))) {
-                        if (property_exists($Buffer->Sensors->{$this->ReadPropertyString('FAHDeviceID')}, 'state')) {
-                            $DeviceState = $Buffer->Sensors->{$this->ReadPropertyString('FAHDeviceID')}->state;
-                        }
-                        if (property_exists($Buffer->Sensors->{$this->ReadPropertyString('FAHDeviceID')}, 'config')) {
-                            $DeviceConfig = $Buffer->Sensors->{$this->ReadPropertyString('FAHDeviceID')}->config;
-                        }
-                    } else {
-                        $this->LogMessage('Device ID: ' . $this->ReadPropertyString('FAHDeviceID') . ' invalid', 10204);
-                        return;
-                    }
-                }
-                break;
-
-            default:
-                $this->SendDebug(__FUNCTION__, 'Invalid Device Type', 0);
-                return;
-        }
-
-        //Convert XY to RGB an set Color if Color Lamp
-        if (property_exists($DeviceState, 'xy')) {
-            if ($DeviceState->bri == 0) {
-                $brightness = 1;
-            } else {
-                $brightness = $DeviceState->bri;
-            }
-            $RGB = $this->convertXYToRGB($DeviceState->xy[0], $DeviceState->xy[1], $brightness);
-            $Color = $RGB['red'] * 256 * 256 + $RGB['green'] * 256 + $RGB['blue'];
-            $this->SetValue('HUE_Color', $Color);
-        }
-
-        if ($this->ReadPropertyBoolean('GroupStateAnyOn')) {
-            if (property_exists($GroupState, 'any_on')) {
-                $this->SetValue('HUE_State', $GroupState->any_on);
-            }
-        } else {
-            if (property_exists($DeviceState, 'on')) {
-                $this->SetValue('HUE_State', $DeviceState->on);
-            }
-        }
-        if (property_exists($DeviceState, 'bri')) {
-            if ($DeviceState->on) {
-                if ($DeviceState->bri == 0) {
-                    $this->SetValue('HUE_Brightness', 1);
-                } else {
-                    $this->SetValue('HUE_Brightness', $DeviceState->bri);
-                }
-            } else {
-                $this->SetValue('HUE_Brightness', -1);
-            }
-        }
-        if (property_exists($DeviceState, 'sat')) {
-            $this->SetValue('HUE_Saturation', $DeviceState->sat);
-        }
-        if (property_exists($DeviceState, 'ct')) {
-            $this->SetValue('HUE_ColorTemperature', $DeviceState->ct);
-
-            if ($this->ReadPropertyBoolean('KelvinActive')) {
-                $this->SetValue('HUE_ColorTemperatureKelvin', 1000000 / $DeviceState->ct);
-            }
-        }
-        if (@$this->GetIDForIdent('HUE_ColorMode') != false) {
-            if (property_exists($DeviceState, 'colormode')) {
-                switch ($DeviceState->colormode) {
-                case 'xy':
-                    $this->SetValue('HUE_ColorMode', 0);
-                    break;
-                case 'hs':
-                    $this->SetValue('HUE_ColorMode', 0);
-                    break;
-                case 'ct':
-                    $this->SetValue('HUE_ColorMode', 1);
-                    break;
-                default:
-                    $this->LogMessage('Invalid ColorMode: ' . $DeviceState->colormode, 10204);
-                    break;
-                }
-            }
-        }
-
-        if (property_exists($DeviceState, 'presence')) {
-            $this->SetValue('HUE_Presence', $DeviceState->presence);
-            if (property_exists($DeviceConfig, 'on')) {
-                $this->SetValue('HUE_PresenceState', $DeviceConfig->on);
-            }
-        }
-        if (property_exists($DeviceConfig, 'battery')) {
-            $this->SetValue('HUE_Battery', $DeviceConfig->battery);
-        }
-        if (property_exists($DeviceConfig, 'reachable')) {
-            $this->SetValue('HUE_Reachable', $DeviceConfig->reachable);
-        }
-        if (property_exists($DeviceState, 'reachable')) {
-            $this->SetValue('HUE_Reachable', $DeviceState->reachable);
-        }
-        if (property_exists($DeviceState, 'lightlevel')) {
-            $this->SetValue('HUE_Lightlevel', intval(pow(10, $DeviceState->lightlevel / 10000)));
-        }
-        if (property_exists($DeviceState, 'dark')) {
-            $this->SetValue('HUE_Dark', $DeviceState->dark);
-        }
-        if (property_exists($DeviceState, 'daylight')) {
-            $this->SetValue('HUE_Daylight', $DeviceState->daylight);
-        }
-        if (property_exists($DeviceState, 'temperature')) {
-            $this->SetValue('HUE_Temperature', $DeviceState->temperature / 100);
-        }
-        if (property_exists($DeviceState, 'buttonevent')) {
-            $this->SetValue('HUE_Buttonevent', $DeviceState->buttonevent);
-        }
     }
 
     public function Request(array $Value)
