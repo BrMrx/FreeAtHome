@@ -443,7 +443,7 @@ class FreeAtHomeDevice extends IPSModule
 
                    // PUT Datapoint Value
                    // {$lDeviceID}.{$lChannel}.{$lDatapoint}
-                   $this->SendDebug(__FUNCTION__, $lDeviceID.$lChannel.$lDatapoint' => '.$Value, 0);
+                   $this->SendDebug(__FUNCTION__, $lDeviceID.$lChannel.$lDatapoint.' => '.$Value, 0);
                    
                 }
             }
