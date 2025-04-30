@@ -457,6 +457,7 @@ class FreeAtHomeDevice extends IPSModule
                         }
                    }     
 
+                   IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.__LINE__.")" );
                    // PUT Datapoint Value
                    // {$lDeviceID}.{$lChannel}.{$lDatapoint}
                    $lSendData = [ 'datapoint' => $lDatapoint, 'value' => $SendValue ];
