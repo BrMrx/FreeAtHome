@@ -198,7 +198,8 @@ class FreeAtHomeDevice extends IPSModule
             $lDataObj[$lRequestArray[0]][$lRequestArray[1]][$lRequestArray[2]] = $lValue;
 
         }
-
+        $this->SendDebug(__FUNCTION__, json_encode($lDataObj), 0);
+ 
         $lData['DataID'] = self::mChildId;
         $lData['Buffer'] = json_encode($lDataObj);
 
