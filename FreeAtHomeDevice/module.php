@@ -253,7 +253,7 @@ class FreeAtHomeDevice extends IPSModule
             return;
         }
 
-        do_ReseiveData( $lDataObj );
+        $this->do_ReseiveData( $lDataObj );
         return;
 
         // Daten empfangen
