@@ -441,7 +441,7 @@ class FreeAtHomeDevice extends IPSModule
                    $lDeviceID = $this->ReadPropertyString('FAHDeviceID');
                    $lChannel = $this->ReadPropertyString('Channel');
 
-                   $lDataType = PID::GetID( $lSettings['type'] );
+                   $lDataType = $lSettings['type'];
 
                    $SendValue = strval( $Value);
                    if( $lDataType == 0 )
