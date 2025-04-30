@@ -181,7 +181,7 @@ class FreeAtHomeDevice extends IPSModule
             $lSettings = PID::GetSettingsByID( $lPairingID );
             if( $lSettings['info'] == 'State' && $lSettings['action'] != '' && $lSettings['type'] == 0 )
             {
-                RequestAction( PID::GetName($lPairingID), $Value );
+                $this->RequestAction( PID::GetName($lPairingID), $Value );
                 return true;
             }
         }                  
@@ -198,7 +198,7 @@ class FreeAtHomeDevice extends IPSModule
             $lSettings = PID::GetSettingsByID( $lPairingID );
             if( $lSettings['info'] == 'State' && $lSettings['action'] != '' && $lSettings['type'] == 1 )
             {
-                RequestAction( PID::GetName($lPairingID), $Value );
+                $this->RequestAction( PID::GetName($lPairingID), $Value );
                 return true;
             }
         }                  
