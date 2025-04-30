@@ -68,12 +68,16 @@ class FreeAtHomeBridge extends IPSModule
             case 'setDatapoint':
                 $lGUID          = $this->ReadPropertyString("SysAP_GUID");
                 $DeviceID       = $data->Buffer->DeviceID;
+                $this->SendDebug(__FUNCTION__, $DeviceID, 0);
                 $lChannel       = $data->Buffer->Channel;
+                $this->SendDebug(__FUNCTION__, $lChannel, 0);
                 $lParameters    = json_decode($data->Buffer->Params);
                 $lDatapoint     = $lParameters->datapoint;
+                $this->SendDebug(__FUNCTION__, $lDatapoint, 0);
                 $lEndpoint = 'datapoint/'.$lGUID.'/'.$DeviceID.'.'.$lChannel.'.'.$lDatapoint;
-                $lParams = ''.$lParameters->value;
-                $this->SendDebug(__FUNCTION__, $lEndpoint.' => '.$lParams), 0);
+                $this->SendDebug(__FUNCTION__, $lEndpoint, 0);
+                $lParams[] = ''.$lParameters->value;
+                $this->SendDebug(__FUNCTION__, json_encode($lParams), 0);
                 $lResult = $this->sendRequest( $lEndpoint, $lParams, 'PUT' );
                 break;
 
@@ -291,7 +295,7 @@ class FreeAtHomeBridge extends IPSModule
         return $this->sendRequest( 'scenes', [], 'GET');
     }
 
-    private function sendRequest( string $endpoint, string $params = '', string $method = 'GET')
+    private function sendRequest( string $endpoint, array $params = [], string $method = 'GET')
     {
         $this->SendDebug(__FUNCTION__ . ' endpoint', $endpoint, 0);
         if ($this->ReadPropertyString('Host') == '') {
@@ -340,7 +344,7 @@ class FreeAtHomeBridge extends IPSModule
             if (in_array($method, ['PUT', 'DELETE'])) {
                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
             }
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $params[0] );
         }
 
         $apiResult = curl_exec($ch);
