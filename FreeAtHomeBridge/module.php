@@ -59,19 +59,23 @@ class FreeAtHomeBridge extends IPSModule
 
     public function ForwardData($JSONString)
     {
-         $this->SendDebug(__FUNCTION__, $JSONString, 0);
+        $this->SendDebug(__FUNCTION__, $JSONString, 0);
         $data = json_decode($JSONString);
         switch ($data->Buffer->Command) {
             case 'getAllDevices':
                 $result = $this->getAllDevices();
                 break;
             case 'setDatapoint':
-                $lGUID = $this->ReadPropertyString("SysAP_GUID");
+                $lGUID          = $this->ReadPropertyString("SysAP_GUID");
                 $DeviceID       = $data->Buffer->DeviceID;
+                $this->SendDebug(__FUNCTION__, $DeviceID, 0);
                 $lChannel       = $data->Buffer->Channel;
+                $this->SendDebug(__FUNCTION__, $lChannel, 0);
                 $lParameters    = json_decode($data->Buffer->Params);
                 $lDatapoint     = $lParameters->datapoint;
+                $this->SendDebug(__FUNCTION__, $lDatapoint, 0);
                 $lEndpoint = 'datapoint/'.$lGUID.'/'.$DeviceID.'.'.$lChannel.'.'.$lDatapoint;
+                $this->SendDebug(__FUNCTION__, $lEndpoint, 0);
                 $lResult = $this->sendRequest( $lEndpoint, $lParameters->value, 'PUT' );
                 break;
 
