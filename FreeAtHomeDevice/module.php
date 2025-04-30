@@ -194,23 +194,6 @@ class FreeAtHomeDevice extends IPSModule
         {
             $lRequestArray = explode('.',$lRequest);
 
-            if( !isset($lDevices->{$lRequestArray[0]}) )
-            {
-                $this->SendDebug(__FUNCTION__, 'device not found', 0);
-                return;
-            }
-
-             if( !isset( $lDevices->{$lRequestArray[0]}->channels ) )
-            {
-                $this->SendDebug(__FUNCTION__, 'channels not found', 0);
-                return;
-            }
-
-            if( !isset( $lDevices->{$lRequestArray[0]}->channels->{$lRequestArray[1]} ) )
-            {
-                $this->SendDebug(__FUNCTION__, 'channel not found', 0);
-                return;
-            }
             $lValue = $lDevices->{$lRequestArray[0]}->channels->{$lRequestArray[1]}->outputs->{$lRequestArray[2]}->value;
 
             $lDataObj[$lRequestArray[0]][$lRequestArray[1]][$lRequestArray[2]] = $lValue;
@@ -533,8 +516,8 @@ class FreeAtHomeDevice extends IPSModule
 
              if( $lbPollData )
             {
-                 $this->SendDebug(__FUNCTION__,'update data',0 );
-
+                sleep(1);
+                $this->SendDebug(__FUNCTION__,'update data',0 );
                 $lResult = $this->sendData('getDevice' );
                 $this->AssignData( $lResult );
                 $this->SendDebug(__FUNCTION__,json_encode($lResult),0 );
