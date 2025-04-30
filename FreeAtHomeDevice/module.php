@@ -554,7 +554,7 @@ class FreeAtHomeDevice extends IPSModule
 
              if( $lbPollData )
             {
-                sleep(1);
+                sleep(2);
                 $this->SendDebug(__FUNCTION__,'update data',0 );
                 $lResult = $this->sendData('getDevice' );
                 $this->AssignData( $lResult );
