@@ -83,6 +83,11 @@ class FreeAtHomeBridge extends IPSModule
                 $lEndpoint = 'device/'.$lGUID.'/'.$DeviceID;
                 $this->SendDebug(__FUNCTION__.' - '.$data->Buffer->Command, $lEndpoint, 0);
                 $result = $this->sendRequest( $lEndpoint );
+                // nur das geforderte device zurückliefern
+                if( isset($result->{$lGUID}->devices) )
+                {
+                    $result = $result->{$lGUID}->devices;
+                }
                 break;
     
             case 'getLightState':
