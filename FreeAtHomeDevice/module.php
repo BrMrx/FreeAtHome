@@ -217,7 +217,7 @@ class FreeAtHomeDevice extends IPSModule
         // beim Wert 0  Lampa direkt ausschalten
         if( $Value == 0 )
         {
-            return SetState( false );
+            return $this->SetState( false );
         }
 
         $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
