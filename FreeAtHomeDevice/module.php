@@ -200,6 +200,12 @@ class FreeAtHomeDevice extends IPSModule
                 return;
             }
 
+            if( !isset( $lDevices->{$lRequestArray[0]}->channels ) )
+            {
+                $this->SendDebug(__FUNCTION__, 'channels not found', 0);
+                return;
+            }
+
             if( !isset( $lDevices->{$lRequestArray[0]}->channels->{$lRequestArray[1]} ) )
             {
                 $this->SendDebug(__FUNCTION__, 'channel not found', 0);
