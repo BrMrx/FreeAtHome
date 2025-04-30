@@ -141,13 +141,21 @@ class FreeAtHomeBridge extends IPSModule
         foreach( $lListRequest as $lRequest )
         {
             $lRequestArray = explode('.',$lRequest);
-
-            $lValue = $lDevices->{$lRequestArray[0]}->channels->{$lRequestArray[1]}->outputs->{$lRequestArray[2]}->value;
-
-            $lDataObj[$lRequestArray[0]][$lRequestArray[1]][$lRequestArray[2]] = $lValue;
-
+            if( isset($lDevices->{$lRequestArray[0]}))
+            {
+                $lValue = $lDevices->{$lRequestArray[0]}->channels->{$lRequestArray[1]}->outputs->{$lRequestArray[2]}->value;
+                $lUnresponsive = $lDevices->{$lRequestArray[0]}->unresponsive;
+                $ldisplayName = $lDevices->{$lRequestArray[0]}->displayName;
+                $lDataObj[$lRequestArray[0]][$lRequestArray[1]][$lRequestArray[2]] = $lValue;
+                $lDataObj[$lRequestArray[0]]['unresponsive'] = $lUnresponsive;
+                $lDataObj[$lRequestArray[0]]['displayName'] = $ldisplayName;
+            }  
+            else
+            {
+                $lDataObj[$lRequestArray[0]]['unresponsive'] = true; 
+            }      
         }
-
+ 
         $lData['DataID'] = self::mChildId;
         $lData['Buffer'] = json_encode($lDataObj);
 

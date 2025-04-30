@@ -196,7 +196,7 @@ class FreeAtHomeDevice extends IPSModule
         foreach( $lOutputs as $lDatapoint => $lPairingID  )
         {
             $lSettings = PID::GetSettingsByID( $lPairingID );
-            if( $lSettings['info'] == 'State' && $lSettings['action'] != '' && $lSettings['type'] == 1 )
+            if( $lSettings['info'] == 'Brightness' && $lSettings['action'] != '' && $lSettings['type'] == 1 )
             {
                 $this->RequestAction( PID::GetName($lPairingID), $Value );
                 return true;
