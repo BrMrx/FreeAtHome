@@ -5,8 +5,9 @@
 
 ## ACHTUNG 
 
-**Der Treiber ist noch nicht lauffähig und befindet sich noch in der Entwicklung!!**
+** Der Treiber ist bereits lauffähig, befindet sich aber noch in der Entwicklung!!**
 
+es werden bisher nur wireless Aktoren und Dimmer Aktoren unterstützt
 
 ## Beschreibung
 
@@ -17,13 +18,13 @@ Dieses Modul ermöglicht die Integration von Busch-Jaeger free@home in IP-Symcon
 
 - Gruppierter Konfigurator für:
   - free@home Geräte
-  - Szenen
-  - Hue-Komponenten
+  - Szenen  ( in Planung)
+  - Hue-Komponenten (In Planung)
 - Automatische Variablenanlage mit passenden Profilen
-- Echtzeit-Aktualisierung über WebSocket
-- Synchronisation mit SysAP (verwaiste Instanzen werden markiert)
-- Unterstützung mehrerer Instanztypen
-- Unterstützung von Szenentriggern
+- Echtzeit-Aktualisierung über WebSocket (in Planung - derzeit zyklisch)
+- Synchronisation mit SysAP 
+  - verwaiste Instanzen werden markiert
+  - Umbenennungen werden nachgezogen
 
 ## Installation
 

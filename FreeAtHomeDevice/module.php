@@ -138,7 +138,7 @@ class FreeAtHomeDevice extends IPSModule
 
         if( isset( $lDataObj->{$lDeviceID}->unresponsive ) )
         {
-            $this->SendDebug(__FUNCTION__, 'unresponsive: '.$lDataObj->{$lDeviceID}->unresponsive, 0);
+            $this->SendDebug(__FUNCTION__, 'unresponsive: '.strval($lDataObj->{$lDeviceID}->unresponsive), 0);
             if( $lDataObj->{$lDeviceID}->unresponsive )
             {
                 $this->SetStatus(200);
@@ -154,7 +154,7 @@ class FreeAtHomeDevice extends IPSModule
                     $lDataObj->{$lDeviceID}->displayName != IPS_GetName( $this->InstanceID) )
         {
             $this->SendDebug(__FUNCTION__, 'displayName: '.$lDataObj->{$lDeviceID}->displayName, 0);
-            IPS_LogMessage( $this->InstanceID, 'device name changed '.IPS_GetName( $this->InstanceID).' => '.$lDataObj->{$lDeviceID}->displayName );
+            IPS_LogMessage( $this->InstanceID, 'device name changed "'.IPS_GetName( $this->InstanceID).'" => "'.$lDataObj->{$lDeviceID}->displayName.'"' );
             IPS_SetName( $this->InstanceID, $lDataObj->{$lDeviceID}->displayName );
         }
 
@@ -208,11 +208,18 @@ class FreeAtHomeDevice extends IPSModule
             }
         }                  
 
+        IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).") not supported" );
         return false;
     }
    
     public function SetBrightness( int $Value )
     {
+        // beim Wert 0  Lampa direkt ausschalten
+        if( $Value == 0 )
+        {
+            return SetState( false );
+        }
+
         $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
 
         foreach( $lOutputs as $lDatapoint => $lPairingID  )
@@ -224,6 +231,8 @@ class FreeAtHomeDevice extends IPSModule
                 return true;
             }
         }                  
+
+        IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).") not supported" );
         return false;
     }
 
