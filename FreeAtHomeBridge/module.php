@@ -76,7 +76,9 @@ class FreeAtHomeBridge extends IPSModule
                 $this->SendDebug(__FUNCTION__, $lDatapoint, 0);
                 $lEndpoint = 'datapoint/'.$lGUID.'/'.$DeviceID.'.'.$lChannel.'.'.$lDatapoint;
                 $this->SendDebug(__FUNCTION__, $lEndpoint, 0);
-                $lResult = $this->sendRequest( $lEndpoint, $lParameters->value, 'PUT' );
+                $lParams[] = $lParameters->value;
+                $this->SendDebug(__FUNCTION__, json_encode($lParams), 0);
+                $lResult = $this->sendRequest( $lEndpoint, $lParams, 'PUT' );
                 break;
 
             case 'getLightState':
