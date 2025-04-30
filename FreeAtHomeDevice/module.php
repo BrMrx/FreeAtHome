@@ -438,13 +438,28 @@ class FreeAtHomeDevice extends IPSModule
             {
                 if( $lActionPID == $lPairingId )
                 {
-                    $lDeviceID = $this->ReadPropertyString('FAHDeviceID');
-                    $lChannel = $this->ReadPropertyString('Channel');
+                   $lDeviceID = $this->ReadPropertyString('FAHDeviceID');
+                   $lChannel = $this->ReadPropertyString('Channel');
+
+                   $lDataType = PID::GetID( $lSettings['type'] );
+
+                   $SendValue = strval( $Value);
+                   if( $lDataType == 0 )
+                   {
+                        if( $Value == true)
+                        {
+                            $SendValue = '1'; 
+                        }
+                        else
+                        {
+                            $SendValue = '0'; 
+                        }
+                   }     
 
                    // PUT Datapoint Value
                    // {$lDeviceID}.{$lChannel}.{$lDatapoint}
                    $this->SendDebug(__FUNCTION__, $lDeviceID.'.'.$lChannel.'.'.$lDatapoint.' => '.$Value, 0);
-                   $lSendData = [ 'datapoint' => $lDatapoint, 'value' => $Value ];
+                   $lSendData = [ 'datapoint' => $lDatapoint, 'value' => $SendValue ];
                    $this->sendData('setDatapoint', json_encode($lSendData) );
                 }
             }
