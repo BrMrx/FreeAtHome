@@ -136,6 +136,26 @@ class FreeAtHomeDevice extends IPSModule
         $lChannel = $this->ReadPropertyString('Channel');
         $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
 
+        if( isset( $lDataObj->{$lDeviceID}->unresponsive ) )
+        {
+            $this->SendDebug(__FUNCTION__, 'unresponsive: '.$lDataObj->{$lDeviceID}->unresponsive, 0);
+            if( $lDataObj->{$lDeviceID}->unresponsive )
+            {
+                $this->SetStatus(200);
+                IPS_LogMessage( $this->InstanceID, 'device '.$lDeviceID.' is unresponsiv' );
+            }
+            else
+            {
+                $this->SetStatus(102);
+            }
+        }
+        if( isset( $lDataObj->{$lDeviceID}->displayName != IPS_GetName( $this->InstanceID) ) )
+        {
+            $this->SendDebug(__FUNCTION__, 'displayName: '.$lDataObj->{$lDeviceID}->displayName, 0);
+            IPS_LogMessage( $this->InstanceID, 'device name changed '.IPS_GetName( $this->InstanceID).' => '.$lDataObj->{$lDeviceID}->displayName );
+            IPS_SetName( $this->InstanceID, $lDataObj->{$lDeviceID}->displayName );
+        }
+
         foreach( $lOutputs as $lDatapoint => $lPairingID  )
         {
             if( isset( $lDataObj->{$lDeviceID}->{$lChannel} ))
