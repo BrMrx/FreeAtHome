@@ -68,19 +68,23 @@ class FreeAtHomeBridge extends IPSModule
             case 'setDatapoint':
                 $lGUID          = $this->ReadPropertyString("SysAP_GUID");
                 $DeviceID       = $data->Buffer->DeviceID;
-                $this->SendDebug(__FUNCTION__, $DeviceID, 0);
                 $lChannel       = $data->Buffer->Channel;
-                $this->SendDebug(__FUNCTION__, $lChannel, 0);
                 $lParameters    = json_decode($data->Buffer->Params);
                 $lDatapoint     = $lParameters->datapoint;
-                $this->SendDebug(__FUNCTION__, $lDatapoint, 0);
                 $lEndpoint = 'datapoint/'.$lGUID.'/'.$DeviceID.'.'.$lChannel.'.'.$lDatapoint;
-                $this->SendDebug(__FUNCTION__, $lEndpoint, 0);
                 $lParams[] = $lParameters->value;
-                $this->SendDebug(__FUNCTION__, json_encode($lParams), 0);
+                $this->SendDebug(__FUNCTION__.' - '.$data->Buffer->Command, $lEndpoint.' => '.json_encode($lParams), 0);
                 $result = $this->sendRequest( $lEndpoint, $lParams, 'PUT' );
                 break;
 
+            case 'getDevice':
+                $lGUID          = $this->ReadPropertyString("SysAP_GUID");
+                $DeviceID       = $data->Buffer->DeviceID;
+                $lEndpoint = 'device/'.$lGUID.'/'.$DeviceID;
+                $this->SendDebug(__FUNCTION__.' - '.$data->Buffer->Command, $lEndpoint, 0);
+                $result = $this->sendRequest( $lEndpoint );
+                break;
+    
             case 'getLightState':
                 $DeviceID = $data->Buffer->DeviceID;
                 $result = $this->getLight($DeviceID);
