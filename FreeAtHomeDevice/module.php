@@ -462,13 +462,16 @@ class FreeAtHomeDevice extends IPSModule
                    $lSendData = [ 'datapoint' => $lDatapoint, 'value' => $SendValue ];
                    $lResult = $this->sendData('setDatapoint', json_encode($lSendData) );
                    $this->SendDebug(__FUNCTION__,json_encode($lResult) );
+                   IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.__LINE__.")" );
 
                    $lbPollData = true;
                 }
             }
 
+            IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.__LINE__.")" );
             if( $lbPollData )
             {
+                IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.__LINE__.")" );
                 $this->SendDebug(__FUNCTION__,'update data' );
 
                 $lResult = $this->sendData('getDevice' );
