@@ -372,6 +372,17 @@ class PID
 		}
 		return array();
 	}
+	public static function GetSettingsByID( $a_ID )
+	{
+		foreach( self::mMapPairingID as $lName => $lVal )
+		{
+			if( $lVal['ID'] == $a_ID )
+			{
+				return $lVal;
+			}
+		}
+		return array();
+	}
 
 	public static function GetName( $a_ID )
     {
