@@ -201,12 +201,44 @@ class FreeAtHomeDevice extends IPSModule
         }
         $this->SendDebug(__FUNCTION__, json_encode($lDataObj), 0);
  
-        $lData['DataID'] = self::mChildId;
-        $lData['Buffer'] = json_encode($lDataObj);
+        do_ReseiveData($lDataObj);
+     }
 
-        $lData = json_encode($lData);
-        // Über Reseive Data weiterverarbeiten
-        ReceiveData($lData);
+    public function  do_ReseiveData(  $lDataObj  )
+    {
+        // Daten für dieses Device dabei
+        if(!isset( $lDataObj->{$lDeviceID} ))
+        {
+            // Daten empfangen
+            $this->SendDebug(__FUNCTION__, 'no device data found', 0);
+            return;
+        }
+
+        // Daten empfangen
+        $this->SendDebug(__FUNCTION__, json_encode($lDataObj->{$lDeviceID}), 0);
+
+        $lChannel = $this->ReadPropertyString('Channel');
+        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
+
+        foreach( $lOutputs as $lDatapoint => $lPairingID  )
+        {
+            if( isset( $lDataObj->{$lDeviceID}->{$lChannel} ))
+            {
+                $lChannelData = $lDataObj->{$lDeviceID}->{$lChannel};
+
+                foreach( $lChannelData as $lDP => $lValue )
+                {
+                    if( $lDP == $lDatapoint )
+                    {
+                        $lValueId = PID::GetName( $lPairingID );
+
+                        $this->SendDebug(__FUNCTION__ , $lValueId.' => '.$lValue, 0);
+                        $this->SetValue($lValueId, $lValue);
+                    }
+                }
+            }
+        }                  
+      
     }
 
     public function ReceiveData($JSONString)
@@ -220,6 +252,9 @@ class FreeAtHomeDevice extends IPSModule
         {
             return;
         }
+
+        do_ReseiveData( $lDataObj );
+        return;
 
         // Daten empfangen
         $this->SendDebug(__FUNCTION__, json_encode($lDataObj->{$lDeviceID}), 0);
