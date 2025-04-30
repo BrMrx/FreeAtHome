@@ -206,8 +206,9 @@ class FreeAtHomeDevice extends IPSModule
 
     public function  do_ReseiveData(  $lDataObj  )
     {
+        $lDeviceID = $this->ReadPropertyString('FAHDeviceID');
         $lDataObj = (object)$lDataObj;
-        
+
         // Daten für dieses Device dabei
         if(!isset( $lDataObj->{$lDeviceID} ))
         {
