@@ -25,7 +25,7 @@ class FreeAtHomeDevice extends IPSModule
         $this->RegisterAttributeString('DeviceType', '');
     }
 
-    public function HasActionInput( string $a_Action )
+    protected function HasActionInput( string $a_Action )
     {
         // Variablen für alle Outputs (des Devises) anlegen
         $lInputs = json_decode( $this->ReadPropertyString('Inputs') );
@@ -78,7 +78,7 @@ class FreeAtHomeDevice extends IPSModule
     }
 
 
-    protected function GetOutputDataPointsOfDevices()
+    private function GetOutputDataPointsOfDevices()
     {    
         $lVectRet = array();
 
@@ -94,7 +94,7 @@ class FreeAtHomeDevice extends IPSModule
     }
 
 
-    public function  AssignData($lDevices)
+    private function  AssignData($lDevices)
     {
         $lDevices = json_decode(json_encode($lDevices));
         $this->SendDebug(__FUNCTION__, json_encode($lDevices), 0);
@@ -117,7 +117,7 @@ class FreeAtHomeDevice extends IPSModule
         do_ReseiveData($lDataObj);
      }
 
-    public function  do_ReseiveData(  $lDataObj  )
+    private  function  do_ReseiveData(  $lDataObj  )
     {
         $lDeviceID = $this->ReadPropertyString('FAHDeviceID');
         $lDataObj = (object)$lDataObj;
@@ -272,7 +272,6 @@ class FreeAtHomeDevice extends IPSModule
                         }
                    }     
 
-                   IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.__LINE__.")" );
                    // PUT Datapoint Value
                    // {$lDeviceID}.{$lChannel}.{$lDatapoint}
                    $lSendData = [ 'datapoint' => $lDatapoint, 'value' => $SendValue ];

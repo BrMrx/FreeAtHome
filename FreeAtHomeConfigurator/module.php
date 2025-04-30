@@ -604,9 +604,7 @@ class FreeAtHomeConfigurator extends IPSModule
             }
         }
 
-        IPS_LogMessage( $this->InstanceID, json_encode($lRetValue) );
-
-        return $lRetValue;
+         return $lRetValue;
  }
 
 
