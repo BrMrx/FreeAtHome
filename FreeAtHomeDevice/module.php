@@ -208,30 +208,36 @@ class FreeAtHomeDevice extends IPSModule
             }
         }                  
 
+        // Wert nicht gültig oder Funktion State nicht verfügbar
         IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).") not supported" );
         return false;
     }
    
     public function SetBrightness( int $Value )
     {
-        // beim Wert 0  Lampa direkt ausschalten
-        if( $Value == 0 )
+        // beim Wert 0 oder negativ Aktor direkt ausschalten
+        if( $Value <= 0 )
         {
             return $this->SetState( false );
         }
 
-        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
-
-        foreach( $lOutputs as $lDatapoint => $lPairingID  )
+        // Wert im gültigen Bereich
+        if( $Value <= 100 )
         {
-            $lSettings = PID::GetSettingsByID( $lPairingID );
-            if( $lSettings['info'] == 'Brightness' && $lSettings['action'] != '' && $lSettings['type'] == 1 )
-            {
-                $this->RequestAction( PID::GetName($lPairingID), $Value );
-                return true;
-            }
-        }                  
+            $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
 
+            foreach( $lOutputs as $lDatapoint => $lPairingID  )
+            {
+                $lSettings = PID::GetSettingsByID( $lPairingID );
+                if( $lSettings['info'] == 'Brightness' && $lSettings['action'] != '' && $lSettings['type'] == 1 )
+                {
+                    $this->RequestAction( PID::GetName($lPairingID), $Value );
+                    return true;
+                }
+            }                  
+        }
+
+        // Wert nicht gültig oder Funktion Brighness nicht verfügbar
         IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).") not supported" );
         return false;
     }
