@@ -183,7 +183,7 @@ class FreeAtHomeDevice extends IPSModule
 
     public function  AssignData($lDevices)
     {
-        $lDevices = (object)$lDevices;
+        $lDevices = json_decode(json_encode($lDevices));
         $this->SendDebug(__FUNCTION__, json_encode($lDevices), 0);
         $lListRequest = $this->GetOutputDataPointsOfDevices();
         $this->SendDebug(__FUNCTION__, json_encode($lListRequest), 0);
@@ -200,7 +200,7 @@ class FreeAtHomeDevice extends IPSModule
                 return;
             }
 
-            if( !isset( $lDevices->{$lRequestArray[0]}->channels ) )
+             if( !isset( $lDevices->{$lRequestArray[0]}->channels ) )
             {
                 $this->SendDebug(__FUNCTION__, 'channels not found', 0);
                 return;
