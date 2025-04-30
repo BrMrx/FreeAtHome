@@ -183,8 +183,10 @@ class FreeAtHomeDevice extends IPSModule
 
     public function  AssignData($lDevices)
     {
+        $this->SendDebug(__FUNCTION__, json_encode($lDevices), 0);
         $lListRequest = $this->GetOutputDataPointsOfDevices();
-        
+        $this->SendDebug(__FUNCTION__, json_encode($lListRequest), 0);
+       
         $lDataObj = array();
   
         foreach( $lListRequest as $lRequest )
