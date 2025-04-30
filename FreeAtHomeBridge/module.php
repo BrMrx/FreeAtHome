@@ -65,6 +65,16 @@ class FreeAtHomeBridge extends IPSModule
             case 'getAllDevices':
                 $result = $this->getAllDevices();
                 break;
+            case 'setDatapoint':
+                $lGUID = $this->ReadPropertyString("SysAP_GUID");
+                $DeviceID       = $data->Buffer->DeviceID;
+                $lChannel       = $data->Buffer->Channel;
+                $lParameters    = json_decode($data->Buffer->Params);
+                $lDatapoint     = $lParameters->datapoint;
+                $lEndpoint = 'datapoint/'.$lGUID.'/'.$DeviceID.'.'.$lChannel.'.'.$lDatapoint;
+                $lResult = $this->sendRequest( $lEndpoint, $lParameters->value, 'PUT' );
+                break;
+
             case 'getLightState':
                 $DeviceID = $data->Buffer->DeviceID;
                 $result = $this->getLight($DeviceID);

@@ -444,7 +444,8 @@ class FreeAtHomeDevice extends IPSModule
                    // PUT Datapoint Value
                    // {$lDeviceID}.{$lChannel}.{$lDatapoint}
                    $this->SendDebug(__FUNCTION__, $lDeviceID.'.'.$lChannel.'.'.$lDatapoint.' => '.$Value, 0);
-                   
+                   $lSendData = [ 'datapoint' => $lDatapoint, 'value' => $Value ];
+                   $this->sendData('setDatapoint', json_encode($lSendData) );
                 }
             }
         }
@@ -657,16 +658,13 @@ class FreeAtHomeDevice extends IPSModule
 
     private function sendData(string $command, $params = '')
     {
-        $DeviceType = $this->ReadPropertyString('DeviceType');
-        //Wenn DeviceType "plugs" ist Typ auf "lights" setzen, damit der Endpoint der API stimmt.
-        if ($this->ReadPropertyString('DeviceType') == 'plugs') {
-            $DeviceType = 'lights';
-        }
+        $lDeviceID = $this->ReadPropertyString('FAHDeviceID');
+        $lChannel = $this->ReadPropertyString('Channel');
 
         $Data['DataID'] = self::mBridgeDataId;
         $Buffer['Command'] = $command;
-        $Buffer['DeviceID'] = $this->ReadPropertyString('FAHDeviceID');
-        $Buffer['Endpoint'] = $DeviceType;
+        $Buffer['DeviceID'] = $lDeviceID;
+        $Buffer['Channel'] = $lChannel;
         $Buffer['Params'] = $params;
         $Data['Buffer'] = $Buffer;
         $Data = json_encode($Data);
