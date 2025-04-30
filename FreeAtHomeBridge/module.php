@@ -295,13 +295,17 @@ class FreeAtHomeBridge extends IPSModule
 
     private function sendRequest( string $endpoint, array $params = [], string $method = 'GET')
     {
+        $this->SendDebug(__FUNCTION__ . ' endpoint', $endpoint, 0);
         if ($this->ReadPropertyString('Host') == '') {
+            $this->SendDebug(__FUNCTION__ ,'host missing', 0);
             return false;
         }
         if ($this->ReadPropertyString('Username') == '') {
+            $this->SendDebug(__FUNCTION__ ,'username missing', 0);
             return false;
         }
         if ($this->ReadPropertyString('Password') == '') {
+            $this->SendDebug(__FUNCTION__ ,'password missing', 0);
             return false;
         }
 
@@ -335,10 +339,10 @@ class FreeAtHomeBridge extends IPSModule
             if ($method == 'POST') {
                 curl_setopt($ch, CURLOPT_POST, true);
             }
-//           if (in_array($method, ['PUT', 'DELETE'])) {
-//               curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
-//           }
-//           curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($params));
+            if (in_array($method, ['PUT', 'DELETE'])) {
+               curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+            }
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($params));
         }
 
         $apiResult = curl_exec($ch);
