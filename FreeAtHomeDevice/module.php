@@ -427,6 +427,7 @@ class FreeAtHomeDevice extends IPSModule
         // Daten empfangen
         $this->SendDebug(__FUNCTION__, $Ident.' => '.$Value, 0);
 
+        $lbPollData=false;
         $lSettings = PID::GetSettings($Ident);
         if( isset($lSettings['action']) )
         {
@@ -462,11 +463,18 @@ class FreeAtHomeDevice extends IPSModule
                    $lResult = $this->sendData('setDatapoint', json_encode($lSendData) );
                    $this->SendDebug(__FUNCTION__,json_encode($lResult) );
 
-                   $lResult = $this->sendData('getDevice' );
-                   $this->SendDebug(__FUNCTION__,json_encode($lResult) );
-
+                   $lbPollData = true;
                 }
             }
+
+            if( $lbPollData )
+            {
+                $this->SendDebug(__FUNCTION__,'update data' );
+
+                $lResult = $this->sendData('getDevice' );
+                $this->SendDebug(__FUNCTION__,json_encode($lResult) );
+            }
+
         }
 
 
