@@ -170,45 +170,40 @@ class FreeAtHomeDevice extends IPSModule
         }
 
         $this->do_ReseiveData( $lDataObj );
-        return;
+    }
 
-        // Daten empfangen
-        $this->SendDebug(__FUNCTION__, json_encode($lDataObj->{$lDeviceID}), 0);
-
-        $lChannel = $this->ReadPropertyString('Channel');
+    public function SetState( bool $Value )
+    {
         $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
 
         foreach( $lOutputs as $lDatapoint => $lPairingID  )
         {
-            if( isset( $lDataObj->{$lDeviceID}->{$lChannel} ))
+            $lSettings = PID::GetSettingsByID( $lPairingID );
+            if( $lSettings['info'] == 'State' && $lSettings['action'] != '' && $lSettings['type'] == 0 )
             {
-                $lChannelData = $lDataObj->{$lDeviceID}->{$lChannel};
-
-                foreach( $lChannelData as $lDP => $lValue )
-                {
-                    if( $lDP == $lDatapoint )
-                    {
-                        $lValueId = PID::GetName( $lPairingID );
-
-                        $this->SendDebug(__FUNCTION__ , $lValueId.' => '.$lValue, 0);
-                        $this->SetValue($lValueId, $lValue);
-                    }
-                }
+                RequestAction( PID::GetName($lPairingID), $Value );
+                return true;
             }
         }                  
-    }
 
-    public function Request(array $Value)
+        return false;
+    }
+   
+    public function SetBrightness( int $Value )
     {
-        if ($this->ReadPropertyString('DeviceType') == 'groups') {
-            $command = 'action';
-        } else {
-            $command = 'state';
-        }
-        return $this->sendData($command, $Value);
+        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
+
+        foreach( $lOutputs as $lDatapoint => $lPairingID  )
+        {
+            $lSettings = PID::GetSettingsByID( $lPairingID );
+            if( $lSettings['info'] == 'State' && $lSettings['action'] != '' && $lSettings['type'] == 1 )
+            {
+                RequestAction( PID::GetName($lPairingID), $Value );
+                return true;
+            }
+        }                  
+        return false;
     }
-
-
 
     public function RequestAction($Ident, $Value)
     {
@@ -268,6 +263,8 @@ class FreeAtHomeDevice extends IPSModule
         }
 
     }
+
+
 
 
     private function sendData(string $command, $params = '')
