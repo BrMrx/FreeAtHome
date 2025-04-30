@@ -11,6 +11,7 @@ class FreeAtHomeDevice extends IPSModule
     const mBridgeDataId     = '{BC9334EC-8C5C-61C2-C5DD-96FE9368F38D}';      // DatenId der Bridge
     const mDeviceModuleId   = '{BDE4603B-E68A-D3AF-2510-9462C7374097}';      // Device Modul Id 
     const mParentId         = '{9AFFB383-D756-8422-BCA0-EFD3BB1E3E29}';      // Parent Id (Bridge)
+    const mChildId          = '{7E471B91-3407-F7EE-347B-64B459E33D76}';      // Child Id 
 
     public function Create()
     {
@@ -161,6 +162,47 @@ class FreeAtHomeDevice extends IPSModule
         $jsonForm = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
 
         return json_encode($jsonForm);
+    }
+
+
+    protected function GetOutputDataPointsOfDevices()
+    {    
+        $lVectRet = array();
+
+        $lData = $this->ReadPropertyString('FAHDeviceID').'.'.$this->ReadPropertyString('Channel').'.';
+        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
+
+        foreach( $lOutputs as $lDatapoint => $lPairingID  )
+        {
+            $lVectRet[] = $lData.$lDatapoint;
+        }                  
+
+        return $lVectRet;
+    }
+
+
+    public function  AssignData($lDevices)
+    {
+        $lListRequest = $this->GetOutputDataPointsOfDevices();
+        
+        $lDataObj = array();
+  
+        foreach( $lListRequest as $lRequest )
+        {
+            $lRequestArray = explode('.',$lRequest);
+
+            $lValue = $lDevices->{$lRequestArray[0]}->channels->{$lRequestArray[1]}->outputs->{$lRequestArray[2]}->value;
+
+            $lDataObj[$lRequestArray[0]][$lRequestArray[1]][$lRequestArray[2]] = $lValue;
+
+        }
+
+        $lData['DataID'] = self::mChildId;
+        $lData['Buffer'] = json_encode($lDataObj);
+
+        $lData = json_encode($lData);
+        // Über Reseive Data weiterverarbeiten
+        ReceiveData($lData);
     }
 
     public function ReceiveData($JSONString)
@@ -473,6 +515,7 @@ class FreeAtHomeDevice extends IPSModule
                  $this->SendDebug(__FUNCTION__,'update data',0 );
 
                 $lResult = $this->sendData('getDevice' );
+                $this->AssignData( $lResult );
                 $this->SendDebug(__FUNCTION__,json_encode($lResult),0 );
             }
 
