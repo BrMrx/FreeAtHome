@@ -170,26 +170,27 @@ class FreeAtHomeDevice extends IPSModule
                     if( $lDP == $lDatapoint )
                     {
                         $lValueId = PID::GetName( $lPairingID );
+                        $lId = $this->GetIDForIdent($lValueId);
                         $lType = PID::GetType( $lPairingID );
                         switch($lType)
                         {
                         case 0: // bool
                         	 $lNewBool = boolval($lValue);
                           
-                             if($this->GetValue($lValueId) != $lNewBool )
+                             if(GetValueBoolean($lId) != $lNewBool )
                         	 {
                                 $lConvertedBool = $lNewBool ? 'true' : 'false';
                             	$this->SendDebug(__FUNCTION__ , $lValueId.' => '.$lConvertedBool, 0);
-                            	$this->SetValue($lValueId,$lNewBool);
+                        		SetValueBoolean($lId,$lNewBool);
                             }
                             break;
                         case 1: // int
                             $lNewInt = intval($lValue);
                            
-                            if($this->GetValue($lValueId) != $lNewInt )
+                            if(GetValueInteger($lId) != $lNewInt )
                             {
                                 $this->SendDebug(__FUNCTION__ , $lValueId.' => '.strval($lNewInt), 0);
-                            	 $this->SetValue($lValueId,$lNewInt);                           
+                            	SetValueInteger($lId,$lNewInt);                           
                             }
                             break;
                         }
