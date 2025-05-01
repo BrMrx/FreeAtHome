@@ -188,7 +188,7 @@ class FreeAtHomeDevice extends IPSModule
                                 $this->SendDebug(__FUNCTION__ , $lValueId.' => '.strval($lNewInt), 0);
                             	 $this->SetValueInteger($lValueId,$lNewInt);                           
                             }
-                            break
+                            break;
                         }
                     }
                 }
