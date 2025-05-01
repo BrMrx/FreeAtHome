@@ -138,7 +138,8 @@ class FreeAtHomeDevice extends IPSModule
 
         if( isset( $lDataObj->{$lDeviceID}->unresponsive ) )
         {
-            $this->SendDebug(__FUNCTION__, 'unresponsive: '.strval($lDataObj->{$lDeviceID}->unresponsive), 0);
+            $lConvertedBool = $lDataObj->{$lDeviceID}->unresponsive ? 'true' : 'false';
+            $this->SendDebug(__FUNCTION__, 'unresponsive: '.$lConvertedBool, 0);
             if( $lDataObj->{$lDeviceID}->unresponsive )
             {
                 $this->SetStatus(200);
