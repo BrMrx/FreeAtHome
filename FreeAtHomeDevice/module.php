@@ -174,6 +174,8 @@ class FreeAtHomeDevice extends IPSModule
                         {
                         case 0: // bool
                         	 $lNewBool = boolval($lValue);
+                                $lConvertedBool = $lNewBool ? 'true' : 'false';
+                            	$this->SendDebug(__FUNCTION__ , $lValueId.' => '.$lConvertedBool, 0);
                             if($this->GetValueBoolean($lValueId) != $lNewBool )
                         	 {
                                 $lConvertedBool = $lNewBool ? 'true' : 'false';
