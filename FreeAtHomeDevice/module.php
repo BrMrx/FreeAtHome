@@ -174,10 +174,8 @@ class FreeAtHomeDevice extends IPSModule
                         {
                         case 0: // bool
                         	 $lNewBool = boolval($lValue);
-                                $lConvertedBool = $lNewBool ? 'true' : 'false';
-                            	$this->SendDebug(__FUNCTION__ , $lValueId.' => '.$lConvertedBool, 0);
-                               // $this->SetValue($lValueId,$lNewBool);
-                            if($this->GetValue($lValueId) != $lNewBool )
+                          
+                             if($this->GetValue($lValueId) != $lNewBool )
                         	 {
                                 $lConvertedBool = $lNewBool ? 'true' : 'false';
                             	$this->SendDebug(__FUNCTION__ , $lValueId.' => '.$lConvertedBool, 0);
@@ -186,8 +184,7 @@ class FreeAtHomeDevice extends IPSModule
                             break;
                         case 1: // int
                             $lNewInt = intval($lValue);
-                            $this->SendDebug(__FUNCTION__ , $lValueId.' => '.strval($lNewInt), 0);
-                            	 $this->SetValue($lValueId,$lNewInt);   
+                           
                             if($this->GetValue($lValueId) != $lNewInt )
                             {
                                 $this->SendDebug(__FUNCTION__ , $lValueId.' => '.strval($lNewInt), 0);
