@@ -211,6 +211,25 @@ class FreeAtHomeBridge extends IPSModule
 
     public function getAllDevices()
     {
+        if ($this->ReadPropertyString('Host') == '') {
+            $this->SendDebug(__FUNCTION__ ,'host missing', 0);
+            return false;
+        }
+        if ($this->ReadPropertyString('Username') == '') {
+            $this->SendDebug(__FUNCTION__ ,'username missing', 0);
+            return false;
+        }
+        if ($this->ReadPropertyString('Password') == '') {
+            $this->SendDebug(__FUNCTION__ ,'password missing', 0);
+            return false;
+        }
+        if ($this->ReadPropertyString('SysAP_GUID') == '') {
+            $this->SendDebug(__FUNCTION__ ,'SysAP GUID missing', 0);
+            return false;
+        }
+
+
+
         $lResult = $this->sendRequest( 'configuration' );
         return $this->FilterSupportedDevices( $lResult->{$this->ReadPropertyString("SysAP_GUID")}->devices );
     }
@@ -231,6 +250,11 @@ class FreeAtHomeBridge extends IPSModule
             $this->SendDebug(__FUNCTION__ ,'password missing', 0);
             return false;
         }
+        if ($this->ReadPropertyString('SysAP_GUID') == '') {
+            $this->SendDebug(__FUNCTION__ ,'SysAP GUID missing', 0);
+            return false;
+        }
+
 
          $ch = curl_init();
 
