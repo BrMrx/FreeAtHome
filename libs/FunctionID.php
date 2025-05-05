@@ -687,7 +687,7 @@ class FID
         'DIMMING_ACTUATOR_TYPE0',
     ];
 	
-    public static function GetName( string $a_Id ) : string
+    public static function GetName( $a_Id ) : string
     {
         $lFunctionId = hexdec( $a_Id );
 
