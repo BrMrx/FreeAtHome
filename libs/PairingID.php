@@ -355,7 +355,7 @@ class PID
 		self::mMapPairingID['ABSOLUTE_SET_VALUE_CONTROL']['ID'],
 	);
 		
-	public static function GetID( string $a_Name )
+	public static function GetID( string $a_Name ) : int
 	{
 		if( isset(self::mMapPairingID[$a_Name] ))
 		{
@@ -364,7 +364,7 @@ class PID
 		return 0;
 	}
 
-	public static function GetSettings( string $a_Name )
+	public static function GetSettings( string $a_Name ) : array
 	{
 		if( isset(self::mMapPairingID[$a_Name] ))
 		{
@@ -372,7 +372,7 @@ class PID
 		}
 		return array();
 	}
-	public static function GetSettingsByID( $a_ID )
+	public static function GetSettingsByID( int $a_ID ) : array
 	{
 		foreach( self::mMapPairingID as $lName => $lVal )
 		{
@@ -384,7 +384,7 @@ class PID
 		return array();
 	}
 
-	public static function GetName( $a_ID )
+	public static function GetName( int $a_ID ) : string
     {
  		foreach( self::mMapPairingID as $lName => $lVal )
 		{
@@ -397,7 +397,7 @@ class PID
         return '['.$a_Id.']';      
     }
 				
-	public static function GetType( $a_ID )
+	public static function GetType( int $a_ID ) : string
     {
  		foreach( self::mMapPairingID as $lName => $lVal )
 		{
@@ -410,7 +410,7 @@ class PID
         return 0;      
     }
 
-	public static function GetInfo( $a_ID )
+	public static function GetInfo( int $a_ID ) : string
     {
   		foreach( self::mMapPairingID as $lName => $lVal )
 		{
@@ -422,7 +422,7 @@ class PID
         return '?'.$a_Id.'?';      
     }
 				
-	public static function GetProfile( $a_ID )
+	public static function GetProfile( int $a_ID ) : string
     {
   		foreach( self::mMapPairingID as $lName => $lVal )
 		{
@@ -434,7 +434,7 @@ class PID
 
         return '';      
     }
-	public static function GetAction( $a_ID )
+	public static function GetAction( int $a_ID ) : string
     {
   		foreach( self::mMapPairingID as $lName => $lVal )
 		{
@@ -474,37 +474,7 @@ class PID
 		return $lResult;
 	}
 	
-	public static function FilterSupportedType2( $a_Channel, string $a_Type )	
-	{
-		$lChannelObj = (object)$a_Channel;
-		IPS_LogMessage( 0, __FUNCTION__.' ChannelData :'. json_encode($lChannelObj) );
-
-		$lResult = array();
-		foreach($lChannelObj->{$a_Type} as $lChannelNr => $lValue)			
-		{    
-			$lChannelValue = (object)$lValue;
-			IPS_LogMessage( 0, __FUNCTION__.' ChannelData '.$a_Type.':'. json_encode($lChannelValue) );
-
-			if( isset($lChannelValue->pairingID )  )
-            {
-				IPS_LogMessage( 0, __FUNCTION__.' IsSet '.$a_Type.':'. json_encode($lChannelValue) );
-				$lPairingId = $lChannelValue->pairingID;
-
-                if( in_array($lPairingId, self::SupportedIDs ) )
-                {
-					IPS_LogMessage( 0, __FUNCTION__.' is supported '.$lPairingId.':'. json_encode($lChannelValue) );
-                    $lResult[$lChannelNr]= $lPairingId;
-                }
-				else
-				{
-					IPS_LogMessage( 0, __FUNCTION__.' is not supported '.$lPairingId.':'. json_encode($lChannelValue) );
-				}
-            }
-        }	
-
-		return $lResult;
-	}
-	
+		
 	public static function FilterSupported( $a_Channel, array $a_Types = ['inputs','outputs'])	
 	{
 		$lResult = array();
