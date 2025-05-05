@@ -138,7 +138,8 @@ class FreeAtHomeDevice extends IPSModule
 
         if( isset( $lDataObj->{$lDeviceID}->unresponsive ) )
         {
-            $this->SendDebug(__FUNCTION__, 'unresponsive: '.strval($lDataObj->{$lDeviceID}->unresponsive), 0);
+            $lConvertedBool = $lDataObj->{$lDeviceID}->unresponsive ? 'true' : 'false';
+            $this->SendDebug(__FUNCTION__, 'unresponsive: '.$lConvertedBool, 0);
             if( $lDataObj->{$lDeviceID}->unresponsive )
             {
                 $this->SetStatus(200);
@@ -169,14 +170,34 @@ class FreeAtHomeDevice extends IPSModule
                     if( $lDP == $lDatapoint )
                     {
                         $lValueId = PID::GetName( $lPairingID );
-
-                        $this->SendDebug(__FUNCTION__ , $lValueId.' => '.$lValue, 0);
-                        $this->SetValue($lValueId, $lValue);
+                        $lId = $this->GetIDForIdent($lValueId);
+                        $lType = PID::GetType( $lPairingID );
+                        switch($lType)
+                        {
+                        case 0: // bool
+                        	 $lNewBool = boolval($lValue);
+                          
+                             if(GetValueBoolean($lId) != $lNewBool )
+                        	 {
+                                $lConvertedBool = $lNewBool ? 'true' : 'false';
+                            	$this->SendDebug(__FUNCTION__ , $lValueId.' => '.$lConvertedBool, 0);
+                        		SetValueBoolean($lId,$lNewBool);
+                            }
+                            break;
+                        case 1: // int
+                            $lNewInt = intval($lValue);
+                           
+                            if(GetValueInteger($lId) != $lNewInt )
+                            {
+                                $this->SendDebug(__FUNCTION__ , $lValueId.' => '.strval($lNewInt), 0);
+                            	SetValueInteger($lId,$lNewInt);                           
+                            }
+                            break;
+                        }
                     }
                 }
             }
         }                  
-      
     }
 
     public function ReceiveData($JSONString)
