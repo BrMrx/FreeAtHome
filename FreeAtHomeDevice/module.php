@@ -25,7 +25,7 @@ class FreeAtHomeDevice extends IPSModule
         $this->RegisterAttributeString('DeviceType', '');
     }
 
-    protected function HasActionInput( string $a_Action )
+    protected function HasActionInput( string $a_Action ) : bool
     {
         // Variablen für alle Outputs (des Devises) anlegen
         $lInputs = json_decode( $this->ReadPropertyString('Inputs') );
