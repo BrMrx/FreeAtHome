@@ -715,7 +715,7 @@ class FID
             $lChannelValue = (object)$lValue;
   			if( isset($lChannelValue->functionID )  )
             {
-                if( IsSupportedID($lChannelValue->functionID) ) )
+                if( IsSupportedID($lChannelValue->functionID) ) 
                 {
                     $lResult[$lChannelNr]= hexdec( $lChannelValue->functionID );
                 }
