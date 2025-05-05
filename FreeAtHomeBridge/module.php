@@ -250,11 +250,6 @@ class FreeAtHomeBridge extends IPSModule
             $this->SendDebug(__FUNCTION__ ,'password missing', 0);
             return false;
         }
-        if ($this->ReadPropertyString('SysAP_GUID') == '') {
-            $this->SendDebug(__FUNCTION__ ,'SysAP GUID missing', 0);
-            return false;
-        }
-
 
          $ch = curl_init();
 
