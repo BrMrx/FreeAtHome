@@ -679,7 +679,7 @@ class FID
             $lChannelValue = (object)$lValue;
   			if( isset($lChannelValue->functionID )  )
             {
-                 if( IsSupportedID( $lChannelValue->functionID ) ) 
+                 if( self::IsSupportedID( $lChannelValue->functionID ) ) 
                 {
                     $lResult[$lChannelNr]= $lChannelValue;
                 }
