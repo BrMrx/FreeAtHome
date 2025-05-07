@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . 'PairingID.php';
 
 class FID
 {
@@ -677,8 +678,15 @@ class FID
 		foreach($a_Channels as $lChannelNr => $lValue)			
 		{             			
             $lChannelValue = (object)$lValue;
-  			if( isset($lChannelValue->functionID )  )
+
+   			if( isset($lChannelValue->functionID )  )
             {
+ 
+                // Nur Werte mit unterstützten Eingängen zulassen
+                $lInputs = json_encode((object)PID::FilterSupportedType($lChannelValue,'inputs'));
+
+                IPS_LogMessage( 0, __FUNCTION__.' '.self::GetName($lChannelValue->functionID).": ".$lInputs );
+                 
                 if( self::IsSupportedID( $lChannelValue->functionID ) ) 
                 {
                     $lResult[$lChannelNr]= $lChannelValue;
