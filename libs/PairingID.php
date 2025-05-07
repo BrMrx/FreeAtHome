@@ -471,11 +471,11 @@ class PID
                 if( in_array($lPairingId, self::SupportedIDs ) )
                 {
 					$lInfoIsSet = !empty(self::GetInfo($lPairingId));
-					if( $a_Type == 'inputs' && $lInfoIsSet )
+					if( $a_Type == 'inputs' && !$lInfoIsSet )
 					{
 						$lResult[$lChannelNr]= $lPairingId;
 					}
-					else if ( $a_Type == 'outputs' && !$lInfoIsSet )
+					else if ( $a_Type == 'outputs' && $lInfoIsSet )
 					{
 						$lResult[$lChannelNr]= $lPairingId;
 					}
