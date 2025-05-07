@@ -44,7 +44,7 @@ class FreeAtHomeConfigurator extends IPSModule
         $Form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
         $AllDevices = $this->getFAH_AllDevices();
 
-        $Devices = $this->FilterDeviceList( $AllDevices, 'RF');
+        $Devices = $this->FilterDeviceList( $AllDevices, false, ['hue']);
         $HueDevices = array(); // = $this->FilterDeviceList( $AllDevices, 'hue'); 
         $Scenes = array(); 
 
@@ -292,7 +292,7 @@ class FreeAtHomeConfigurator extends IPSModule
     }
 
 
-    private function FilterDeviceList( $AllDevices, $a_InterfaceType )
+    private function FilterDeviceList( $AllDevices, bool $DoInclude, array $Interfaces )
     {
         $lRetValue = new stdClass();
 
@@ -300,7 +300,7 @@ class FreeAtHomeConfigurator extends IPSModule
         {        
             if( isset($DeviceValue['interface'] ) )
             {
-                if( $DeviceValue['interface'] == $a_InterfaceType )
+                if( $DoInclude == in_array( $DeviceValue['interface'], $Interfaces ) )
                 {
                     $lRetValue->$lDeviceId = $DeviceValue;
                 }
