@@ -74,6 +74,7 @@
       {
          "type": "ExpansionPanel",
          "caption": "Group Configurator",
+         "visible": false,
          "items": [
             {
                "type": "Label",
