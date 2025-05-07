@@ -416,7 +416,11 @@ class PID
 		{
 			if( $lVal['ID'] == $a_ID )
 			{
-				return $lVal['info'];
+				if( isset($lVal['info']))
+				{
+					return $lVal['info'];
+				}
+				return "";
 			}
 		}
         return '?'.$a_Id.'?';      
@@ -466,7 +470,15 @@ class PID
 
                 if( in_array($lPairingId, self::SupportedIDs ) )
                 {
-                    $lResult[$lChannelNr]= $lPairingId;
+					$lInfoIsSet = !empty(self::GetInfo($lPairingId));
+					if( $a_Type == 'inputs' && lInfoIsSet )
+					{
+						$lResult[$lChannelNr]= $lPairingId;
+					}
+					else ( $a_Type == 'outputs' && !lInfoIsSet )
+					{
+						$lResult[$lChannelNr]= $lPairingId;
+					}
                 }
             }
         }	
