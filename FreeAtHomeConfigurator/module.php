@@ -44,7 +44,7 @@ class FreeAtHomeConfigurator extends IPSModule
         $Form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
         $AllDevices = $this->getFAH_AllDevices();
 
-        $Devices = $this->FilterDeviceList( $AllDevices, false, ['hue']);
+        $Devices = $this->FilterDeviceList( $AllDevices, false, ['xhue']);
         $HueDevices = array(); // = $this->FilterDeviceList( $AllDevices, 'hue'); 
         $Scenes = array(); 
 
