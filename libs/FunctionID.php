@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . 'PairingID.php';
+require_once __DIR__ . '/PairingID.php';
 
 class FID
 {
