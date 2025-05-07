@@ -39,7 +39,7 @@ class FID
         'DES_AUTOMATIC_DOOR_OPENER_ACTUATOR'            => [ 'ID' => 0x0020 ],
         'DES_LIGHT_SWITCH_ACTUATOR'                     => [ 'ID' => 0x0021 ],
         'DES_UNKNOWN_HVAC_ACTUATOR'                     => [ 'ID' => 0x0022 ],
-        'ROOM_TEMPERATURE_CONTROLLER_MASTER_WITHOUT_FAN'    => [ 'ID' => 0x0023 ], // A master room temperature controller that does not include a fan
+        'ROOM_TEMPERATURE_CONTROLLER_MASTER_WITHOUT_FAN'=> [ 'ID' => 0x0023 ], // A master room temperature controller that does not include a fan
         'COOLING_ACTUATOR'                              => [ 'ID' => 0x0024 ],
         'DAY_NIGHT_SENSOR'                              => [ 'ID' => 0x0025 ],
         'DATE_AND_TIME'                                 => [ 'ID' => 0x0026 ],
@@ -679,7 +679,7 @@ class FID
             $lChannelValue = (object)$lValue;
   			if( isset($lChannelValue->functionID )  )
             {
-                 if( self::IsSupportedID( $lChannelValue->functionID ) ) 
+                if( self::IsSupportedID( $lChannelValue->functionID ) ) 
                 {
                     $lResult[$lChannelNr]= $lChannelValue;
                 }
