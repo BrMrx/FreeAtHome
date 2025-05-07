@@ -381,5 +381,5 @@ class FreeAtHomeConfigurator extends IPSModule
         return array_reverse($path);
     }
 
-    
+}  
    
