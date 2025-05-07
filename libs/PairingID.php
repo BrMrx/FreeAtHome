@@ -475,7 +475,7 @@ class PID
 					{
 						$lResult[$lChannelNr]= $lPairingId;
 					}
-					else ( $a_Type == 'outputs' && !lInfoIsSet )
+					else if ( $a_Type == 'outputs' && !lInfoIsSet )
 					{
 						$lResult[$lChannelNr]= $lPairingId;
 					}
