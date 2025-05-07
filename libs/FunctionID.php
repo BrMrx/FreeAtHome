@@ -683,11 +683,11 @@ class FID
             {
  
                 // Nur Werte mit unterstützten Eingängen zulassen
-                $lInputs = json_encode((object)PID::FilterSupportedType($lChannelValue,'inputs'));
+                $lInputsArry = PID::FilterSupportedType($lChannelValue,'inputs');
 
-                IPS_LogMessage( 0, __FUNCTION__.' '.self::GetName($lChannelValue->functionID).": ".$lInputs );
+                IPS_LogMessage( 0, __FUNCTION__.' '.$lChannelValue->displayName.' '.self::GetName($lChannelValue->functionID).": ".json_encode($lInputsArry) );
                  
-                if( self::IsSupportedID( $lChannelValue->functionID ) ) 
+                if( !empty($lInputsArry) ) 
                 {
                     $lResult[$lChannelNr]= $lChannelValue;
                 }
