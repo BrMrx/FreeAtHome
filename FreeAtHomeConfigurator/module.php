@@ -28,8 +28,6 @@ class FreeAtHomeConfigurator extends IPSModule
         $this->RegisterPropertyInteger('HUE_TargetCategory', 0);
         $this->RegisterPropertyInteger('Scene_TargetCategory', 0);
 
-    //    $this->RegisterAttributeInteger('ProgressStatus', -1);
-    //    $this->RegisterTimer('ProgressNewDevices', 0, 'FAHCONF_ProgressUpdateNewDevicesList(' . $this->InstanceID . ');');
     }
 
     public function ApplyChanges()
@@ -47,27 +45,6 @@ class FreeAtHomeConfigurator extends IPSModule
         $Devices = $this->FilterDeviceList( $AllDevices, false, ['hue']);  // alles ausser Hue Devices
         $HueDevices = $this->FilterDeviceList( $AllDevices, true, ['hue']); // nur Hue Devices
         $Scenes = array(); 
-
- 
- //      $HueDevices = $this->getHUEDevices();
- //      $Scenes = $this->getFAHScenes();
-
- //      if (array_key_exists('error', $Devices)) {
- //          $this->LogMessage('FAH Configuration Error: ' . $Devices['error']['type'] . ': ' . $Devices['error']['description'], KL_ERROR);
- //          return $Form;
- //      }
- //      if (array_key_exists('error', $HueDevices)) {
- //          $this->LogMessage('FAH Configuration Error: ' . $HueDevices['error']['type'] . ': ' . $HueDevices['error']['description'], KL_ERROR);
- //          return $Form;
- //      }
- //      if (array_key_exists('error', $Scenes)) {
- //          $this->LogMessage('FAH Configuration Error: ' . $Scenes['error']['type'] . ': ' . $Scenes['error']['description'], KL_ERROR);
- //          return $Form;
- //      }
-
-        $this->SendDebug(__FUNCTION__ . ' Devises', json_encode($Devices), 0);
-        $this->SendDebug(__FUNCTION__ . ' HUE-Devices', json_encode($HueDevices), 0);
-        $this->SendDebug(__FUNCTION__ . ' Scenes', json_encode($Scenes), 0);
 
 
         $lAllDeviceGroups = [
