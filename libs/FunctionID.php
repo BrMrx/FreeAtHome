@@ -649,6 +649,7 @@ class FID
 	const SupportedIDs = [
         self::mMapValues['SWITCH_ACTUATOR']['ID'],
         self::mMapValues['DIMMING_ACTUATOR_TYPE0']['ID'],
+        self::mMapValues['DIMMING_ACTUATOR']['ID'],
     ];
 	
     public static function GetName( string $a_Id ) : string
