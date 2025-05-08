@@ -183,16 +183,16 @@ class FreeAtHomeBridge extends IPSModule
                         $SupportedPairingIDs = PID::FilterSupported($lChannelValue);
                         if( !empty($SupportedPairingIDs) )
                         {
-                            if( FID::IsSupportedID( $lChannelValue->functionID ) )
-                            {
+                          //  if( FID::IsSupportedID( $lChannelValue->functionID ) )
+                            //{
                                 $lAddToList = true;
                                 break;
-                            }
-                            else
-                            {
+                            //}
+                            //else
+                            //{
                                 // Supported Pairing ID's but functionID not Supported
-                                $this->SendDebug( __FUNCTION__.": supported pairingID's but FID::".FID::GetName($lChannelValue->functionID)." not supported", 'no data', 0 );
-                            }
+                             //   $this->SendDebug( __FUNCTION__.": supported pairingID's but FID::".FID::GetName($lChannelValue->functionID)." not supported", 'no data', 0 );
+                            //}
                         }
                     }
                 }
