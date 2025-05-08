@@ -651,7 +651,7 @@ class FID
         self::mMapValues['DIMMING_ACTUATOR_TYPE0']['ID'],
         self::mMapValues['DIMMING_ACTUATOR']['ID'],
         self::mMapValues['COLORTEMPERATURE_ACTUATOR']['ID'],
-    //    self::mMapValues['RGB_W_ACTUATOR']['ID'], 
+        self::mMapValues['RGB_W_ACTUATOR']['ID'], 
     ];
 	
     public static function GetName( string $a_Id ) : string
