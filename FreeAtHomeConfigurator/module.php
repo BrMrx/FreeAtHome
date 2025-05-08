@@ -84,8 +84,6 @@ class FreeAtHomeConfigurator extends IPSModule
 
 
         $Values = [];
-        $ValuesAllDevices = [];
-
 
         foreach( $lAllDeviceGroups as $lGroupName => $lVal )
         {
@@ -113,15 +111,7 @@ class FreeAtHomeConfigurator extends IPSModule
                             'Productname'           => ''
                         ];
             
-                        $AddValueAllDevicesLights = [
-                            'id'                    => $lVal['id'],
-                            'DeviceID'              => '',
-                            'DeviceName'            => $this->translate($lGroupName),
-                            'DeviceType'            => ''
-                        ];
-    
                         $Values[] = $AddValueLights;
-                        $ValuesAllDevices[] = $AddValueAllDevicesLights;
                         $lAddTypeCategory = false;
                     }
     
@@ -152,18 +142,7 @@ class FreeAtHomeConfigurator extends IPSModule
                         'Productname'           => $lOutputs,
                         'instanceID'            => $instanceID
                     ];
-    
-                    $AddValueAllDevicesLights = [
-                        'parent'                => $lVal['id'],
-                        'id'                    => $key,
-                        'DeviceID'              => $key,
-                        'DeviceName'            => $lDeviceName,
-                        'DeviceType'            => $lDeviceType,
-                        'Channel'               => $lChannel,
-                        'Inputs'                => $lInputs,
-                        'Outputs'               => $lOutputs
-                    ];
-    
+        
                     $AddValueLights['create'] = [
                         'moduleID'      => self::mDeviceModuleId,
                         'configuration' => [
@@ -177,107 +156,9 @@ class FreeAtHomeConfigurator extends IPSModule
                     ];
     
                     $Values[] = $AddValueLights;
-                    $ValuesAllDevices[] = $AddValueAllDevicesLights;
                 }
             }
         }
-
-/*
-        // Busch und Jäger Komponenten
-        $location = $this->getPathOfCategory($this->ReadPropertyInteger('RF_TargetCategory'));
-        $lAddTypeCategory = true;
-        foreach ($Devices as $key => $lDevice) {
-            $lListFunctionIds = FID::FilterSupportedChannels( (object)$lDevice['channels'] );
-            $lFunctionIdIndex=1;
-            foreach( $lListFunctionIds as $lChannel => $lChannelValue )
-            {
-                $lChannelData = (object)$lChannelValue;
-                // beim ersten Elemnent vorher die Typencategorie hinzufügen
-                if( $lAddTypeCategory  )
-                {
-                    $AddValueLights = [
-                        'id'                    => 1,
-                        'ID'                    => '',
-                        'name'                  => 'devices',
-                        'DisplayName'           => $this->translate('free@home Devices'),
-                        'Type'                  => '',
-                        'ModelID'               => '',
-                        'Manufacturername'      => '',
-                        'Productname'           => ''
-                    ];
-        
-                    $AddValueAllDevicesLights = [
-                        'id'                    => 99999,
-                        'DeviceID'              => '',
-                        'DeviceName'            => $this->translate('free@home devices'),
-                        'DeviceType'            => ''
-                    ];
-
-                    $Values[] = $AddValueLights;
-                    $ValuesAllDevices[] = $AddValueAllDevicesLights;
-                    $lAddTypeCategory = false;
-                }
-
-                $lDeviceName = $lChannelData->displayName;
-                if(count($lListFunctionIds)> 1)
-                {
-                    $lDeviceName = $lDeviceName.':'.$lFunctionIdIndex;
-                }
-                $lDeviceType = FID::GetName($lChannelData->functionID);
-
- 
-
-                 $lInputs = json_encode((object)PID::FilterSupportedType($lChannelData,'inputs'));
-                 $lOutputs = json_encode((object)PID::FilterSupportedType($lChannelData,'outputs'));
-
-//                 IPS_LogMessage( $this->InstanceID, __FUNCTION__.' Outputs:'. $lOutputs );
-
-
-                $instanceID = $this->getFAHDeviceInstances($key, $lDeviceType );
-                $AddValueLights = [
-                    'parent'                => 1,
-                    'ID'                    => $key,
-                    'DisplayName'           => $lDeviceName,
-                    'name'                  => $lDeviceName,
-                    'Type'                  => $lDeviceType,
-                    'ModelID'               => $lInputs,
-                    'Manufacturername'      => ((array_key_exists($lDevice['interface'], self::m_Types)) ? self::m_Types[$lDevice['interface']] : '?'.$lDevice->interface.'?'),
-                    'Productname'           => $lOutputs,
-                    'instanceID'            => $instanceID
-                ];
-
-                $AddValueAllDevicesLights = [
-                    'parent'                => 99999,
-                    'id'                    => $key,
-                    'DeviceID'              => $key,
-                    'DeviceName'            => $lDeviceName,
-                    'DeviceType'            => $lDeviceType,
-                    'Channel'               => $lChannel,
-                    'Inputs'                => $lInputs,
-                    'Outputs'               => $lOutputs
-                ];
-
-                $AddValueLights['create'] = [
-                    'moduleID'      => self::mDeviceModuleId,
-                    'configuration' => [
-                        'FAHDeviceID'    => $key,
-                        'DeviceType'     => $lDeviceType,
-                        'Channel'        => $lChannel,
-                        'Inputs'         => $lInputs,
-                        'Outputs'        => $lOutputs
-                        ],
-                    'location' => $location
-                ];
-
-                $Values[] = $AddValueLights;
-                $ValuesAllDevices[] = $AddValueAllDevicesLights;
-            }
-        }
-            */
-//----------------------------
-
-        //DeviceManagement AllDevices
-    //    $Form['actions'][1]['items'][6]['values'] = $ValuesAllDevices;
 
         $Form['actions'][0]['values'] = $Values;
         return json_encode($Form);
