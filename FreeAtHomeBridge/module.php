@@ -174,7 +174,7 @@ class FreeAtHomeBridge extends IPSModule
         foreach($a_Devices as $lDeviceId => $DeviceValue)
         {        
             $lAddToList = false;
-            if( isset($DeviceValue->channels ) )
+            if( isset($DeviceValue->channels ) && isset($DeviceValue->interface))
             {
                 foreach($DeviceValue->channels as $lChannelNr => $lChannelValue)
                 {
