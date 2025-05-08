@@ -277,7 +277,7 @@ class FreeAtHomeConfigurator extends IPSModule
 //----------------------------
 
         //DeviceManagement AllDevices
-        $Form['actions'][1]['items'][6]['values'] = $ValuesAllDevices;
+    //    $Form['actions'][1]['items'][6]['values'] = $ValuesAllDevices;
 
         $Form['actions'][0]['values'] = $Values;
         return json_encode($Form);
