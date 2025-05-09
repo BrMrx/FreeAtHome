@@ -70,7 +70,11 @@ class PID
 		'INFO_ERROR'                                    =>[ 'ID' => 0x0111 ], // DPT_BIT_SET_32	4BYTE	Indicates load failures / short circuits / etc
 		'SYSAP_INFO_ACTUAL_DIMMING_VALUE'               =>[ 'ID' => 0x0115 ], // DPT_SCALING	1BYTE	Reflects the actual value of the actuator group
 		'SYSAP_INFO_ERROR'                              =>[ 'ID' => 0x0116 ], // DPT_BIT_SET_32	4BYTE	Indicates load failures / short circuits / etc
-		'INFO_RGB'                                      =>[ 'ID' => 0x0117 ], // DPT_COLOUR_RGB	3BYTE
+		'INFO_RGB'                                      =>[ 'ID' => 0x0117,	  // DPT_COLOUR_RGB	3BYTE
+															'info' 		=> 'colour',
+															'type' 		=> 1,
+															'profile' 	=> '~HexColor',
+														    'action' 	=> 'RGB' ], // DPT_COLOUR_RGB	3BYTE
 		'INFO_COLOR_TEMPERATURE'                        =>[ 'ID' => 0x0118 ], // DPT_SCALING	1BYTE	Color temperature
 		'SYSAP_INFO_RGB'                                =>[ 'ID' => 0x0119 ], // DPT_COLOUR_RGB	3BYTE
 		'SYSAP_INFO_COLOR_TEMPERATURE'                  =>[ 'ID' => 0x011A ], // DPT_SCALING	1BYTE	Color temperature
