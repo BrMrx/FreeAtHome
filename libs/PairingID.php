@@ -358,7 +358,7 @@ class PID
 		self::mMapPairingID['INFO_ACTUAL_DIMMING_VALUE']['ID'],
 		self::mMapPairingID['ABSOLUTE_SET_VALUE_CONTROL']['ID'],
 		self::mMapPairingID['INFO_RGB']['ID'],
-		self::mMapPairingID['IRGB']['ID'],
+		self::mMapPairingID['RGB']['ID'],
 	);
 		
 	public static function GetID( string $a_Name ) : int
