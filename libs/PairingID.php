@@ -71,7 +71,7 @@ class PID
 		'SYSAP_INFO_ACTUAL_DIMMING_VALUE'               =>[ 'ID' => 0x0115 ], // DPT_SCALING	1BYTE	Reflects the actual value of the actuator group
 		'SYSAP_INFO_ERROR'                              =>[ 'ID' => 0x0116 ], // DPT_BIT_SET_32	4BYTE	Indicates load failures / short circuits / etc
 		'INFO_RGB'                                      =>[ 'ID' => 0x0117,	  // DPT_COLOUR_RGB	3BYTE
-															'info' 		=> 'colour',
+															'info' 		=> 'Colour',
 															'type' 		=> 1,
 															'profile' 	=> '~HexColor',
 														    'action' 	=> 'RGB' ], // DPT_COLOUR_RGB	3BYTE
@@ -357,6 +357,8 @@ class PID
 		self::mMapPairingID['INFO_ON_OFF']['ID'],
 		self::mMapPairingID['INFO_ACTUAL_DIMMING_VALUE']['ID'],
 		self::mMapPairingID['ABSOLUTE_SET_VALUE_CONTROL']['ID'],
+		self::mMapPairingID['INFO_RGB']['ID'],
+		self::mMapPairingID['IRGB']['ID'],
 	);
 		
 	public static function GetID( string $a_Name ) : int

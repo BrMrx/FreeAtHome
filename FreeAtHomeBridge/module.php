@@ -173,7 +173,6 @@ class FreeAtHomeBridge extends IPSModule
 
         foreach($a_Devices as $lDeviceId => $DeviceValue)
         {        
-            $lIgnoreFIDList = true;
             $lAddToList = false;
             if( isset($DeviceValue->channels ) && isset($DeviceValue->interface))
             {
@@ -184,16 +183,7 @@ class FreeAtHomeBridge extends IPSModule
                         $SupportedPairingIDs = PID::FilterSupported($lChannelValue);
                         if( !empty($SupportedPairingIDs) )
                         {
-                            if( $lIgnoreFIDList || FID::IsSupportedID( $lChannelValue->functionID ) )
-                            {
-                                $lAddToList = true;
-                                break;
-                            }
-                            else
-                            {
-                                // Supported Pairing ID's but functionID not Supported
-                                $this->SendDebug( __FUNCTION__.": supported pairingID's but FID::".FID::GetName($lChannelValue->functionID)." not supported", 'no data', 0 );
-                            }
+                            $lAddToList = true;
                         }
                     }
                 }
