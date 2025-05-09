@@ -84,7 +84,11 @@ class PID
 		'SYSAP_INFO_COLOR_MODE'                         =>[ 'ID' => 0x011E ], // DPT_COLOUR_MODE	1BIT
 		'COLOR_MODE'                                    =>[ 'ID' => 0x011F ], // DPT_COLOUR_MODE	1BIT
 		'INFO_MOVE_UP_DOWN'                             =>[ 'ID' => 0x0120 ], // DPT_ENUM_0_TO_3	2BIT	Indicates last moving direction and whether moving currently or not
-		'CURRENT_ABSOLUTE_POSITION_BLINDS_PERCENTAGE'   =>[ 'ID' => 0x0121 ], // DPT_SCALING	1BYTE	Indicate the current position of the sunblinds in percentage
+		'CURRENT_ABSOLUTE_POSITION_BLINDS_PERCENTAGE'   =>[ 'ID' => 0x0121,
+															'info' 		=> 'Position',
+															'type' 		=> 1,
+															'profile' 	=> '~Shutter',
+															'action' 	=> 'SET_ABSOLUTE_POSITION_BLINDS_PERCENTAGE' ], // DPT_SCALING	1BYTE	Indicate the current position of the sunblinds in percentage
 		'CURRENT_ABSOLUTE_POSITION_SLATS_PERCENTAGE'    =>[ 'ID' => 0x0122 ], // DPT_SCALING	1BYTE	Indicate the current position of the slats in percentage
 		'VALID_CURRENT_ABSOLUTE_POSITION'               =>[ 'ID' => 0x0123 ], // DPT_SWITCH	1BIT
 		'SYSAP_INFO_MOVE_UP_DOWN'                       =>[ 'ID' => 0x0125 ], // DPT_ENUM_0_TO_3	2BIT	Indicates last moving direction and whether moving currently or not of the actuator group
@@ -359,8 +363,11 @@ class PID
 		self::mMapPairingID['ABSOLUTE_SET_VALUE_CONTROL']['ID'],
 		self::mMapPairingID['INFO_RGB']['ID'],
 		self::mMapPairingID['RGB']['ID'],
+		self::mMapPairingID['CURRENT_ABSOLUTE_POSITION_BLINDS_PERCENTAGE']['ID'],
+		self::mMapPairingID['SET_ABSOLUTE_POSITION_BLINDS_PERCENTAGE']['ID'],
 	);
-		
+
+	
 	public static function GetID( string $a_Name ) : int
 	{
 		if( isset(self::mMapPairingID[$a_Name] ))
