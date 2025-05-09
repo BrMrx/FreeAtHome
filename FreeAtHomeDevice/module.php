@@ -263,6 +263,38 @@ class FreeAtHomeDevice extends IPSModule
         return false;
     }
 
+    
+    public function SetColour( int $Value )
+    {
+        // beim Wert 0 oder negativ Aktor direkt ausschalten
+        if( $Value <= 0 )
+        {
+            return $this->SetState( false );
+        }
+
+        if( $Value >= 0xFFFFFF )
+        {
+            return $this->SetState( true );
+        }
+
+        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
+
+        foreach( $lOutputs as $lDatapoint => $lPairingID  )
+        {
+            $lSettings = PID::GetSettingsByID( $lPairingID );
+            if( $lSettings['info'] == 'Colour' && $lSettings['action'] != '' && $lSettings['type'] == 1 )
+            {
+                $this->RequestAction( PID::GetName($lPairingID), $Value );
+                return true;
+            }
+        }                  
+
+        // Wert nicht gültig oder Funktion Colour nicht verfügbar
+        IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).") not supported" );
+        return false;
+    }
+
+
     public function RequestAction($Ident, $Value)
     {
      
