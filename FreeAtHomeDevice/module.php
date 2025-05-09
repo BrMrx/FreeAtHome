@@ -294,6 +294,40 @@ class FreeAtHomeDevice extends IPSModule
         return false;
     }
 
+    public function SetPosition( int $Value )
+    {
+        // beim negativem Wert nichts machen
+        if( $Value < 0  )
+        {
+            // Wert nicht gültig oder Funktion Brighness nicht verfügbar
+            IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).") not supported" );
+            return false;
+        }
+       // beim Wert über 100 nichts machen
+       if( $Value > 100  )
+       {
+            // Wert nicht gültig oder Funktion Brighness nicht verfügbar
+            IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).") not supported" );
+           return false;
+       }
+
+        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
+
+        foreach( $lOutputs as $lDatapoint => $lPairingID  )
+        {
+            $lSettings = PID::GetSettingsByID( $lPairingID );
+            if( $lSettings['info'] == 'Position' && $lSettings['action'] != '' && $lSettings['type'] == 1 )
+            {
+                $this->RequestAction( PID::GetName($lPairingID), $Value );
+                return true;
+            }
+        }                  
+
+        // Wert nicht gültig oder Funktion Brighness nicht verfügbar
+        IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).") not supported" );
+        return false;
+    }
+
 
     public function RequestAction($Ident, $Value)
     {
