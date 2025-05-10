@@ -365,7 +365,6 @@ class FreeAtHomeDevice extends IPSModule
             {
                 $Ident = 'INFO_ON_OFF';
                 $Value = false;
-                $lDoSetOrigValue = true;
             }
             break;
         }
