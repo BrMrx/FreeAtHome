@@ -1,4 +1,4 @@
-<?php
+k<?php
 
 declare(strict_types=1);
 require_once __DIR__ . '/../libs/FunctionID.php';
@@ -322,6 +322,14 @@ class FreeAtHomeDevice extends IPSModule
         // Helligkeit 0 in Aus umwandeln 
         case 'INFO_ACTUAL_DIMMING_VALUE':
         	if($Value <= 0)
+            {
+                $Ident = 'INFO_ON_OFF';
+                $Value = false;
+            }
+            break;
+        // Farbe Schwarz in Aus umwandeln
+        case 'INFO_RGB':
+            if($Value <= 0)
             {
                 $Ident = 'INFO_ON_OFF';
                 $Value = false;
