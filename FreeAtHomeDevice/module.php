@@ -311,6 +311,34 @@ class FreeAtHomeDevice extends IPSModule
         return false;
     }
 
+    private function do_SetValue( string $Ident, string $Value )
+    {
+        $lPairingID = PID::GetID( $Ident );
+        $lId        = $this->GetIDForIdent($Ident);
+        $lType      = PID::GetType( $lPairingID );
+        switch($lType)
+        {
+        case 0: // bool
+             $lNewBool = boolval($lValue);
+          
+             if(GetValueBoolean($lId) != $lNewBool )
+             {
+                $lConvertedBool = $lNewBool ? 'true' : 'false';
+                $this->SendDebug(__FUNCTION__ , $lValueId.' => '.$lConvertedBool, 0);
+                SetValueBoolean($lId,$lNewBool);
+            }
+            break;
+        case 1: // int
+            $lNewInt = intval($lValue);
+           
+            if(GetValueInteger($lId) != $lNewInt )
+            {
+                $this->SendDebug(__FUNCTION__ , $lValueId.' => '.strval($lNewInt), 0);
+                SetValueInteger($lId,$lNewInt);                           
+            }
+            break;
+        }
+    }
 
     public function RequestAction($Ident, $Value)
     {
@@ -371,8 +399,11 @@ class FreeAtHomeDevice extends IPSModule
                    // {$lDeviceID}.{$lChannel}.{$lDatapoint}
                    $lSendData = [ 'datapoint' => $lDatapoint, 'value' => $SendValue ];
                    $lResult = $this->sendData('setDatapoint', json_encode($lSendData) );
+
+                   // Date im Abbild direkt übernehmen ohne auf die Rückmeldung zu warten
+                   $this->do_SetValue( $Ident, $Value );
                    $this->SendDebug(__FUNCTION__,json_encode($lResult),0 );
- 
+
                    $lbPollData = true;
                 }
             }
