@@ -236,14 +236,6 @@ class FreeAtHomeDevice extends IPSModule
    
     public function SetBrightness( int $Value )
     {
-        IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).")" );
-        // beim Wert 0 oder negativ Aktor direkt ausschalten
-        if( $Value <= 1 )
-        {
-            IPS_LogMessage( $this->InstanceID, __FUNCTION__.'- Set State('.strval($Value).")" );
-            return $this->SetState( false );
-        }
-
         // Wert im gültigen Bereich
         if( $Value <= 100 )
         {
@@ -268,17 +260,6 @@ class FreeAtHomeDevice extends IPSModule
     
     public function SetColour( int $Value )
     {
-        // beim Wert 0 oder negativ Aktor direkt ausschalten
-        if( $Value <= 0 )
-        {
-            return $this->SetState( false );
-        }
-
-        if( $Value >= 0xFFFFFF )
-        {
-            return $this->SetState( true );
-        }
-
         $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
 
         foreach( $lOutputs as $lDatapoint => $lPairingID  )
@@ -340,7 +321,7 @@ class FreeAtHomeDevice extends IPSModule
         {
         // Helligkeit 0 in Aus umwandeln 
         case 'INFO_ACTUAL_DIMMING_VALUE':
-        	if($Value == 0)
+        	if($Value <= 0)
             {
                 $Ident = 'INFO_ON_OFF';
                 $Value = false;
