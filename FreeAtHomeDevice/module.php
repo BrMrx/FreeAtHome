@@ -311,15 +311,15 @@ class FreeAtHomeDevice extends IPSModule
         return false;
     }
 
-    private function do_SetValue( string $Ident, string $Value )
+    private function do_SetValue( string $a_Ident, string $a_Value )
     {
-        $lPairingID = PID::GetID( $Ident );
-        $lId        = $this->GetIDForIdent($Ident);
+        $lPairingID = PID::GetID( $a_Ident );
+        $lId        = $this->GetIDForIdent($a_Ident);
         $lType      = PID::GetType( $lPairingID );
         switch($lType)
         {
         case 0: // bool
-             $lNewBool = boolval($lValue);
+             $lNewBool = boolval($a_Value);
           
              if(GetValueBoolean($lId) != $lNewBool )
              {
@@ -329,7 +329,7 @@ class FreeAtHomeDevice extends IPSModule
             }
             break;
         case 1: // int
-            $lNewInt = intval($lValue);
+            $lNewInt = intval($a_Value);
            
             if(GetValueInteger($lId) != $lNewInt )
             {
