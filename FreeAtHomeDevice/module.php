@@ -344,7 +344,10 @@ class FreeAtHomeDevice extends IPSModule
     {
         // Daten empfangen
         $this->SendDebug(__FUNCTION__, $Ident.' => '.$Value, 0);
-        
+        $lOrigIdent = $Ident;
+        $lOrigValue = $Value;
+        $lDoSetOrigValue = false;
+
         switch($Ident)
         {
         // Helligkeit 0 in Aus umwandeln 
@@ -353,6 +356,7 @@ class FreeAtHomeDevice extends IPSModule
             {
                 $Ident = 'INFO_ON_OFF';
                 $Value = false;
+                $lDoSetOrigValue = true;
             }
             break;
         // Farbe Schwarz in Aus umwandeln
@@ -361,6 +365,7 @@ class FreeAtHomeDevice extends IPSModule
             {
                 $Ident = 'INFO_ON_OFF';
                 $Value = false;
+                $lDoSetOrigValue = true;
             }
             break;
         }
@@ -402,6 +407,10 @@ class FreeAtHomeDevice extends IPSModule
 
                    // Date im Abbild direkt übernehmen ohne auf die Rückmeldung zu warten
                    $this->do_SetValue( $Ident, $SendValue );
+                   if( $lDoSetOrigValue )
+                   {
+                        $this->do_SetValue( $lOrigIdent, strval($lOrigValue) );
+                   }
                    $this->SendDebug(__FUNCTION__,json_encode($lResult),0 );
 
                    $lbPollData = true;
