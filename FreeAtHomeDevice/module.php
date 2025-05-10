@@ -236,9 +236,11 @@ class FreeAtHomeDevice extends IPSModule
    
     public function SetBrightness( int $Value )
     {
+        IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).")" );
         // beim Wert 0 oder negativ Aktor direkt ausschalten
         if( $Value <= 50 )
         {
+            IPS_LogMessage( $this->InstanceID, __FUNCTION__.'- Set State('.strval($Value).")" );
             return $this->SetState( false );
         }
 
