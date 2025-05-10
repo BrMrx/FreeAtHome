@@ -401,7 +401,7 @@ class FreeAtHomeDevice extends IPSModule
                    $lResult = $this->sendData('setDatapoint', json_encode($lSendData) );
 
                    // Date im Abbild direkt übernehmen ohne auf die Rückmeldung zu warten
-                   $this->do_SetValue( $Ident, $Value );
+                   $this->do_SetValue( $Ident, $SendValue );
                    $this->SendDebug(__FUNCTION__,json_encode($lResult),0 );
 
                    $lbPollData = true;
