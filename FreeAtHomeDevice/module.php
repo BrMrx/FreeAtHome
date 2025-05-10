@@ -238,7 +238,7 @@ class FreeAtHomeDevice extends IPSModule
     {
         IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).")" );
         // beim Wert 0 oder negativ Aktor direkt ausschalten
-        if( $Value <= 50 )
+        if( $Value <= 1 )
         {
             IPS_LogMessage( $this->InstanceID, __FUNCTION__.'- Set State('.strval($Value).")" );
             return $this->SetState( false );
@@ -333,9 +333,20 @@ class FreeAtHomeDevice extends IPSModule
 
     public function RequestAction($Ident, $Value)
     {
-     
         // Daten empfangen
         $this->SendDebug(__FUNCTION__, $Ident.' => '.$Value, 0);
+        
+        switch($Ident)
+        {
+        // Helligkeit 0 in Aus umwandeln 
+        case 'INFO_ACTUAL_DIMMING_VALUE':
+        	if($Value == 0)
+            {
+                $Ident = 'INFO_ON_OFF';
+                $Value = false;
+            }
+            break;
+        }
 
         $lbPollData=false;
         $lSettings = PID::GetSettings($Ident);
