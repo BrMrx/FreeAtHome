@@ -373,7 +373,7 @@ class FreeAtHomeDevice extends IPSModule
                 $Value = false;
                 $lDoSetOrigValue = true;
             }
-            else if( !do_GetValue('INFO_ON_OFF') )
+            else if( !$this->do_GetValue('INFO_ON_OFF') )
             {
                 // Wert grösser 0 und war noch nicht an
                 $Ident = 'INFO_ON_OFF';
