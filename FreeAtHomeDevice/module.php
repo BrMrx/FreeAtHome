@@ -311,6 +311,21 @@ class FreeAtHomeDevice extends IPSModule
         return false;
     }
 
+    private function do_GetValue( string $a_Ident )
+    {
+        $lPairingID = PID::GetID( $a_Ident );
+        $lId        = $this->GetIDForIdent($a_Ident);
+        $lType      = PID::GetType( $lPairingID );
+        switch($lType)
+        {
+        case 0: // bool
+             return GetValueBoolean($lId);
+        case 1: // int
+            return GetValueInteger($lId);
+        }
+        return false ;
+    }
+
     private function do_SetValue( string $a_Ident, string $a_Value )
     {
         $lPairingID = PID::GetID( $a_Ident );
@@ -350,12 +365,19 @@ class FreeAtHomeDevice extends IPSModule
 
         switch($Ident)
         {
-        // Helligkeit 0 in Aus umwandeln 
+        // Helligkeit 0 in Aus umwandeln, ggf. erstmal einschalten 
         case 'INFO_ACTUAL_DIMMING_VALUE':
         	if($Value <= 0)
             {
                 $Ident = 'INFO_ON_OFF';
                 $Value = false;
+                $lDoSetOrigValue = true;
+            }
+            else if( !do_GetValue('INFO_ON_OFF') )
+            {
+                // Wert grösser 0 und war noch nicht an
+                $Ident = 'INFO_ON_OFF';
+                $Value = true;
                 $lDoSetOrigValue = true;
             }
             break;
