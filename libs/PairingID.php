@@ -366,6 +366,8 @@ class PID
 	const SupportedIDs = array(
         self::mMapPairingID['SWITCH_ON_OFF']['ID'],
 		self::mMapPairingID['INFO_ON_OFF']['ID'],
+		self::mMapPairingID['SWITCH_ON_OFF']['ID'],
+		self::mMapPairingID['WINDOW_DOOR']['ID'],
 		self::mMapPairingID['INFO_ACTUAL_DIMMING_VALUE']['ID'],
 		self::mMapPairingID['ABSOLUTE_SET_VALUE_CONTROL']['ID'],
 		self::mMapPairingID['INFO_RGB']['ID'],
