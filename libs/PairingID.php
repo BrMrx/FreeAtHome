@@ -39,7 +39,7 @@ class PID
 		'SET_POINT_TEMPERATURE'                         =>[ 'ID' => 0x0033 ], // DPT_VALUE_TEMP	2BYTE	Defines the displayed set point temperature of the system
 		'RELATIVE_SET_POINT_TEMPERATURE'                =>[ 'ID' => 0x0034 ], // DPT_VALUE_TEMP	2BYTE	Defines the relative set point temperature of the system
 		'WINDOW_DOOR'                                   =>[ 'ID' => 0x0035,   // DPT_WINDOW_DOOR	1BIT
-															'info' => 'Window',
+															'info' => 'State',
 															'type'  	=> 0,                    // bool
 															'profile' 	=> '~Window'],         // Darstellungsprofil
 		'STATE_INDICATION'                              =>[ 'ID' => 0x0036 ], // DPT_BIT_SET_8	1BYTE	states: on/off heating/cooling; eco/comfort; frost/not frost
