@@ -411,7 +411,7 @@ class PID
 			}
 		}
 
-        return '['.$a_Id.']';      
+        return '['.$a_ID.']';      
     }
 				
 	public static function GetType( int $a_ID ) : string
@@ -440,7 +440,7 @@ class PID
 				return "";
 			}
 		}
-        return '?'.$a_Id.'?';      
+        return '?'.$a_ID.'?';      
     }
 				
 	public static function GetProfile( int $a_ID ) : string
@@ -495,6 +495,11 @@ class PID
 					else if ( $a_Type == 'outputs' && $lInfoIsSet )
 					{
 						$lResult[$lChannelNr]= $lPairingId;
+					}
+					else
+					{
+						// Wert nicht gültig oder Funktion Brighness nicht verfügbar
+						IPS_LogMessage( 0, __FUNCTION__.'('.$a_Channel.', '.$a_Type.') '.self::GetName($lPairingId).' not channel found' );
 					}
                 }
             }
