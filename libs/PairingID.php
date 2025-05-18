@@ -5,7 +5,10 @@ class PID
 {
 	const mMapPairingID = [
 		'INVALID'                                       =>[ 'ID' => 0x0000 ], // invalid pairing
-		'SWITCH_ON_OFF'                                 =>[ 'ID' => 0x0001 ], // DPT_SWITCH	1BIT
+		'SWITCH_ON_OFF'                                 =>[ 'ID' => 0x0001,		// DPT_SWITCH	1BIT
+															'info'  	=> 'State',             // Zustand
+															'type'  	=> 0,                   // bool
+															'profile' 	=> '~Switch'],           // Darstellungsprofil
 		'TIMED_START_STOP'                              =>[ 'ID' => 0x0002 ], // DPT_START	1BIT
 		'FORCED'                                        =>[ 'ID' => 0x0003 ], // DPT_SWITCH_CONTROL	2BIT
 		'SCENE_CONTROL'                                 =>[ 'ID' => 0x0004 ], // DPT_SCENE_CONTROL	1BYTE
@@ -38,7 +41,11 @@ class PID
 		'ACTUATING_VALUE_COOLING'                       =>[ 'ID' => 0x0032 ], // DPT_SCALING	1BYTE	Determines the through flow volume of the control valve
 		'SET_POINT_TEMPERATURE'                         =>[ 'ID' => 0x0033 ], // DPT_VALUE_TEMP	2BYTE	Defines the displayed set point temperature of the system
 		'RELATIVE_SET_POINT_TEMPERATURE'                =>[ 'ID' => 0x0034 ], // DPT_VALUE_TEMP	2BYTE	Defines the relative set point temperature of the system
-		'WINDOW_DOOR'                                   =>[ 'ID' => 0x0035 ], // DPT_WINDOW_DOOR	1BIT
+		'WINDOW_DOOR'                                   =>[ 'ID' => 0x0035,   // DPT_WINDOW_DOOR	1BIT
+															'info' => 'Window',
+															'type'  	=> 0,                    // bool
+															'profile' 	=> '~Window'           // Darstellungsprofil
+															 ], 
 		'STATE_INDICATION'                              =>[ 'ID' => 0x0036 ], // DPT_BIT_SET_8	1BYTE	states: on/off heating/cooling; eco/comfort; frost/not frost
 		'FAN_MANUAL_ON_OFF'                             =>[ 'ID' => 0x0037 ], // DPT_SWITCH	1BIT
 		'CONTROLLER_ON_OFF'                             =>[ 'ID' => 0x0038 ], // DPT_SWITCH	1BIT
