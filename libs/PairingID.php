@@ -484,8 +484,6 @@ class PID
 			if( isset($lChannelValue->pairingID )  )
             {
 				$lPairingId = $lChannelValue->pairingID;
-				// Wert nicht gültig oder Funktion Brighness nicht verfügbar
-				IPS_LogMessage( 0, __FUNCTION__.'('.json_encode($a_Channel).', '.$a_Type.') '.self::GetName($lPairingId) );
 
                 if( in_array($lPairingId, self::SupportedIDs ) )
                 {

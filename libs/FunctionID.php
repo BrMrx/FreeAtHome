@@ -694,6 +694,8 @@ class FID
                 }
                 else
                 {
+    				// Wert nicht gültig oder Funktion Brighness nicht verfügbar
+                    IPS_LogMessage( 0, __FUNCTION__.'check outputs: '.json_encode($$lChannelValue) );
                     // dann handelt es sich wohl um einen reinen Sensor
                     // Nur Werte mit unterstützten Ausgängen zulassen
                     $lOutputsArray = PID::FilterSupportedType($lChannelValue,'outputs');
