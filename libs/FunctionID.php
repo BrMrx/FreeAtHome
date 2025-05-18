@@ -692,6 +692,16 @@ class FID
                 {
                     $lResult[$lChannelNr]= $lChannelValue;
                 }
+                else
+                {
+                    // dann handelt es sich wohl um einen reinen Sensor
+                    // Nur Werte mit unterstützten Ausgängen zulassen
+                    $lOutputsArray = PID::FilterSupportedType($lChannelValue,'outputs');
+                    if( !empty($lOutputsArray) ) 
+                    {
+                        $lResult[$lChannelNr]= $lChannelValue;
+                    }
+                  }
             }
         }	
   		return $lResult;
