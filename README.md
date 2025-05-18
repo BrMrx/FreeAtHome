@@ -7,7 +7,7 @@
 
 ** Der Treiber ist bereits lauffähig, befindet sich aber noch in der Entwicklung!!**
 
-es werden bisher nur wireless Aktoren und Dimmer Aktoren unterstützt
+es werden bereits viele Busch Jäger (Dimmer, Relais, Universalmelder) und Hue Komponenten unterstützt.
 
 ## Beschreibung
 
@@ -19,7 +19,7 @@ Dieses Modul ermöglicht die Integration von Busch-Jaeger free@home in IP-Symcon
 - Gruppierter Konfigurator für:
   - free@home Geräte
   - Szenen  ( in Planung)
-  - Hue-Komponenten (In Planung)
+  - Hue-Komponenten 
 - Automatische Variablenanlage mit passenden Profilen
 - Echtzeit-Aktualisierung über WebSocket (in Planung - derzeit zyklisch)
 - Synchronisation mit SysAP 
