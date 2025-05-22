@@ -23,6 +23,33 @@ class FreeAtHomeDevice extends IPSModule
         $this->RegisterPropertyString('Outputs', '');
  
         $this->RegisterAttributeString('DeviceType', '');
+
+
+        if (!IPS_VariableProfileExists('FAH.WindForce')) {
+            IPS_CreateVariableProfile('HUE.WindForce', 1);
+        }
+
+        IPS_SetVariableProfileText('HUE.WindForce', '', 'Bft');
+        IPS_SetVariableProfileValues('HUE.WindForce', 0, 17, 1);
+        IPS_SetVariableProfileAssociation('HUE.WindForce', 0, '0 Bft: Windstille, weniger als 1 km/h', "Wind", 0x0000FF);
+        IPS_SetVariableProfileAssociation('HUE.WindForce', 1, '1 Bft: leichter Zug, 1-5 km/h ', "Wind", 0x0000FF);
+        IPS_SetVariableProfileAssociation('HUE.WindForce', 2, '2 Bft: leichte Brise, 6-11 km/h', "Wind", 0x00FF00);
+        IPS_SetVariableProfileAssociation('HUE.WindForce', 3, '3 Bft: schwache Brise, 12-19 km/h', "Wind", 0x00FF00);
+        IPS_SetVariableProfileAssociation('HUE.WindForce', 4, '4 Bft: mäßige Brise, 20-28 km/h', "Wind", 0x00FF00);
+        IPS_SetVariableProfileAssociation('HUE.WindForce', 5, '5 Bft: frische Brise, 29-38 km/h', "Wind", 0xFF00FF);
+        IPS_SetVariableProfileAssociation('HUE.WindForce', 6, '6 Bft: starker Wind, 39-49 km/h', "Wind", 0xFF00FF);
+        IPS_SetVariableProfileAssociation('HUE.WindForce', 7, '7 Bft: steifer Wind, 50-61 km/h', "Wind", 0xFF00FF);
+        IPS_SetVariableProfileAssociation('HUE.WindForce', 8, '8 Bft: stürmischer Wind, 62-74 km/h', "Wind", 0xFF00FF);
+        IPS_SetVariableProfileAssociation('HUE.WindForce', 9, '9 Bft: Sturm, 75-88 km/h', "Wind", 0xFF00FF);
+        IPS_SetVariableProfileAssociation('HUE.WindForce', 10, '10 Bft: schwerer Sturm, 89-102 km/h', "Wind", 0xFF00FF);
+        IPS_SetVariableProfileAssociation('HUE.WindForce', 11, '11 Bft: Orkanartiger Sturm, 103-117 km/h', "Wind", 0xFF0000);
+        IPS_SetVariableProfileAssociation('HUE.WindForce', 12, '12 Bft: Orkan, über 118–133 km/h', "Wind", 0xFF0000);
+        IPS_SetVariableProfileAssociation('HUE.WindForce', 13, '13 Bft: Orkan, 134–149 km/h', "Wind", 0xFF0000);
+        IPS_SetVariableProfileAssociation('HUE.WindForce', 14, '14 Bft: Orkan, 150–166 km/h', "Wind", 0xFF0000);
+        IPS_SetVariableProfileAssociation('HUE.WindForce', 15, '15 Bft: Orkan, 167–183 km/h', "Wind", 0xFF0000);
+        IPS_SetVariableProfileAssociation('HUE.WindForce', 16, '16 Bft: Orkan, 184–202 km/h', "Wind", 0xFF0000);
+        IPS_SetVariableProfileAssociation('HUE.WindForce', 17, '17 Bft: Orkan, ≧203 km/h', "Wind", 0xFF0000);
+
     }
 
     protected function HasActionInput( string $a_Action ) : bool
@@ -186,11 +213,20 @@ class FreeAtHomeDevice extends IPSModule
                             break;
                         case 1: // int
                             $lNewInt = intval($lValue);
-                           
+                            
                             if(GetValueInteger($lId) != $lNewInt )
                             {
                                 $this->SendDebug(__FUNCTION__ , $lValueId.' => '.strval($lNewInt), 0);
-                            	SetValueInteger($lId,$lNewInt);                           
+                                SetValueInteger($lId,$lNewInt);                           
+                            }
+                            break;
+                        case 2: // float
+                            $lNewFloat = floatval($lValue);
+                            
+                            if(GetValueFloat($lId) != $lNewFloat )
+                            {
+                                $this->SendDebug(__FUNCTION__ , $lValueId.' => '.strval($lNewFloat), 0);
+                                SetValueFloat($lId,$lNewFloat);                           
                             }
                             break;
                         }
@@ -322,7 +358,9 @@ class FreeAtHomeDevice extends IPSModule
              return GetValueBoolean($lId);
         case 1: // int
             return GetValueInteger($lId);
-        }
+        case 2: // float
+            return GetValueFloat($lId);
+            }
         return false ;
     }
 

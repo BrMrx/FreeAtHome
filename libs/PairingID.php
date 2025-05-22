@@ -28,9 +28,18 @@ class PID
 		'DEDICATED_STOP'                                =>[ 'ID' => 0x0022 ], // DPT_START	1BIT
 		'SET_ABSOLUTE_POSITION_BLINDS_PERCENTAGE'       =>[ 'ID' => 0x0023 ], // DPT_SCALING	1BYTE	Moves the sunblinds into a specified position
 		'SET_ABSOLUTE_POSITION_SLATS_PERCENTAGE'        =>[ 'ID' => 0x0024 ], // DPT_SCALING	1BYTE	Moves the slats into a specified position
-		'WIND_ALARM'                                    =>[ 'ID' => 0x0025 ], // DPT_ALARM	1BIT
-		'FROST_ALARM'                                   =>[ 'ID' => 0x0026 ], // DPT_ALARM	1BIT
-		'RAIN_ALARM'                                    =>[ 'ID' => 0x0027 ], // DPT_ALARM	1BIT
+		'WIND_ALARM'                                    =>[ 'ID' => 0x0025,   // DPT_ALARM	1BIT
+															'info' => 'Wind alert',
+															'type'  	=> 0,                    // bool
+															'profile' 	=> '~Alert'],         // Darstellungsprofil
+		'FROST_ALARM'                                   =>[ 'ID' => 0x0026, // DPT_ALARM	1BIT
+															'info' => 'Frost',
+															'type'  	=> 0,                    // bool
+															'profile' 	=> '~Alert'],         // Darstellungsprofil
+		'RAIN_ALARM'                                    =>[ 'ID' => 0x0027,   // DPT_ALARM	1BIT
+															'info' => 'Regen',
+															'type'  	=> 0,                    // bool
+															'profile' 	=> '~Alert'],         // Darstellungsprofil
 		'FORCED_UP_DOWN'                                =>[ 'ID' => 0x0028 ], // DPT_SWITCH_CONTROL	2BIT
 		'WINDOW_DOOR_POSITION'                          =>[ 'ID' => 0x0029 ], // DPT_SCALING	1BYTE	Delivers position for Window/Door (Open / Tilted / Closed)
 		'ACTUATING_VALUE_HEATING'                       =>[ 'ID' => 0x0030 ], // DPT_SCALING	1BYTE	Determines the through flow volume of the control valve
@@ -184,11 +193,26 @@ class PID
 		'FLOOD_ALARM'                                   =>[ 'ID' => 0x02C8 ], // DPT_SWITCH	1BIT
 		'SET_OPERATING_MODE'                            =>[ 'ID' => 0x0300 ], // Operating mode of thermostat
 		'HEATING_COOLING_DOMUS'                         =>[ 'ID' => 0x0301 ], // Switch from Heating (0) Cooling (1)
-		'OUTDOOR_TEMPERATURE'                           =>[ 'ID' => 0x0400 ], // DPT_VALUE_TEMP	2BYTE	Outdoor Temperature
-		'WIND_FORCE'                                    =>[ 'ID' => 0x0401 ], // DPT_BEAUFORT_WIND_FORCE_SCALE	1BYTE	Wind force
-		'BRIGHTNESS_ALARM'                              =>[ 'ID' => 0x0402 ], // DPT_SWITCH	1BIT
-		'BRIGHTNESS_LEVEL'                              =>[ 'ID' => 0x0403 ], // DPT_VALUE_LUX	2BYTE	Weatherstation brightness level
-		'WIND_SPEED'                                    =>[ 'ID' => 0x0404 ], // DPT_VALUE_WSP	2BYTE	Wind speed
+		'OUTDOOR_TEMPERATURE'                           =>[ 'ID' => 0x0400, // DPT_VALUE_TEMP	2BYTE	Outdoor Temperature
+															'info' => 'Temperature',
+															'type'  	=> 2,                    // float
+															'profile' 	=> '~Temperature'],     // Darstellungsprofil
+		'WIND_FORCE'                                    =>[ 'ID' => 0x0401, // DPT_BEAUFORT_WIND_FORCE_SCALE	1BYTE	Wind force
+															'info' => 'Wind force',
+															'type'  	=> 1,                    // int
+															'profile' 	=> 'FAH.WindForce'],     // Darstellungsprofil
+		'BRIGHTNESS_ALARM'                              =>[ 'ID' => 0x0402,  // DPT_SWITCH	1BIT
+															'info' => 'Illumination Alarm',
+															'type'  	=> 0,                    // bool
+															'profile' 	=> '~Alert'],         // Darstellungsprofil
+		'BRIGHTNESS_LEVEL'                              =>[ 'ID' => 0x0403, // DPT_VALUE_LUX	2BYTE	Weatherstation brightness level
+															'info' => 'Illumination',
+															'type'  	=> 1,                    // int
+															'profile' 	=> '~Illumination'],     // Darstellungsprofil
+		'WIND_SPEED'                                    =>[ 'ID' => 0x0404, // DPT_VALUE_WSP	2BYTE	Wind speed
+															'info' => 'Wind speed',
+															'type'  	=> 2,                    // float
+															'profile' 	=> '~WindSpeed.ms'],     // Darstellungsprofil
 		'RAIN_SENSOR_ACTIVATION_PERCENTAGE'             =>[ 'ID' => 0x0405 ], // DPT_SCALING	1BYTE
 		'RAIN_SENSOR_FREQUENCY'                         =>[ 'ID' => 0x0406 ], // DPT_KNX_FLOAT	2BYTE
 		'MEDIA_PLAY'                                    =>[ 'ID' => 0x0440 ], // DPT_TRIGGER	1BIT
@@ -368,7 +392,14 @@ class PID
 		self::mMapPairingID['INFO_RGB']['ID'],
 		self::mMapPairingID['RGB']['ID'],
 		self::mMapPairingID['CURRENT_ABSOLUTE_POSITION_BLINDS_PERCENTAGE']['ID'],
-		self::mMapPairingID['SET_ABSOLUTE_POSITION_BLINDS_PERCENTAGE']['ID'],
+		self::mMapPairingID['BRIGHTNESS_LEVEL']['ID'],
+		self::mMapPairingID['BRIGHTNESS_ALARM']['ID'],
+		self::mMapPairingID['RAIN_ALARM']['ID'],
+		self::mMapPairingID['FROST_ALARM']['ID'],
+		self::mMapPairingID['OUTDOOR_TEMPERATURE']['ID'],
+		self::mMapPairingID['WIND_ALARM']['ID'],
+		self::mMapPairingID['WIND_FORCE']['ID'],
+		self::mMapPairingID['WIND_SPEED']['ID'],
 	);
 
 	
