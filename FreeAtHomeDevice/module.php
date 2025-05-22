@@ -191,7 +191,7 @@ class FreeAtHomeDevice extends IPSModule
 
             $this->SendDebug(__FUNCTION__, 'displayName: '.$lDataObj->{$lDeviceID}->displayName, 0);
             IPS_LogMessage( $this->InstanceID, 'device name changed "'.IPS_GetName( $this->InstanceID).'" => "'.$lNewName.'"' );
-            IPS_SetName( $this->InstanceID, $lNewName );
+    //        IPS_SetName( $this->InstanceID, $lNewName );
         }
 
         foreach( $lOutputs as $lDatapoint => $lPairingID  )
