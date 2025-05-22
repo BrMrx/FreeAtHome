@@ -178,12 +178,20 @@ class FreeAtHomeDevice extends IPSModule
             }
         }
 
-        if( isset( $lDataObj->{$lDeviceID}->displayName ) &&
-                    $lDataObj->{$lDeviceID}->displayName != IPS_GetName( $this->InstanceID) )
+
+        $lOldName = explode( ' - ', IPS_GetName( $this->InstanceID) );
+
+
+
+        if( isset( $lDataObj->{$lDeviceID}->displayName ) && isset( $lOldName[0] ) &&
+                    $lDataObj->{$lDeviceID}->displayName != $lOldName[0] )
         {
+            $lOldName[0] = $lDataObj->{$lDeviceID}->displayName;
+            $lNewName = implode( ' - ', $lOldName );
+
             $this->SendDebug(__FUNCTION__, 'displayName: '.$lDataObj->{$lDeviceID}->displayName, 0);
-            IPS_LogMessage( $this->InstanceID, 'device name changed "'.IPS_GetName( $this->InstanceID).'" => "'.$lDataObj->{$lDeviceID}->displayName.'"' );
-            IPS_SetName( $this->InstanceID, $lDataObj->{$lDeviceID}->displayName );
+            IPS_LogMessage( $this->InstanceID, 'device name changed "'.IPS_GetName( $this->InstanceID).'" => "'.$lNewName.'"' );
+            IPS_SetName( $this->InstanceID, $lNewName );
         }
 
         foreach( $lOutputs as $lDatapoint => $lPairingID  )
