@@ -48,7 +48,7 @@ class FreeAtHomeDevice extends IPSModule
         IPS_SetVariableProfileAssociation('HUE.WindForce', 14, '14 Bft: Orkan, 150–166 km/h', "Wind", 0xFF0000);
         IPS_SetVariableProfileAssociation('HUE.WindForce', 15, '15 Bft: Orkan, 167–183 km/h', "Wind", 0xFF0000);
         IPS_SetVariableProfileAssociation('HUE.WindForce', 16, '16 Bft: Orkan, 184–202 km/h', "Wind", 0xFF0000);
-        IPS_SetVariableProfileAssociation('HUE.WindForce', 17, '17 Bft: Orkan, ≧203 km/h', "Wind", 0xFF0000);
+        IPS_SetVariableProfileAssociation('HUE.WindForce', 17, '17 Bft: Orkan, >= 203 km/h', "Wind", 0xFF0000);
 
     }
 
