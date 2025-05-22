@@ -93,13 +93,11 @@ class FreeAtHomeConfigurator extends IPSModule
                     }
     
                     $lDeviceName = $lChannelData->displayName;
+                    $lDeviceType = FID::GetName($lChannelData->functionID);
                     if(count($lListFunctionIds)> 1)
                     {
                         $lDeviceName = $lDeviceName.' - '.$this->translate($lDeviceType);
                     }
-                    $lDeviceType = FID::GetName($lChannelData->functionID);
-    
-    
     
                     $lInputs = json_encode((object)PID::FilterSupportedType($lChannelData,'inputs'));
                     $lOutputs = json_encode((object)PID::FilterSupportedType($lChannelData,'outputs'));
