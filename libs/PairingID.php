@@ -31,15 +31,15 @@ class PID
 		'WIND_ALARM'                                    =>[ 'ID' => 0x0025,   // DPT_ALARM	1BIT
 															'info' => 'Wind alert',
 															'type'  	=> 0,                    // bool
-															'profile' 	=> '~Alert'],         // Darstellungsprofil
+															'profile' 	=> 'FAH.WindAlarm'],         // Darstellungsprofil
 		'FROST_ALARM'                                   =>[ 'ID' => 0x0026, // DPT_ALARM	1BIT
 															'info' => 'Frost',
 															'type'  	=> 0,                    // bool
-															'profile' 	=> '~Alert'],         // Darstellungsprofil
+															'profile' 	=> 'FAH.FrostAlarm'],         // Darstellungsprofil
 		'RAIN_ALARM'                                    =>[ 'ID' => 0x0027,   // DPT_ALARM	1BIT
 															'info' => 'Regen',
 															'type'  	=> 0,                    // bool
-															'profile' 	=> '~Alert'],         // Darstellungsprofil
+															'profile' 	=> '~Raining'],         // Darstellungsprofil
 		'FORCED_UP_DOWN'                                =>[ 'ID' => 0x0028 ], // DPT_SWITCH_CONTROL	2BIT
 		'WINDOW_DOOR_POSITION'                          =>[ 'ID' => 0x0029 ], // DPT_SCALING	1BYTE	Delivers position for Window/Door (Open / Tilted / Closed)
 		'ACTUATING_VALUE_HEATING'                       =>[ 'ID' => 0x0030 ], // DPT_SCALING	1BYTE	Determines the through flow volume of the control valve
@@ -204,7 +204,7 @@ class PID
 		'BRIGHTNESS_ALARM'                              =>[ 'ID' => 0x0402,  // DPT_SWITCH	1BIT
 															'info' => 'Illumination Alarm',
 															'type'  	=> 0,                    // bool
-															'profile' 	=> '~Alert'],         // Darstellungsprofil
+															'profile' 	=> 'FAH.IlluminationAlert'],         // Darstellungsprofil
 		'BRIGHTNESS_LEVEL'                              =>[ 'ID' => 0x0403, // DPT_VALUE_LUX	2BYTE	Weatherstation brightness level
 															'info' => 'Illumination',
 															'type'  	=> 1,                    // int

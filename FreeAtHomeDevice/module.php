@@ -24,6 +24,31 @@ class FreeAtHomeDevice extends IPSModule
  
         $this->RegisterAttributeString('DeviceType', '');
 
+        // Wind Grenzwert Profil
+        if (!IPS_VariableProfileExists('FAH.WindAlarm')) {
+            IPS_CreateVariableProfile('FAH.WindAlarm', 0);
+        }
+		IPS_SetVariableProfileIcon('FAH.WindAlarm', 'wind' );
+        IPS_SetVariableProfileAssociation('FAH.WindAlarm', false,   $this->translate('Below Limit'), 'wind', -1 );
+        IPS_SetVariableProfileAssociation('FAH.WindAlarm', true,    $this->translate('Limit exceeded'), 'wind-warning', 0xE72D2E);
+ 
+        // Frost Grenzwert Profil
+        if (!IPS_VariableProfileExists('FAH.FrostAlarm')) {
+            IPS_CreateVariableProfile('FAH.FrostAlarm', 0);
+        }
+		IPS_SetVariableProfileIcon('FAH.FrostAlarm', 'snowflake' );
+        IPS_SetVariableProfileAssociation('FAH.FrostAlarm', false,   $this->translate('Above Limit'),   'snowflake', -1 );
+        IPS_SetVariableProfileAssociation('FAH.FrostAlarm', true,    $this->translate('Limit undercut'), 'temperature-snow', 0xB5EBF5);
+ 
+       // Helligkeit Grenzwert Profil
+        if (!IPS_VariableProfileExists('FAH.IlluminationAlert')) {
+            IPS_CreateVariableProfile('FAH.IlluminationAlert', 0);
+        }
+		IPS_SetVariableProfileIcon('FAH.IlluminationAlert', 'snowflake' );
+        IPS_SetVariableProfileAssociation('FAH.IlluminationAlert', false,   $this->translate('Below Limit'),   'brightness-low', -1 );
+        IPS_SetVariableProfileAssociation('FAH.IlluminationAlert', true,    $this->translate('Limit exceeded'), 'brightness', 0xFFD53D);
+ 
+
 
         if (!IPS_VariableProfileExists('FAH.WindForce')) {
             IPS_CreateVariableProfile('FAH.WindForce', 1);
