@@ -31,24 +31,25 @@ class FreeAtHomeDevice extends IPSModule
 		IPS_SetVariableProfileIcon('FAH.WindForce', 'wind' );
         IPS_SetVariableProfileText('FAH.WindForce', '', 'Bft');
         IPS_SetVariableProfileValues('FAH.WindForce', 0, 17, 1);
-        IPS_SetVariableProfileAssociation('FAH.WindForce', 0, '0 Bft: Windstille, weniger als 1 km/h', "wind", 0x0000FF);
-        IPS_SetVariableProfileAssociation('FAH.WindForce', 1, '1 Bft: leichter Zug, 1-5 km/h ', "wind", 0x0000FF);
-        IPS_SetVariableProfileAssociation('FAH.WindForce', 2, '2 Bft: leichte Brise, 6-11 km/h', "wind", 0x00FF00);
-        IPS_SetVariableProfileAssociation('FAH.WindForce', 3, '3 Bft: schwache Brise, 12-19 km/h', "wind", 0x00FF00);
-        IPS_SetVariableProfileAssociation('FAH.WindForce', 4, '4 Bft: mäßige Brise, 20-28 km/h', "wind", 0x00FF00);
-        IPS_SetVariableProfileAssociation('FAH.WindForce', 5, '5 Bft: frische Brise, 29-38 km/h', "wind", 0xF7CE46);
-        IPS_SetVariableProfileAssociation('FAH.WindForce', 6, '6 Bft: starker Wind, 39-49 km/h', "wind", 0xF7CE46);
-        IPS_SetVariableProfileAssociation('FAH.WindForce', 7, '7 Bft: steifer Wind, 50-61 km/h', "wind", 0xF7CE46);
-        IPS_SetVariableProfileAssociation('FAH.WindForce', 8, '8 Bft: stürmischer Wind, 62-74 km/h', "wind-warning", 0xF7CE46);
-        IPS_SetVariableProfileAssociation('FAH.WindForce', 9, '9 Bft: Sturm, 75-88 km/h', "wind-warning", 0xF7CE46);
-        IPS_SetVariableProfileAssociation('FAH.WindForce', 10, '10 Bft: schwerer Sturm, 89-102 km/h', "wind-warning", 0xF7CE46);
-        IPS_SetVariableProfileAssociation('FAH.WindForce', 11, '11 Bft: Orkanartiger Sturm, 103-117 km/h', "wind-warning", 0xFF0000);
-        IPS_SetVariableProfileAssociation('FAH.WindForce', 12, '12 Bft: Orkan, über 118–133 km/h', "wind-warning", 0xFF0000);
-        IPS_SetVariableProfileAssociation('FAH.WindForce', 13, '13 Bft: Orkan, 134–149 km/h', "wind-warning", 0xFF0000);
-        IPS_SetVariableProfileAssociation('FAH.WindForce', 14, '14 Bft: Orkan, 150–166 km/h', "wind-warning", 0xFF0000);
-        IPS_SetVariableProfileAssociation('FAH.WindForce', 15, '15 Bft: Orkan, 167–183 km/h', "wind-warning", 0xFF0000);
-        IPS_SetVariableProfileAssociation('FAH.WindForce', 16, '16 Bft: Orkan, 184–202 km/h', "wind-warning", 0xFF0000);
-        IPS_SetVariableProfileAssociation('FAH.WindForce', 17, '17 Bft: Orkan, >= 203 km/h', "wind-warning", 0xFF0000);
+
+        IPS_SetVariableProfileAssociation('FAH.WindForce', 0,  $this->translate('0 Bft: Calm, less then 1 km/h'), "wind", 0x22BAD2);
+        IPS_SetVariableProfileAssociation('FAH.WindForce', 1,  $this->translate('1 Bft: Light Air, 1-5 km/h'), "wind", 0x06C3BF);
+        IPS_SetVariableProfileAssociation('FAH.WindForce', 2,  $this->translate('2 Bft: Light Breeze, 6-11 km/h'), "wind", 0x00BC8A);
+        IPS_SetVariableProfileAssociation('FAH.WindForce', 3,  $this->translate('3 Bft: Gentle Breeze, 12-19 km/h'), "wind", 0x00B556);
+        IPS_SetVariableProfileAssociation('FAH.WindForce', 4,  $this->translate('4 Bft: Moderate Breeze, 20-28 km/h'), "wind", 0x25B426);
+        IPS_SetVariableProfileAssociation('FAH.WindForce', 5,  $this->translate('5 Bft: Fresh Breeze, 29-38 km/h'), "wind", 0x92B500);
+        IPS_SetVariableProfileAssociation('FAH.WindForce', 6,  $this->translate('6 Bft: Strong Breeze, 39-49 km/h'), "wind-warning", 0xD6B301);
+        IPS_SetVariableProfileAssociation('FAH.WindForce', 7,  $this->translate('7 Bft: Near Gale, 50-61 km/h'), "wind-warning", 0xDCA500);
+        IPS_SetVariableProfileAssociation('FAH.WindForce', 8,  $this->translate('8 Bft: Gale, 62-74 km/h'), "wind-warning", 0xDF9500);
+        IPS_SetVariableProfileAssociation('FAH.WindForce', 9,  $this->translate('9 Bft: Severe Gale, 75-88 km/h'), "wind-warning", 0xE28400);
+        IPS_SetVariableProfileAssociation('FAH.WindForce', 10, $this->translate('10 Bft: Storm, 89-102 km/h'), "wind-warning", 0xE65305);
+        IPS_SetVariableProfileAssociation('FAH.WindForce', 11, $this->translate('11 Bft: Violent Storm, 103-117 km/h'), "wind-warning", 0xE72D2E);
+        IPS_SetVariableProfileAssociation('FAH.WindForce', 12, $this->translate('12 Bft: Hurricane, über 118–133 km/h'), "wind-warning", 0xE81854);
+        IPS_SetVariableProfileAssociation('FAH.WindForce', 13, $this->translate('13 Bft: Hurricane, 134–149 km/h'), "wind-warning", 0xE81854);
+        IPS_SetVariableProfileAssociation('FAH.WindForce', 14, $this->translate('14 Bft: Hurricane, 150–166 km/h'), "wind-warning", 0xE81854);
+        IPS_SetVariableProfileAssociation('FAH.WindForce', 15, $this->translate('15 Bft: Hurricane, 167–183 km/h'), "wind-warning", 0xE81854);
+        IPS_SetVariableProfileAssociation('FAH.WindForce', 16, $this->translate('16 Bft: Hurricane, 184–202 km/h'), "wind-warning", 0xE81854);
+        IPS_SetVariableProfileAssociation('FAH.WindForce', 17, $this->translate('17 Bft: Hurricane, >= 203 km/h'), "wind-warning", 0xE81854);
 
     }
 
@@ -86,7 +87,7 @@ class FreeAtHomeDevice extends IPSModule
             IPS_LogMessage( $this->InstanceID, __FUNCTION__.' '.$lOdp.":".$lPairingId.' - '.$lPIDName );
             $this->MaintainVariable(
                 $lPIDName, 
-                $this->Translate(PID::GetInfo($lPairingId)), 
+                $this->translate(PID::GetInfo($lPairingId)), 
                 PID::GetType($lPairingId), PID::GetProfile($lPairingId), 
                 0, true );          
             // hat die Pairing ID ein Action Item
