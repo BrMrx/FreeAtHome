@@ -646,12 +646,8 @@ class FID
     ];
 
 	// aktuell unterstützte Funktions ID's
-	const SupportedIDs = [
-        self::mMapValues['SWITCH_ACTUATOR']['ID'],
-        self::mMapValues['DIMMING_ACTUATOR_TYPE0']['ID'],
-        self::mMapValues['DIMMING_ACTUATOR']['ID'],
-        self::mMapValues['COLORTEMPERATURE_ACTUATOR']['ID'],
-        self::mMapValues['RGB_W_ACTUATOR']['ID'], 
+	const UnSupportedIDs = [
+        self::mMapValues['SWITCH_FORCE_ON_OFF_SENSOR_ROCKER_TYPE1']['ID'],
     ];
 	
     public static function GetName( string $a_Id ) : string
@@ -672,7 +668,7 @@ class FID
     public static function IsSupportedID( string $a_Id ) : bool
     {
         $lFunctionId = hexdec( $a_Id );
-        return in_array($lFunctionId, self::SupportedIDs );
+        return !in_array($lFunctionId, self::UnSupportedIDs );
     }
 
 	public static function FilterSupportedChannels( $a_Channels ) : array

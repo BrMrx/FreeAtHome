@@ -178,7 +178,7 @@ class FreeAtHomeBridge extends IPSModule
             {
                 foreach($DeviceValue->channels as $lChannelNr => $lChannelValue)
                 {
-                    if( isset($lChannelValue->functionID )  )
+                    if( isset($lChannelValue->functionID ) && FID::IsSupportedID( $lChannelValue->functionID ) )
                     {
                         $SupportedPairingIDs = PID::FilterSupported($lChannelValue);
                         if( !empty($SupportedPairingIDs) )
