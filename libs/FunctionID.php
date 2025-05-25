@@ -678,7 +678,7 @@ class FID
 		{             			
             $lChannelValue = (object)$lValue;
 
-   			if( isset($lChannelValue->functionID )  )
+   			if( isset($lChannelValue->functionID ) && self::IsSupportedID( $lChannelValue->functionID )  )
             {
  
                 // Nur Werte mit unterstützten Eingängen zulassen
