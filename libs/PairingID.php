@@ -10,7 +10,10 @@ class PID
 		'FORCED'                                        =>[ 'ID' => 0x0003 ], // DPT_SWITCH_CONTROL	2BIT
 		'SCENE_CONTROL'                                 =>[ 'ID' => 0x0004 ], // DPT_SCENE_CONTROL	1BYTE
 		'DOOR_OPENER'                                   =>[ 'ID' => 0x0005 ], // DPT_START	1BIT
-		'TIMED_MOVEMENT'                                =>[ 'ID' => 0x0006 ], // DPT_START	1BIT
+		'TIMED_MOVEMENT'                                =>[ 'ID' => 0x0006,   // DPT_START	1BIT
+															'info' => 'Motion',
+															'type'  	=> 0,                    // bool
+															'profile' 	=> '~Motion'],         // Darstellungsprofil
 		'TIMED_PRESENCE'                                =>[ 'ID' => 0x0007 ], // DPT_START	1BIT
 		'RELATIVE_SET_VALUE_CONTROL'                    =>[ 'ID' => 0x0010 ], // DPT_CONTROL_DIMMING	4BIT
 		'ABSOLUTE_SET_VALUE_CONTROL'                    =>[ 'ID' => 0x0011 ], // DPT_SCALING	1BYTE	Absolute control of the set value
@@ -37,7 +40,7 @@ class PID
 															'type'  	=> 0,                    // bool
 															'profile' 	=> 'FAH.FrostAlarm'],         // Darstellungsprofil
 		'RAIN_ALARM'                                    =>[ 'ID' => 0x0027,   // DPT_ALARM	1BIT
-															'info' => 'Regen',
+															'info' => 'Rain',
 															'type'  	=> 0,                    // bool
 															'profile' 	=> '~Raining'],         // Darstellungsprofil
 		'FORCED_UP_DOWN'                                =>[ 'ID' => 0x0028 ], // DPT_SWITCH_CONTROL	2BIT
@@ -153,6 +156,7 @@ class PID
 		'TIMED_MOVEMENT_REQUEST'                        =>[ 'ID' => 0x0164 ], // DPT_START	1BIT
 		'INFO_TIMED_MOVEMENT'                           =>[ 'ID' => 0x0165 ], // DPT_ENUM_0_TO_63	6BIT	Reflects the actual value of the actuator
 		'MOVEMENT_DETECTOR_STATUS'                      =>[ 'ID' => 0x0166 ], // DPT_BIT_SET_8	1BYTE	Reflects the actual value of the actuator
+
 		'LOCK_SENSOR'                                   =>[ 'ID' => 0x0167 ], // DPT_SWITCH	1BIT
 		'INFO_LOCKED_SENSOR'                            =>[ 'ID' => 0x0168 ], // DPT_STATE	1BIT
 		'SYSAP_INFO_LOCKED_SENSOR'                      =>[ 'ID' => 0x0169 ], // DPT_STATE	1BIT
