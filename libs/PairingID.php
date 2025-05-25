@@ -385,7 +385,6 @@ class PID
 
 
 	
-	
 	// aktuell unterstützte Funktions ID
 	const SupportedIDs = array(
         self::mMapPairingID['SWITCH_ON_OFF']['ID'],
