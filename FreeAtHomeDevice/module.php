@@ -462,7 +462,7 @@ class FreeAtHomeDevice extends IPSModule
        {
             // Wert nicht gültig oder Funktion Brighness nicht verfügbar
             IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).") not supported" );
-           return false;
+            return false;
        }
 
         $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
@@ -519,6 +519,12 @@ class FreeAtHomeDevice extends IPSModule
         case 1: // int
             $lNewInt = intval($a_Value);
            
+            if( $this->HasLinarisation() )
+            {
+                $lNewInt = $this->LinearizeFromDevice( $lNewInt );
+                $this->SendDebug(__FUNCTION__ , 'Linarize '.intval($lValue).' => '.$lNewInt, 0);
+            }
+
             if(GetValueInteger($lId) != $lNewInt )
             {
                 $this->SendDebug(__FUNCTION__ , $a_Ident.' => '.strval($lNewInt), 0);
