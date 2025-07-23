@@ -82,6 +82,81 @@ class FreeAtHomeDevice extends IPSModule
 
     }
 
+    protected function GetLinearisation() : array
+    {
+        $data = array();
+
+        $lin25 = $this->ReadPropertyInteger("Lin25");
+        $lin50 = $this->ReadPropertyInteger("Lin50");
+        $lin75 = $this->ReadPropertyInteger("Lin75");
+        // Sichheitscheck auf gültige Werte
+        if ($lin25 > 0 && $lin50 > $lin25 && $lin75 > $lin50 && $lin75 < 100) {
+            $data[25] = $lin25;
+            $data[50] = $lin50;
+            $data[75] = $lin75;
+        }
+        $data[100] = 100;
+        return $data;
+    }
+
+    protected function Linearize(int $aValue, int $x0, int $y0, int $x1, int $y1) : int
+    {
+        $div = $x1 - $x0;
+        return intval( floatval($y0) * ($x1 - $aValue) / $div + $y1 * ($aValue - $x0) / floatval($div) + 0.5);
+    }
+
+    protected function LinearizeToDevice(int $value) : int 
+    {
+        if ($value <= 0 || $value >= 100)
+        {
+            return $value;
+        }  
+
+        $data = $this->GetLinearisation();
+        $x0 = 0;
+        $y0 = 0;
+        foreach ($data as $x1 => $y1) 
+        {
+            if ($value > $x1) 
+            {
+                $x0 = $x1;
+                $y0 = $y1;
+            } 
+            else 
+            {
+                return $this->Linearize($value, $x0, $y0, $x1, $y1);
+            }
+        }
+
+        return $value;
+    }
+
+    protected function LinearizeFromDevice(int $value) : int
+    {
+        if ($value <= 0 || $value >= 100)
+        {
+            return $value;
+        }  
+
+        $data = $this->GetLinearisation();
+        $x0 = 0;
+        $y0 = 0;
+        foreach ($data as $y1 => $x1) 
+        {
+            if ($value > $x1) 
+            {
+                $x0 = $x1;
+                $y0 = $y1;
+            } 
+            else 
+            {
+                return $this->Linearize($value, $x0, $y0, $x1, $y1);
+            }
+        }
+
+        return $value;
+    }
+
     protected function HasActionInput( string $a_Action ) : bool
     {
         // Variablen für alle Outputs (des Devises) anlegen
@@ -124,7 +199,11 @@ class FreeAtHomeDevice extends IPSModule
             // Prüfe ob das Action Item in den Inputs enthalten ist
             $this->MaintainAction( $lPIDName, $this->HasActionInput($Action) );    
         }
+    }
 
+    protected function HasLinarisation() : bool
+    {
+        return FID::HasLinarisation( $this->ReadPropertyString('DeviceType'));
     }
 
     public function GetConfigurationForm()
@@ -132,7 +211,7 @@ class FreeAtHomeDevice extends IPSModule
         $lJsonForm = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
 
         // entferne die Linearisation wenn das Device diese nicht unterstützt
-        if( !FID::HasLinarisation( $this->ReadPropertyString('DeviceType')) )
+        if( !$this->HasLinarisation() )
         {
             // Liste von Namen, die aus 'elements' entfernt werden sollen 
             $lNamesToRemove = ['LinLabel', 'Lin25', 'Lin50', 'Lin75'];
@@ -263,6 +342,12 @@ class FreeAtHomeDevice extends IPSModule
                             break;
                         case 1: // int
                             $lNewInt = intval($lValue);
+
+                            if( $this->HasLinarisation() )
+                            {
+                               $lNewInt = $this->LinearizeFromDevice( $lNewInt );
+                               $this->SendDebug(__FUNCTION__ , 'Linarize '.intval($lValue).' => '.$lNewInt, 0);
+                            }
                             
                             if(GetValueInteger($lId) != $lNewInt )
                             {
@@ -447,6 +532,13 @@ class FreeAtHomeDevice extends IPSModule
     {
         // Daten empfangen
         $this->SendDebug(__FUNCTION__, $Ident.' => '.$Value, 0);
+
+        if( $this->HasLinarisation() )
+        {
+            $Value = $this->LinearizeToDevice( $Value );
+            $this->SendDebug(__FUNCTION__, $Ident.' => Linarized => '.$Value, 0);
+        }
+
         $lOrigIdent = $Ident;
         $lOrigValue = $Value;
         $lDoSetOrigValue = false;
