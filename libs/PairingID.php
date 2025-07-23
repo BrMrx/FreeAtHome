@@ -395,6 +395,7 @@ class PID
 		self::mMapPairingID['INFO_RGB']['ID'],
 		self::mMapPairingID['RGB']['ID'],
 		self::mMapPairingID['CURRENT_ABSOLUTE_POSITION_BLINDS_PERCENTAGE']['ID'],
+		self::mMapPairingID['SET_ABSOLUTE_POSITION_BLINDS_PERCENTAGE']['ID'],
 		self::mMapPairingID['BRIGHTNESS_LEVEL']['ID'],
 		self::mMapPairingID['BRIGHTNESS_ALARM']['ID'],
 		self::mMapPairingID['RAIN_ALARM']['ID'],
