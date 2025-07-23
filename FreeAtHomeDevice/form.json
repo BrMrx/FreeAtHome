@@ -5,7 +5,11 @@
     {"type": "ValidationTextBox", "enabled": false, "name": "DeviceType", "caption": "Device Type" },
     {"type": "ValidationTextBox", "enabled": false, "name": "Channel", "caption": "Channel" },
     {"type": "ValidationTextBox", "enabled": false, "name": "Inputs", "caption": "Inputs" },
-    {"type": "ValidationTextBox", "enabled": false, "name": "Outputs", "caption": "Outputs" }
+    {"type": "ValidationTextBox", "enabled": false, "name": "Outputs", "caption": "Outputs" },
+    {"type": "Label", "name": "LinLabel", "label": "Linearization"},
+    {"type": "NumberSpinner", "name": "Lin25", "caption": "25 %", "suffix": "%", "minimum": "0", "maximum": "100"},
+    {"type": "NumberSpinner", "name": "Lin50", "caption": "50 %", "suffix": "%", "minimum": "0", "maximum": "100"},
+    {"type": "NumberSpinner", "name": "Lin75", "caption": "75 %", "suffix": "%", "minimum": "0", "maximum": "100"}  
   ],
   "actions": [
    {

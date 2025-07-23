@@ -21,6 +21,10 @@ class FreeAtHomeDevice extends IPSModule
         $this->RegisterPropertyString('Channel', '');
         $this->RegisterPropertyString('Inputs', '');
         $this->RegisterPropertyString('Outputs', '');
+        $this->RegisterPropertyInteger('Lin25', 25 );
+        $this->RegisterPropertyInteger('Lin50', 50 );
+        $this->RegisterPropertyInteger('Lin75', 75 );
+
  
         $this->RegisterAttributeString('DeviceType', '');
 
@@ -125,9 +129,21 @@ class FreeAtHomeDevice extends IPSModule
 
     public function GetConfigurationForm()
     {
-        $jsonForm = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
+        $lJsonForm = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
 
-        return json_encode($jsonForm);
+        // entferne die Linearisation wenn das Device diese nicht unterstützt
+        if( !FID::HasLinarisation( $this->ReadPropertyString('DeviceType')) )
+        {
+            // Liste von Namen, die aus 'elements' entfernt werden sollen 
+            $lNamesToRemove = ['LinLabel', 'Lin25', 'Lin50', 'Lin75'];
+
+            // Filtern des Arrays
+            $lJsonForm['elements'] = array_filter($lJsonForm['elements'], function($lPos) use ($lNamesToRemove) {
+                return !in_array($lPos['name'], $lNamesToRemove, true);
+            });
+        }
+
+        return json_encode($lJsonForm);
     }
 
 
