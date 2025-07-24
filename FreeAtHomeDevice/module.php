@@ -56,10 +56,10 @@ class FreeAtHomeDevice extends IPSModule
             IPS_CreateVariableProfile('FAH.MoveInfo', 1);
         }
 
-        IPS_SetVariableProfileAssociation('FAH.MoveInfo', 0,  $this->translate('0 MoveInfo'), "square", 0x22BAD2);
-        IPS_SetVariableProfileAssociation('FAH.MoveInfo', 1,  $this->translate('1 MoveInfo'), "angles-up-down", 0x06C3BF);
-        IPS_SetVariableProfileAssociation('FAH.MoveInfo', 2,  $this->translate('2 MoveInfo'), "angles-up", 0x00BC8A);
-        IPS_SetVariableProfileAssociation('FAH.MoveInfo', 3,  $this->translate('3 MoveInfo'), "angles-down", 0x00B556);
+        IPS_SetVariableProfileAssociation('FAH.MoveInfo', 0,  $this->translate('Stopped up'), "arrow-up-to-line", 0x22BAD2);
+        IPS_SetVariableProfileAssociation('FAH.MoveInfo', 1,  $this->translate('Stopped down'), "arrow-down-to-line", 0x22BAD2);
+        IPS_SetVariableProfileAssociation('FAH.MoveInfo', 2,  $this->translate('Moving up'), "angles-up", 0x92B500);
+        IPS_SetVariableProfileAssociation('FAH.MoveInfo', 3,  $this->translate('Moving down'), "angles-down", 0x92B500);
         IPS_SetVariableProfileValues('FAH.MoveInfo', 0, 3, 1);
 
         if (!IPS_VariableProfileExists('FAH.WindForce')) {
@@ -87,6 +87,12 @@ class FreeAtHomeDevice extends IPSModule
         IPS_SetVariableProfileAssociation('FAH.WindForce', 15, $this->translate('15 Bft: Hurricane, 167–183 km/h'), "wind-warning", 0xE81854);
         IPS_SetVariableProfileAssociation('FAH.WindForce', 16, $this->translate('16 Bft: Hurricane, 184–202 km/h'), "wind-warning", 0xE81854);
         IPS_SetVariableProfileAssociation('FAH.WindForce', 17, $this->translate('17 Bft: Hurricane, >= 203 km/h'), "wind-warning", 0xE81854);
+
+    }
+
+    public function UpdateVariables()
+    {
+
 
     }
 

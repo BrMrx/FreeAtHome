@@ -14,8 +14,8 @@
   "actions": [
    {
       "type": "Button",
-      "caption": "Update Scene Profile",
-      "onClick": "FAHDEV_UpdateSceneProfile($id);"
+      "caption": "Update Variables",
+      "onClick": "FAHDEV_UpdateVariables($id);"
    }
 ]
 }
