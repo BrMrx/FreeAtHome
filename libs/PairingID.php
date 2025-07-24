@@ -98,7 +98,10 @@ class PID
 		'INFO_COLOR_MODE'                               =>[ 'ID' => 0x011D ], // DPT_COLOUR_MODE	1BIT
 		'SYSAP_INFO_COLOR_MODE'                         =>[ 'ID' => 0x011E ], // DPT_COLOUR_MODE	1BIT
 		'COLOR_MODE'                                    =>[ 'ID' => 0x011F ], // DPT_COLOUR_MODE	1BIT
-		'INFO_MOVE_UP_DOWN'                             =>[ 'ID' => 0x0120 ], // DPT_ENUM_0_TO_3	2BIT	Indicates last moving direction and whether moving currently or not
+		'INFO_MOVE_UP_DOWN'                             =>[ 'ID' => 0x0120,
+															'info' 		=> 'Move info',
+															'type' 		=> 1,
+														    'profile' 	=> 'FAH.MoveInfo' ], // DPT_ENUM_0_TO_3	2BIT	Indicates last moving direction and whether moving currently or not
 		'CURRENT_ABSOLUTE_POSITION_BLINDS_PERCENTAGE'   =>[ 'ID' => 0x0121,
 															'info' 		=> 'Position',
 															'type' 		=> 1,
