@@ -408,6 +408,7 @@ class PID
 		self::mMapPairingID['WIND_FORCE']['ID'],
 		self::mMapPairingID['WIND_SPEED']['ID'],
 		self::mMapPairingID['TIMED_MOVEMENT']['ID'],
+		self::mMapPairingID['INFO_MOVE_UP_DOWN']['ID'],
 	);
 
 	
