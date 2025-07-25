@@ -385,7 +385,6 @@ class FreeAtHomeDevice extends IPSModule
             {
                 foreach( $lChannelData as $lDP => $lValue )
                 {
-                    $this->SendDebug(__FUNCTION__, "db: $lDP -> $lValue", 0);
                     if( $lDP == $lDatapoint )
                     {
                         if( PID::GetName( $lPairingID ) == 'INFO_MOVE_UP_DOWN' )
@@ -405,9 +404,9 @@ class FreeAtHomeDevice extends IPSModule
 
             foreach( $lOutputs as $lDatapoint => $lPairingID  )
             {
-                if( in_arry( $lPairingID, $lPairingIdsToSuppress ) )
+                if( in_array( $lPairingID, $lPairingIdsToSuppress ) )
                 {
-                    $this->SendDebug(__FUNCTION__, 'suppressing '.PID::GetName( $lPairingID ), 0);
+                    $this->SendDebug(__FUNCTION__, 'now suppressing '.PID::GetName( $lPairingID ), 0);
                 }
                 else
                 {
