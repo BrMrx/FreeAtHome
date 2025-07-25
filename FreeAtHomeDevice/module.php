@@ -101,8 +101,7 @@ class FreeAtHomeDevice extends IPSModule
         $lResult = $this->sendData('getDevice' );
         $this->SendDebug(__FUNCTION__,json_encode($lResult),0 );
         
-        $lChannelResult = $lResult[$lResult];
-
+        $lChannelResult = $lResult->{$lDeviceID};
 
         $lListFunctionIds = FID::FilterSupportedChannels( (object)$lChannelResult['channels'] );
 
