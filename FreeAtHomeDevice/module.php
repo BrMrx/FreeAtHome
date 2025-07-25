@@ -92,13 +92,42 @@ class FreeAtHomeDevice extends IPSModule
 
     public function UpdateVariables()
     {
-        $this->SendDebug(__FUNCTION__,'update data',0 );
+        $lDeviceID  = $this->ReadPropertyString('FAHDeviceID');
+        $lMyChannel = $this->ReadPropertyString('Channel');
+        $lMyOutputs = $this->ReadPropertyString('Outputs');
+        $lMyInputs  = $this->ReadPropertyString('Inputs');
+
+        $this->SendDebug(__FUNCTION__,"update device $lDeviceID, channel $lMyChannel",0 );
         $lResult = $this->sendData('getDevice' );
-  ////              $this->AssignData( $lResult );
         $this->SendDebug(__FUNCTION__,json_encode($lResult),0 );
+        
+        $lListFunctionIds = FID::FilterSupportedChannels( (object)$lResult['channels'] );
 
+        foreach( $lListFunctionIds as $lChannel => $lChannelValue )
+        {
+            // suche meinen Kanal
+            if( $lChannel == $lMyChannel )
+            {
+                $this->SendDebug(__FUNCTION__,"device $lDeviceID, channel $lMyChannel found",0 );
+                $lChannelData = (object)$lChannelValue;
 
-    }
+                $lInputs =  json_encode((object)PID::FilterSupportedType($lChannelData,'inputs'));
+                $lOutputs = json_encode((object)PID::FilterSupportedType($lChannelData,'outputs'));
+
+                if( $lInputs != $lMyInputs )
+                {
+                    $this->SendDebug(__FUNCTION__,"inputs changed $lMyInputs -> $lInputs",0 );
+                }
+                if( $lOutputs != $lMyOutputs )
+                {
+                    $this->SendDebug(__FUNCTION__,"inputs changed $lMyOutputs -> $lInputs",0 );
+                }
+
+                return;
+            }
+        }
+        $this->SendDebug(__FUNCTION__,"device $lDeviceID, channel $lMyChannel not found",0 );
+   }
 
     protected function GetLinearisation() : array
     {
