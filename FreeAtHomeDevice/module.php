@@ -444,7 +444,7 @@ class FreeAtHomeDevice extends IPSModule
                                 if( PID::HasLinearisation($lPairingID) )
                                 {
                                     $lNewInt = $this->LinearizeFromDevice( $lNewInt );
-                                    $this->SendDebug(__FUNCTION__ , 'Linarize from Device'.intval($lValue).' => '.$lNewInt, 0);
+                                    $this->SendDebug(__FUNCTION__ , 'Linarize from Device '.intval($lValue).' => '.$lNewInt, 0);
                                 }
                                 
                                 if(GetValueInteger($lId) != $lNewInt )
@@ -640,8 +640,9 @@ class FreeAtHomeDevice extends IPSModule
 
         if(  PID::HasLinearisation(PID::GetID($Ident)) )
         {
+            $lBeforeValue= $Value;
             $Value = $this->LinearizeToDevice( $Value );
-            $this->SendDebug(__FUNCTION__, $Ident.' => Linarized => '.$Value, 0);
+            $this->SendDebug(__FUNCTION__, "LinearizeToDevice $lBeforeValue => $Value", 0);
         }
 
         $lOrigIdent = $Ident;
