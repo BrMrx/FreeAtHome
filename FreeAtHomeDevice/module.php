@@ -122,7 +122,7 @@ class FreeAtHomeDevice extends IPSModule
                 }
                 if( $lOutputs != $lMyOutputs )
                 {
-                    $this->SendDebug(__FUNCTION__,"inputs changed $lMyOutputs -> $lInputs",0 );
+                    $this->SendDebug(__FUNCTION__,"outputs changed $lMyOutputs -> $lOutputs",0 );
                 }
 
                 return;
