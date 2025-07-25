@@ -379,60 +379,82 @@ class FreeAtHomeDevice extends IPSModule
         {
             $lChannelData = $lDataObj->{$lDeviceID}->{$lChannel};
 
-            $lDataPointsToSuppress = array();
+            $lPairingIdsToSuppress = array();
             // Prüfe ob Daten für die Übernahme unterdrückt werden müssen
-            foreach( $lChannelData as $lDP => $lValue )
-            {
-                $this->SendDebug(__FUNCTION__, "db: $lDP -> $lValue", 0);
-
-            }
-
-
             foreach( $lOutputs as $lDatapoint => $lPairingID  )
             {
                 foreach( $lChannelData as $lDP => $lValue )
                 {
+                    $this->SendDebug(__FUNCTION__, "db: $lDP -> $lValue", 0);
                     if( $lDP == $lDatapoint )
                     {
-                        $lValueId = PID::GetName( $lPairingID );
-                        $lId = $this->GetIDForIdent($lValueId);
-                        $lType = PID::GetType( $lPairingID );
-                        switch($lType)
+                        if( PID::GetName( $lPairingID ) == 'INFO_MOVE_UP_DOWN' )
                         {
-                        case 0: // bool
-                        	 $lNewBool = boolval($lValue);
-                          
-                             if(GetValueBoolean($lId) != $lNewBool )
-                        	 {
-                                $lConvertedBool = $lNewBool ? 'true' : 'false';
-                            	$this->SendDebug(__FUNCTION__ , $lValueId.' => '.$lConvertedBool, 0);
-                        		SetValueBoolean($lId,$lNewBool);
+                            $lInt = intval($lValue);
+                            // gerade in Bewegung ?
+                            if( $lInt >= 2 )
+                            {
+                                $this->SendDebug(__FUNCTION__, 'is moving do suppress CURRENT_ABSOLUTE_POSITION_BLINDS_PERCENTAGE ', 0);
+                                // Informationen über die Position nicht übernehmen
+                                $lPairingIdsToSuppress[] =  PID::GetID('CURRENT_ABSOLUTE_POSITION_BLINDS_PERCENTAGE');  
                             }
-                            break;
-                        case 1: // int
-                            $lNewInt = intval($lValue);
+                        }
+                    }
+                }
+            }
 
-                            if( $this->HasLinarisation() )
+            foreach( $lOutputs as $lDatapoint => $lPairingID  )
+            {
+                if( in_arry( $lPairingID, $lPairingIdsToSuppress ) )
+                {
+                    $this->SendDebug(__FUNCTION__, 'suppressing '.PID::GetName( $lPairingID ), 0);
+                }
+                else
+                {
+                    foreach( $lChannelData as $lDP => $lValue )
+                    {
+                        if( $lDP == $lDatapoint )
+                        {
+                            $lValueId = PID::GetName( $lPairingID );
+                            $lId = $this->GetIDForIdent($lValueId);
+                            $lType = PID::GetType( $lPairingID );
+                            switch($lType)
                             {
-                               $lNewInt = $this->LinearizeFromDevice( $lNewInt );
-                               $this->SendDebug(__FUNCTION__ , 'Linarize '.intval($lValue).' => '.$lNewInt, 0);
-                            }
+                            case 0: // bool
+                                $lNewBool = boolval($lValue);
                             
-                            if(GetValueInteger($lId) != $lNewInt )
-                            {
-                                $this->SendDebug(__FUNCTION__ , $lValueId.' => '.strval($lNewInt), 0);
-                                SetValueInteger($lId,$lNewInt);                           
+                                if(GetValueBoolean($lId) != $lNewBool )
+                                {
+                                    $lConvertedBool = $lNewBool ? 'true' : 'false';
+                                    $this->SendDebug(__FUNCTION__ , $lValueId.' => '.$lConvertedBool, 0);
+                                    SetValueBoolean($lId,$lNewBool);
+                                }
+                                break;
+                            case 1: // int
+                                $lNewInt = intval($lValue);
+
+                                if( $this->HasLinarisation() )
+                                {
+                                $lNewInt = $this->LinearizeFromDevice( $lNewInt );
+                                $this->SendDebug(__FUNCTION__ , 'Linarize '.intval($lValue).' => '.$lNewInt, 0);
+                                }
+                                
+                                if(GetValueInteger($lId) != $lNewInt )
+                                {
+                                    $this->SendDebug(__FUNCTION__ , $lValueId.' => '.strval($lNewInt), 0);
+                                    SetValueInteger($lId,$lNewInt);                           
+                                }
+                                break;
+                            case 2: // float
+                                $lNewFloat = floatval($lValue);
+                                
+                                if(GetValueFloat($lId) != $lNewFloat )
+                                {
+                                    $this->SendDebug(__FUNCTION__ , $lValueId.' => '.strval($lNewFloat), 0);
+                                    SetValueFloat($lId,$lNewFloat);                           
+                                }
+                                break;
                             }
-                            break;
-                        case 2: // float
-                            $lNewFloat = floatval($lValue);
-                            
-                            if(GetValueFloat($lId) != $lNewFloat )
-                            {
-                                $this->SendDebug(__FUNCTION__ , $lValueId.' => '.strval($lNewFloat), 0);
-                                SetValueFloat($lId,$lNewFloat);                           
-                            }
-                            break;
                         }
                     }
                 }
