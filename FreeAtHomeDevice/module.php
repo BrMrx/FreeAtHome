@@ -116,15 +116,26 @@ class FreeAtHomeDevice extends IPSModule
                 $lInputs =  json_encode((object)PID::FilterSupportedType($lChannelData,'inputs'));
                 $lOutputs = json_encode((object)PID::FilterSupportedType($lChannelData,'outputs'));
 
+                $lDoApplyChanges=false;
                 if( $lInputs != $lMyInputs )
                 {
                     $this->SendDebug(__FUNCTION__,"inputs changed $lMyInputs -> $lInputs",0 );
+                    // neue Kanaldatenübernehmen
+                    IPS_SetProperty( $this->InstanceID , 'Inputs', $lInputs );
+                    $lDoApplyChanges = true;
                 }
                 if( $lOutputs != $lMyOutputs )
                 {
                     $this->SendDebug(__FUNCTION__,"outputs changed $lMyOutputs -> $lOutputs",0 );
+                    // neue Kanaldatenübernehmen
+                    IPS_SetProperty( $this->InstanceID , 'Outputs', $lOutputs );
+                    $lDoApplyChanges = true;
                 }
 
+                if( $lDoApplyChanges )
+                {
+                    IPS_ApplyChanges( $this->InstanceID  );
+                }
                 return;
             }
         }
@@ -231,7 +242,7 @@ class FreeAtHomeDevice extends IPSModule
             return;
         }
 
-        // Variablen für alle Outputs (des Devises) anlegen
+        // Variablen für alle Outputs (des Devices) anlegen
         $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
  
         foreach( $lOutputs as $lOdp => $lPairingId  )
