@@ -261,17 +261,26 @@ class FreeAtHomeDevice extends IPSModule
         }
     }
 
-    protected function HasLinarisation() : bool
-    {
-        return FID::HasLinarisation( $this->ReadPropertyString('DeviceType'));
-    }
-
     public function GetConfigurationForm()
     {
         $lJsonForm = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
 
+
+        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
+
+        // hat einer der Meldungen eine Linearisierung aktiv
+        $lHasLinearisation = false;
+        foreach( $lOutputs as $lDatapoint => $lPairingID  )
+        {
+            if( PID::HasLinearisation($lPairingID) )  
+            {
+                $lHasLinearisation = true;
+            }          
+        }
+
+
         // entferne die Linearisation wenn das Device diese nicht unterstützt
-        if( !$this->HasLinarisation() )
+        if( !$lHasLinearisation )
         {
             // Liste von Namen, die aus 'elements' entfernt werden sollen 
             $lNamesToRemove = ['LinLabel', 'Lin25', 'Lin50', 'Lin75'];
@@ -432,10 +441,10 @@ class FreeAtHomeDevice extends IPSModule
                             case 1: // int
                                 $lNewInt = intval($lValue);
 
-                                if( $this->HasLinarisation() )
+                                if( PID::HasLinearisation($lPairingID) )
                                 {
-                                $lNewInt = $this->LinearizeFromDevice( $lNewInt );
-                                $this->SendDebug(__FUNCTION__ , 'Linarize '.intval($lValue).' => '.$lNewInt, 0);
+                                    $lNewInt = $this->LinearizeFromDevice( $lNewInt );
+                                    $this->SendDebug(__FUNCTION__ , 'Linarize from Device'.intval($lValue).' => '.$lNewInt, 0);
                                 }
                                 
                                 if(GetValueInteger($lId) != $lNewInt )
@@ -609,10 +618,10 @@ class FreeAtHomeDevice extends IPSModule
         case 1: // int
             $lNewInt = intval($a_Value);
            
-            if( $this->HasLinarisation() )
+            if( PID::HasLinearisation($lPairingID) )
             {
                 $lNewInt = $this->LinearizeFromDevice( $lNewInt );
-                $this->SendDebug(__FUNCTION__ , 'Linarize '.intval($lValue).' => '.$lNewInt, 0);
+                $this->SendDebug(__FUNCTION__ , 'Linearize from device '.intval($a_Value).' => '.$lNewInt, 0);
             }
 
             if(GetValueInteger($lId) != $lNewInt )
@@ -629,7 +638,7 @@ class FreeAtHomeDevice extends IPSModule
         // Daten empfangen
         $this->SendDebug(__FUNCTION__, $Ident.' => '.$Value, 0);
 
-        if( $this->HasLinarisation() )
+        if(  PID::HasLinearisation(PID::GetID($Ident)) )
         {
             $Value = $this->LinearizeToDevice( $Value );
             $this->SendDebug(__FUNCTION__, $Ident.' => Linarized => '.$Value, 0);

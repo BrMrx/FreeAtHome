@@ -106,7 +106,8 @@ class PID
 															'info' 		=> 'Position',
 															'type' 		=> 1,
 															'profile' 	=> '~Shutter',
-															'action' 	=> 'SET_ABSOLUTE_POSITION_BLINDS_PERCENTAGE' ], // DPT_SCALING	1BYTE	Indicate the current position of the sunblinds in percentage
+															'action' 	=> 'SET_ABSOLUTE_POSITION_BLINDS_PERCENTAGE',
+														    'LIN'       => true  ], // DPT_SCALING	1BYTE	Indicate the current position of the sunblinds in percentage
 		'CURRENT_ABSOLUTE_POSITION_SLATS_PERCENTAGE'    =>[ 'ID' => 0x0122 ], // DPT_SCALING	1BYTE	Indicate the current position of the slats in percentage
 		'VALID_CURRENT_ABSOLUTE_POSITION'               =>[ 'ID' => 0x0123 ], // DPT_SWITCH	1BIT
 		'SYSAP_INFO_MOVE_UP_DOWN'                       =>[ 'ID' => 0x0125 ], // DPT_ENUM_0_TO_3	2BIT	Indicates last moving direction and whether moving currently or not of the actuator group
@@ -429,6 +430,7 @@ class PID
 		}
 		return array();
 	}
+
 	public static function GetSettingsByID( int $a_ID ) : array
 	{
 		foreach( self::mMapPairingID as $lName => $lVal )
@@ -439,6 +441,22 @@ class PID
 			}
 		}
 		return array();
+	}
+
+	public static function HasLinearisation( int $a_ID ) : bool
+	{
+		foreach( self::mMapPairingID as $lName => $lVal )
+		{
+			if( $lVal['ID'] == $a_ID )
+			{
+				if( isset( $lVal['LIN'] ) )
+				{
+					return $lVal['LIN'];
+				}
+				return false;
+			}
+		}
+		return false;
 	}
 
 	public static function GetName( int $a_ID ) : string

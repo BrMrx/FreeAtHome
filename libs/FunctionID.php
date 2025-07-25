@@ -563,18 +563,12 @@ class FID
         'DIMMING_ACTUATOR_TYPE2'                        => [ 'ID' => 0x1812 ],
         'DIMMING_ACTUATOR_TYPE8'                        => [ 'ID' => 0x1818 ],
         'DIMMING_ACTUATOR_TYPE9'                        => [ 'ID' => 0x1819 ],
-        'BLINDS_ACTUATOR_TYPE0'                         => [ 'ID' => 0x1820,
-                                                             'LIN' => true  ],
-        'BLINDS_ACTUATOR_TYPE1'                         => [ 'ID' => 0x1821,
-                                                             'LIN' => true  ],
-        'BLINDS_ACTUATOR_TYPE2'                         => [ 'ID' => 0x1822,
-                                                             'LIN' => true  ],
-        'BLINDS_ACTUATOR_TYPE3'                         => [ 'ID' => 0x1823,
-                                                             'LIN' => true  ],
-        'BLINDS_ACTUATOR_TYPE5'                         => [ 'ID' => 0x1825,
-                                                             'LIN' => true  ],
-        'BLINDS_ACTUATOR_TYPE8'                         => [ 'ID' => 0x1828,
-                                                             'LIN' => true  ],
+        'BLINDS_ACTUATOR_TYPE0'                         => [ 'ID' => 0x1820 ],
+        'BLINDS_ACTUATOR_TYPE1'                         => [ 'ID' => 0x1821 ],
+        'BLINDS_ACTUATOR_TYPE2'                         => [ 'ID' => 0x1822 ],
+        'BLINDS_ACTUATOR_TYPE3'                         => [ 'ID' => 0x1823 ],
+        'BLINDS_ACTUATOR_TYPE5'                         => [ 'ID' => 0x1825 ],
+        'BLINDS_ACTUATOR_TYPE8'                         => [ 'ID' => 0x1828 ],
         'E_CONTACT_SWITCH_ACTUATOR_TYPE0'               => [ 'ID' => 0x1830 ],
         'E_CONTACT_SWITCH_ACTUATOR_TYPE1'               => [ 'ID' => 0x1831 ],
         'E_CONTACT_SWITCH_ACTUATOR_TYPE2'               => [ 'ID' => 0x1832 ],
@@ -669,25 +663,6 @@ class FID
 		}
 
         return '['.$a_Id.']';      
-    }
-
-    // ermiitlle ob die Variable mit Linarisation arbeitet
-    public static function HasLinarisation( string $a_Name ) : bool
-    {
-        foreach( self::mMapValues as $lName => $lVal )
-		{
-            if( $lName == $a_Name )
-            {
-                if( isset( $lVal['LIN']) )
-                {
-                    return $lVal['LIN'];
-                }
-
-                return false;
-            }
-		}
-
-        return false;      
     }
 
     public static function IsSupportedID( string $a_Id ) : bool
