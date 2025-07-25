@@ -92,6 +92,10 @@ class FreeAtHomeDevice extends IPSModule
 
     public function UpdateVariables()
     {
+        $this->SendDebug(__FUNCTION__,'update data',0 );
+        $lResult = $this->sendData('getDevice' );
+  ////              $this->AssignData( $lResult );
+        $this->SendDebug(__FUNCTION__,json_encode($lResult),0 );
 
 
     }
