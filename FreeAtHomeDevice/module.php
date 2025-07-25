@@ -581,6 +581,24 @@ class FreeAtHomeDevice extends IPSModule
         return false;
     }
 
+    public function GetPosition() : int
+    {
+        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
+
+        foreach( $lOutputs as $lDatapoint => $lPairingID  )
+        {
+            $lSettings = PID::GetSettingsByID( $lPairingID );
+            if( $lSettings['info'] == 'Position' && $lSettings['type'] == 1 )
+            {
+                $lId = $this->GetIDForIdent( PID::GetName($lPairingID) );
+                return GetValueInteger($lId);
+            }
+        }
+    
+        return 0;
+    }
+
+
     private function do_GetValue( string $a_Ident )
     {
         $lPairingID = PID::GetID( $a_Ident );
