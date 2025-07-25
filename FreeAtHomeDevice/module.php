@@ -375,12 +375,21 @@ class FreeAtHomeDevice extends IPSModule
             IPS_SetName( $this->InstanceID, $lNewName );
         }
 
-        foreach( $lOutputs as $lDatapoint => $lPairingID  )
+        if( isset( $lDataObj->{$lDeviceID}->{$lChannel} ))
         {
-            if( isset( $lDataObj->{$lDeviceID}->{$lChannel} ))
-            {
-                $lChannelData = $lDataObj->{$lDeviceID}->{$lChannel};
+            $lChannelData = $lDataObj->{$lDeviceID}->{$lChannel};
 
+            $lDataPointsToSuppress = array();
+            // Prüfe ob Daten für die Übernahme unterdrückt werden müssen
+            foreach( $lChannelData as $lDP => $lValue )
+            {
+                $this->SendDebug(__FUNCTION__, "db: $lDP -> $lValue", 0);
+
+            }
+
+
+            foreach( $lOutputs as $lDatapoint => $lPairingID  )
+            {
                 foreach( $lChannelData as $lDP => $lValue )
                 {
                     if( $lDP == $lDatapoint )
