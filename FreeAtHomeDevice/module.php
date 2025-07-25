@@ -594,8 +594,10 @@ class FreeAtHomeDevice extends IPSModule
                 return GetValueInteger($lId);
             }
         }
-    
-        return 0;
+ 
+        // Attribut Position nicht gefunden
+        IPS_LogMessage( $this->InstanceID, __FUNCTION__."() attribut Position not found" );
+         return 0;
     }
 
 
