@@ -644,9 +644,10 @@ class FreeAtHomeDevice extends IPSModule
                 $this->SendDebug(__FUNCTION__ , 'Linearize from device '.intval($a_Value).' => '.$lNewInt, 0);
             }
 
-            if(GetValueInteger($lId) != $lNewInt )
+			$lOldValue = GetValueInteger($lId);
+            if($lOldValue != $lNewInt )
             {
-                $this->SendDebug(__FUNCTION__ , $a_Ident.' => '.strval($lNewInt), 0);
+                $this->SendDebug(__FUNCTION__ , "$a_Ident: $lOldValue => $lNewInt", 0);
                 SetValueInteger($lId,$lNewInt);                           
             }
             break;
