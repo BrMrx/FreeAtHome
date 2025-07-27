@@ -668,7 +668,8 @@ class FreeAtHomeDevice extends IPSModule
 
         $lOrigIdent = $Ident;
         $lOrigValue = $Value;
-        $lDoSetOrigValue = false;
+        $lDoSetOrigValue = false;        
+        $lDoSetValue = true;
 
         switch($Ident)
         {
@@ -696,6 +697,47 @@ class FreeAtHomeDevice extends IPSModule
                 $Value = false;
             }
             break;
+        case 'INFO_MOVE_UP_DOWN':
+            {
+                // der Wert muss für FORCED_UP_DOWN umgewandelt werden
+                switch( $Value )
+                {
+                    case 0: // gestoppet aufwärts
+                    case 1: // gestoppet abwärts
+                        $Value = 2; // stop
+                        break;
+ 
+                    case 2: // fährt aufwärts
+                        $Value = 1; // hochfahren
+                        break;
+
+                    case 3: // fährt abwärts
+                        $Value = 3; // runterfahren
+                        break;
+                }
+             
+                $lDoSetValue = false;
+            }
+            break;
+
+            case 'CURRENT_ABSOLUTE_POSITION_BLINDS_PERCENTAGE':
+                {
+                    if( $Value == 0 )
+                    {
+                        $Ident = 'INFO_MOVE_UP_DOWN';
+                        $Value = 1;  // hochfahren
+                        $lDoSetValue = false;
+                        $lDoSetOrigValue = true;
+                    }
+                    else if( $Value == 100 )
+                    {
+                        $Ident = 'INFO_MOVE_UP_DOWN';
+                        $Value = 3;  // runterfahren
+                        $lDoSetValue = false;
+                        $lDoSetOrigValue = true;
+                    }
+                }
+                break;
         }
 
         $lbPollData=false;
@@ -732,15 +774,19 @@ class FreeAtHomeDevice extends IPSModule
                    // {$lDeviceID}.{$lChannel}.{$lDatapoint}
                    $lSendData = [ 'datapoint' => $lDatapoint, 'value' => $SendValue ];
                    $lResult = $this->sendData('setDatapoint', json_encode($lSendData) );
-
-                   // Date im Abbild direkt übernehmen ohne auf die Rückmeldung zu warten
-                   $this->do_SetValue( $Ident, $SendValue );
-                   if( $lDoSetOrigValue )
-                   {
-                        $this->do_SetValue( $lOrigIdent, strval($lOrigValue) );
-                   }
                    $this->SendDebug(__FUNCTION__,json_encode($lResult),0 );
 
+                   if( $lDoSetValue )
+                   {
+                        // Date im Abbild direkt übernehmen ohne auf die Rückmeldung zu warten
+                        $this->do_SetValue( $Ident, $SendValue );
+                   }
+
+                   if( $lDoSetOrigValue )
+                   {
+                       $this->do_SetValue( $lOrigIdent, strval($lOrigValue) );
+                   }
+  
                    $lbPollData = true;
                 }
             }
