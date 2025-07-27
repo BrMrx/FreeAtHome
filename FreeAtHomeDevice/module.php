@@ -355,8 +355,6 @@ class FreeAtHomeDevice extends IPSModule
 
         if( isset( $lDataObj->{$lDeviceID}->unresponsive ) )
         {
-            $lConvertedBool = $lDataObj->{$lDeviceID}->unresponsive ? 'true' : 'false';
-            $this->SendDebug(__FUNCTION__, 'unresponsive: '.$lConvertedBool, 0);
             if( $lDataObj->{$lDeviceID}->unresponsive )
             {
                 $this->SetStatus(200);
@@ -699,22 +697,6 @@ class FreeAtHomeDevice extends IPSModule
             break;
         case 'INFO_MOVE_UP_DOWN':
             {
-                // der Wert muss für FORCED_UP_DOWN umgewandelt werden
-//                switch( $Value )
-//               {
-//                   case 0: // gestoppet aufwärts
-//                   case 1: // gestoppet abwärts
-//                       $Value = 2; // stop
-//                       break;
-//
-//                   case 2: // fährt aufwärts
-//                       $Value = 2; // hochfahren
-//                       break;
-//
-//                   case 3: // fährt abwärts
-//                       $Value = 3; // runterfahren
-//                       break;
-//               }
              
                 $lDoSetValue = false;
             }
