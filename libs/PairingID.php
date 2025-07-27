@@ -102,7 +102,7 @@ class PID
 															'info' 		=> 'Move info',
 															'type' 		=> 1,
 														    'profile' 	=> 'FAH.MoveInfo',
-															'action'    => 'FORCED_UP_DOWN' ], // DPT_ENUM_0_TO_3	2BIT	Indicates last moving direction and whether moving currently or not
+															'action'    => 'MOVE_UP_DOWN' ], // DPT_ENUM_0_TO_3	2BIT	Indicates last moving direction and whether moving currently or not
 		'CURRENT_ABSOLUTE_POSITION_BLINDS_PERCENTAGE'   =>[ 'ID' => 0x0121,
 															'info' 		=> 'Position',
 															'type' 		=> 1,
@@ -411,7 +411,7 @@ class PID
 		self::mMapPairingID['WIND_SPEED']['ID'],
 		self::mMapPairingID['TIMED_MOVEMENT']['ID'],
 		self::mMapPairingID['INFO_MOVE_UP_DOWN']['ID'],
-		self::mMapPairingID['FORCED_UP_DOWN']['ID'],
+		self::mMapPairingID['MOVE_UP_DOWN']['ID'],
 	);
 
 	
