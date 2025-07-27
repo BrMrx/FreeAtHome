@@ -659,9 +659,9 @@ class FreeAtHomeDevice extends IPSModule
         // Daten empfangen
         $this->SendDebug(__FUNCTION__, $Ident.' => '.$Value, 0);
 
+        $lBeforeValue= $Value;
         if(  PID::HasLinearisation(PID::GetID($Ident)) )
         {
-            $lBeforeValue= $Value;
             $Value = $this->LinearizeToDevice( $Value );
             $this->SendDebug(__FUNCTION__, "LinearizeToDevice $lBeforeValue => $Value", 0);
         }
@@ -722,14 +722,14 @@ class FreeAtHomeDevice extends IPSModule
 
             case 'CURRENT_ABSOLUTE_POSITION_BLINDS_PERCENTAGE':
                 {
-                    if( $Value == 0 )
+                    if( $lBeforeValue == 0 )
                     {
                         $Ident = 'INFO_MOVE_UP_DOWN';
                         $Value = 1;  // hochfahren
                         $lDoSetValue = false;
                         $lDoSetOrigValue = true;
                     }
-                    else if( $Value == 100 )
+                    else if( $lBeforeValue == 100 )
                     {
                         $Ident = 'INFO_MOVE_UP_DOWN';
                         $Value = 3;  // runterfahren
@@ -738,6 +738,11 @@ class FreeAtHomeDevice extends IPSModule
                     }
                 }
                 break;
+        }
+
+        if( $Ident != $lOrigIdent )
+        {
+            $this->SendDebug(__FUNCTION__,"convert $lOrigIdent ($lBeforeValue) -> $Ident ($Value)",0 );
         }
 
         $lbPollData=false;
