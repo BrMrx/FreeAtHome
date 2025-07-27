@@ -700,21 +700,21 @@ class FreeAtHomeDevice extends IPSModule
         case 'INFO_MOVE_UP_DOWN':
             {
                 // der Wert muss für FORCED_UP_DOWN umgewandelt werden
-                switch( $Value )
-                {
-                    case 0: // gestoppet aufwärts
-                    case 1: // gestoppet abwärts
-                        $Value = 2; // stop
-                        break;
- 
-                    case 2: // fährt aufwärts
-                        $Value = 1; // hochfahren
-                        break;
-
-                    case 3: // fährt abwärts
-                        $Value = 3; // runterfahren
-                        break;
-                }
+//                switch( $Value )
+//               {
+//                   case 0: // gestoppet aufwärts
+//                   case 1: // gestoppet abwärts
+//                       $Value = 2; // stop
+//                       break;
+//
+//                   case 2: // fährt aufwärts
+//                       $Value = 2; // hochfahren
+//                       break;
+//
+//                   case 3: // fährt abwärts
+//                       $Value = 3; // runterfahren
+//                       break;
+//               }
              
                 $lDoSetValue = false;
             }
