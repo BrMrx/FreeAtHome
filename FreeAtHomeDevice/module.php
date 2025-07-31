@@ -595,7 +595,45 @@ class FreeAtHomeDevice extends IPSModule
  
         // Attribut Position nicht gefunden
         IPS_LogMessage( $this->InstanceID, __FUNCTION__."() attribut Position not found" );
-         return 0;
+        return 0;
+    }
+
+  public function SetSensorLock( bool $Value )
+  {
+        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
+
+        foreach( $lOutputs as $lDatapoint => $lPairingID  )
+        {
+            $lSettings = PID::GetSettingsByID( $lPairingID );
+            if( $lSettings['info'] == 'Sensor lock' && $lSettings['action'] != '' && $lSettings['type'] == 0 )
+            {
+                $this->RequestAction( PID::GetName($lPairingID), $Value );
+                return true;
+            }
+        }                  
+
+        // Wert nicht gültig oder Funktion Brighness nicht verfügbar
+        IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).") attribut Sensor lock not found" );
+        return false;
+    }
+  
+    public function GetSensorLock() : bool
+    {
+        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
+
+        foreach( $lOutputs as $lDatapoint => $lPairingID  )
+        {
+            $lSettings = PID::GetSettingsByID( $lPairingID );
+            if( $lSettings['info'] == 'Sensor lock' && $lSettings['type'] == 0 )
+            {
+                $lId = $this->GetIDForIdent( PID::GetName($lPairingID) );
+                return GetValueBoolean($lId);
+            }
+        }
+ 
+        // Attribut Position nicht gefunden
+        IPS_LogMessage( $this->InstanceID, __FUNCTION__."() attribut Sensor lock not found" );
+        return false;
     }
 
 
