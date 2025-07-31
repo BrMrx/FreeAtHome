@@ -161,9 +161,12 @@ class PID
 		'TIMED_MOVEMENT_REQUEST'                        =>[ 'ID' => 0x0164 ], // DPT_START	1BIT
 		'INFO_TIMED_MOVEMENT'                           =>[ 'ID' => 0x0165 ], // DPT_ENUM_0_TO_63	6BIT	Reflects the actual value of the actuator
 		'MOVEMENT_DETECTOR_STATUS'                      =>[ 'ID' => 0x0166 ], // DPT_BIT_SET_8	1BYTE	Reflects the actual value of the actuator
-
 		'LOCK_SENSOR'                                   =>[ 'ID' => 0x0167 ], // DPT_SWITCH	1BIT
-		'INFO_LOCKED_SENSOR'                            =>[ 'ID' => 0x0168 ], // DPT_STATE	1BIT
+		'INFO_LOCKED_SENSOR'                            =>[ 'ID' => 0x0168,
+															'info' 		=> 'Sensor lock',
+															'type' 		=> 0,               // bool
+															'profile' 	=> '~Lock',
+														    'action' 	=> 'LOCK_SENSOR' ], // DPT_STATE	1BIT
 		'SYSAP_INFO_LOCKED_SENSOR'                      =>[ 'ID' => 0x0169 ], // DPT_STATE	1BIT
 		'INFO_VALUE_WHITE'                              =>[ 'ID' => 0x0170 ], // DPT_SCALING	1BYTE	Feedback value white
 		'SYSAP_INFO_VALUE_WHITE'                        =>[ 'ID' => 0x0171 ], // DPT_SCALING	1BYTE	SysAP Feedback value white
@@ -412,6 +415,8 @@ class PID
 		self::mMapPairingID['TIMED_MOVEMENT']['ID'],
 		self::mMapPairingID['INFO_MOVE_UP_DOWN']['ID'],
 		self::mMapPairingID['FORCED_UP_DOWN']['ID'],
+		self::mMapPairingID['LOCK_SENSOR']['ID'],
+		self::mMapPairingID['INFO_LOCKED_SENSOR']['ID'],
 	);
 
 	
