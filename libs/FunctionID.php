@@ -648,6 +648,10 @@ class FID
 	// aktuell unterstützte Funktions ID's
 	const UnSupportedIDs = [
         self::mMapValues['SWITCH_FORCE_ON_OFF_SENSOR_ROCKER_TYPE1']['ID'],
+        self::mMapValues['DIMMING_SENSOR_ROCKER_TYPE0']['ID'],
+        self::mMapValues['BLIND_SENSOR_ROCKER_TYPE0']['ID'],
+        self::mMapValues['BLIND_SENSOR_ROCKER_TYPE2']['ID'],
+        self::mMapValues['BLIND_SENSOR_ROCKER_TYPE4']['ID'],
     ];
 	
     public static function GetName( string $a_Id ) : string
