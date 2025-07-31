@@ -652,6 +652,9 @@ class FID
         self::mMapValues['BLIND_SENSOR_ROCKER_TYPE0']['ID'],
         self::mMapValues['BLIND_SENSOR_ROCKER_TYPE2']['ID'],
         self::mMapValues['BLIND_SENSOR_ROCKER_TYPE4']['ID'],
+        self::mMapValues['SWITCH_SENSOR_ROCKER_TYPE0']['ID'],
+        self::mMapValues['SWITCH_SENSOR_PUSHBUTTON_TYPE2']['ID'],
+        self::mMapValues['DIMMING_SENSOR_PUSHBUTTON_TYPE2']['ID'],
     ];
 	
     public static function GetName( string $a_Id ) : string
