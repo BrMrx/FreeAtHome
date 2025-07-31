@@ -707,14 +707,14 @@ class FreeAtHomeDevice extends IPSModule
                     if( $lBeforeValue == 0 )
                     {
                         $Ident = 'INFO_MOVE_UP_DOWN';
-                        $Value = 2;  // hochfahren
+                        $Value = 0;  // hochfahren
                         $lDoSetValue = false;
                         $lDoSetOrigValue = true;
                     }
                     else if( $lBeforeValue == 100 )
                     {
                         $Ident = 'INFO_MOVE_UP_DOWN';
-                        $Value = 3;  // runterfahren
+                        $Value = 1;  // runterfahren
                         $lDoSetValue = false;
                         $lDoSetOrigValue = true;
                     }
