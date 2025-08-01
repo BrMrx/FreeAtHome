@@ -742,19 +742,21 @@ class FreeAtHomeDevice extends IPSModule
 
             case 'CURRENT_ABSOLUTE_POSITION_BLINDS_PERCENTAGE':
                 {
+                    // Wert immer zurücklesen
+                    $lDoSetValue = false;
                     if( $lBeforeValue == 0 )
                     {
                         $Ident = 'INFO_MOVE_UP_DOWN';
                         $Value = 0;  // hochfahren
-                        $lDoSetValue = false;
-                        $lDoSetOrigValue = true;
+       //                 $lDoSetValue = false;
+         //               $lDoSetOrigValue = true;
                     }
                     else if( $lBeforeValue == 100 )
                     {
                         $Ident = 'INFO_MOVE_UP_DOWN';
                         $Value = 1;  // runterfahren
                         $lDoSetValue = false;
-                        $lDoSetOrigValue = true;
+        //                $lDoSetOrigValue = true;
                     }
                 }
                 break;
