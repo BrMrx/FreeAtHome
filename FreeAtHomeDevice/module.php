@@ -735,30 +735,36 @@ class FreeAtHomeDevice extends IPSModule
             break;
         case 'INFO_MOVE_UP_DOWN':
             {
-             
+                // Statusinfo in MOVE command wandeln
+                switch($Value)
+                {
+                    case 2:    // Hochfahren
+                       $Value = 0;
+                       break; 
+                    case 3:    // runterfahren
+                       $Value = 1;
+                       break; 
+                }
+                // Wert immer zurücklesen
                 $lDoSetValue = false;
             }
             break;
 
             case 'CURRENT_ABSOLUTE_POSITION_BLINDS_PERCENTAGE':
                 {
-                    // Wert immer zurücklesen
-                    $lDoSetValue = false;
-                    if( $lBeforeValue == 0 )
+                     if( $lBeforeValue == 0 )
                     {
                         $Ident = 'INFO_MOVE_UP_DOWN';
                         $Value = 0;  // hochfahren
-       //                 $lDoSetValue = false;
-         //               $lDoSetOrigValue = true;
-                    }
+                     }
                     else if( $lBeforeValue == 100 )
                     {
                         $Ident = 'INFO_MOVE_UP_DOWN';
                         $Value = 1;  // runterfahren
-                        $lDoSetValue = false;
-        //                $lDoSetOrigValue = true;
                     }
-                }
+                    // Wert immer zurücklesen
+                    $lDoSetValue = false;
+               }
                 break;
         }
 
