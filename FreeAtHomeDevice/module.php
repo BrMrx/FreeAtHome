@@ -355,14 +355,24 @@ class FreeAtHomeDevice extends IPSModule
 
         if( isset( $lDataObj->{$lDeviceID}->unresponsive ) )
         {
+            $lOldStatus = $this->GetStatus();
+            $lNewStatus = $lOldStatus;
+            $lErrorText = '';
+
             if( $lDataObj->{$lDeviceID}->unresponsive )
             {
-                $this->SetStatus(200);
-                IPS_LogMessage( $this->InstanceID, 'device '.$lDeviceID.' is unresponsiv' );
+                $lNewStatus = 200;
+                $lErrorText = ' is unresponsiv';
             }
             else
             {
-                $this->SetStatus(102);
+                $lNewStatus = 102;
+            }
+
+            if( $lOldStatus != $lNewStatus )
+            {
+                $this->SetStatus($lNewStatus);
+                IPS_LogMessage( $this->InstanceID, 'device '.$lDeviceID.' status change '.$lOldStatus.' -> '.$lNewStatus.$lErrorText );                  
             }
         }
 
