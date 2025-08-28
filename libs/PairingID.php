@@ -565,7 +565,7 @@ class PID
 					else
 					{
 						// Wert nicht gültig oder Funktion Brighness nicht verfügbar
-						IPS_LogMessage( 0, __FUNCTION__.'('.json_encode($a_Channel).', '.$a_Type.') '.self::GetName($lPairingId).' not channel found' );
+						// IPS_LogMessage( 0, __FUNCTION__.'('.json_encode($a_Channel).', '.$a_Type.') '.self::GetName($lPairingId).' not channel found' );
 					}
                 }
             }

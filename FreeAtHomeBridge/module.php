@@ -141,7 +141,15 @@ class FreeAtHomeBridge extends IPSModule
         foreach( $lListRequest as $lRequest )
         {
             $lRequestArray = explode('.',$lRequest);
-            if( isset($lDevices->{$lRequestArray[0]}))
+            if( isset($lDevices->{$lRequestArray[0]}) && 
+                isset($lDevices->{$lRequestArray[0]}->channels) &&
+                isset($lRequestArray[1]) &&
+                isset($lDevices->{$lRequestArray[0]}->channels->{$lRequestArray[1]}) &&
+                isset($lDevices->{$lRequestArray[0]}->channels->{$lRequestArray[1]}->outputs) &&
+                isset($lRequestArray[2]) &&
+                isset($lDevices->{$lRequestArray[0]}->channels->{$lRequestArray[1]}->outputs->{$lRequestArray[2]}) &&
+                isset($lDevices->{$lRequestArray[0]}->channels->{$lRequestArray[1]}->outputs->{$lRequestArray[2]}->value) 
+                )
             {
                 $lValue = $lDevices->{$lRequestArray[0]}->channels->{$lRequestArray[1]}->outputs->{$lRequestArray[2]}->value;
                 $lUnresponsive = $lDevices->{$lRequestArray[0]}->unresponsive;
