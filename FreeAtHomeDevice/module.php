@@ -775,6 +775,10 @@ class FreeAtHomeDevice extends IPSModule
                     case 3:    // runterfahren
                        $Value = 1;
                        break; 
+                    default:
+                       $lActionIdent = 'STOP_STEP_UP_DOWN';
+                       $Value = 1;
+                       break;               
                 }
                 // Wert immer zurücklesen
                 $lDoSetValue = false;
@@ -808,7 +812,14 @@ class FreeAtHomeDevice extends IPSModule
         $lSettings = PID::GetSettings($Ident);
         if( isset($lSettings['action']) )
         {
-            $lActionPID = PID::GetID( $lSettings['action'] );
+            if( isset($lActionIdent) || isset($lActionIdent) )
+            {
+                $lActionPID = PID::GetID( $lActionIdent );
+            }
+            else
+            {
+                $lActionPID = PID::GetID( $lSettings['action'] );
+            }
             // Variablen für alle Outputs (des Devises) anlegen
             $lInputs = json_decode( $this->ReadPropertyString('Inputs') );
 
