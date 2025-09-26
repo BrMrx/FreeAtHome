@@ -512,6 +512,27 @@ class FreeAtHomeDevice extends IPSModule
         return false;
     }
    
+
+    public function GetState() : bool
+    {
+        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
+
+        foreach( $lOutputs as $lDatapoint => $lPairingID  )
+        {
+            $lSettings = PID::GetSettingsByID( $lPairingID );
+            if( $lSettings['info'] == 'State' && $lSettings['type'] == 0 )
+            {
+                $lId = $this->GetIDForIdent( PID::GetName($lPairingID) );
+                return GetValueBoolean($lId);
+            }
+        }
+ 
+        // Attribut Position nicht gefunden
+        IPS_LogMessage( $this->InstanceID, __FUNCTION__."() attribut State not found" );
+        return false;
+    }
+
+
     public function SetBrightness( int $Value )
     {
         // Wert im gültigen Bereich
