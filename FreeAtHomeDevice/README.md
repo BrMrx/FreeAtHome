@@ -36,7 +36,25 @@
    ```php
    FAHDEV_GetPosition(12345); // Gibt gibt die aktuelle Rolladenposition zurück
    ```
-   
+
+   **FAHDEV_SetUp($InstanceID)**\
+   Mit dieser Funktion ist es möglich das device nach oben zu fahren
+   ```php
+   FAHDEV_SetPUp(12345); // Gibt true == Erfolg, false == Fehler, Funktion nicht verfügbar
+   ```
+
+   **FAHDEV_SetDown($InstanceID)**\
+   Mit dieser Funktion ist es möglich das device nach unten zu fahren
+   ```php
+   FAHDEV_SetDown(12345); // Gibt true == Erfolg, false == Fehler, Funktion nicht verfügbar
+   ```
+
+   **FAHDEV_SetStop($InstanceID)**\
+   Mit dieser Funktion ist es möglich das device zu stoppen
+   ```php
+   FAHDEV_SetStop(12345); // Gibt true == Erfolg, false == Fehler, Funktion nicht verfügbar
+   ```
+
    **FAHDEV_SetSensorLock($InstanceID, bool $Value)**\
    Mit dieser Funktion ist es möglich die Sensor Verriegelung zu setzen
    ```php

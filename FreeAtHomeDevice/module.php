@@ -667,6 +667,65 @@ class FreeAtHomeDevice extends IPSModule
         return false;
     }
 
+    public function SetUp()
+    {
+        $Value = 2;
+        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
+
+        foreach( $lOutputs as $lDatapoint => $lPairingID  )
+        {
+            $lSettings = PID::GetSettingsByID( $lPairingID );
+            if( $lSettings['info'] == 'Move info' && $lSettings['action'] != '' && $lSettings['type'] == 1 )
+            {
+                $this->RequestAction( PID::GetName($lPairingID), $Value );
+                return true;
+            }
+        }                  
+
+        // Wert nicht gültig oder Funktion Move Info nicht verfügbar
+        IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).") attribut Move info not found" );
+        return false;
+    }
+
+    public function SetDown()
+    {
+        $Value = 3;
+        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
+
+        foreach( $lOutputs as $lDatapoint => $lPairingID  )
+        {
+            $lSettings = PID::GetSettingsByID( $lPairingID );
+            if( $lSettings['info'] == 'Move info' && $lSettings['action'] != '' && $lSettings['type'] == 1 )
+            {
+                $this->RequestAction( PID::GetName($lPairingID), $Value );
+                return true;
+            }
+        }                  
+
+        // Wert nicht gültig oder Funktion Move Info nicht verfügbar
+        IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).") attribut Move info not found" );
+        return false;
+    }
+
+    public function SetStop()
+    {
+        $Value = 0;
+        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
+
+        foreach( $lOutputs as $lDatapoint => $lPairingID  )
+        {
+            $lSettings = PID::GetSettingsByID( $lPairingID );
+            if( $lSettings['info'] == 'Move info' && $lSettings['action'] != '' && $lSettings['type'] == 1 )
+            {
+                $this->RequestAction( PID::GetName($lPairingID), $Value );
+                return true;
+            }
+        }                  
+
+        // Wert nicht gültig oder Funktion Move Info nicht verfügbar
+        IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).") attribut Move info not found" );
+        return false;
+    }
 
     private function do_GetValue( string $a_Ident )
     {
