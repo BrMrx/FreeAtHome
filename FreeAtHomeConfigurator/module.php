@@ -15,6 +15,7 @@ class FreeAtHomeConfigurator extends IPSModule
 
     const m_Types = array( 
         'RF' => 'free@home wireless',
+        'smokealarm' => 'free@home smokealarm',
         'hue' => 'Phillips HUE');
 
 
