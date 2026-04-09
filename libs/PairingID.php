@@ -197,7 +197,10 @@ class PID
 		'LOCATOR_BEEP'                                  =>[ 'ID' => 0x02C0 ], // DPT_TRIGGER	1BIT
 		'SWITCH_TEST_ALARM'                             =>[ 'ID' => 0x02C1 ], // DPT_SWITCH	1BIT
 		'TEST_ALARM_ACTIVE'                             =>[ 'ID' => 0x02C2 ], // DPT_ALARM	1BIT
-		'FIRE_ALARM_ACTIVE'                             =>[ 'ID' => 0x02C3 ], // DPT_ALARM	1BIT
+		'FIRE_ALARM_ACTIVE'                             =>[ 'ID' => 0x02C3,
+															 'info' => 'Fire Alarm',
+															 'type' => 0,   // bool
+															 'profile' => '~Alert' ], // DPT_ALARM	1BIT
 		'CO_ALARM_ACTIVE'                               =>[ 'ID' => 0x02C4 ], // DPT_ALARM	1BIT
 		'REMOTE_LOCATE'                                 =>[ 'ID' => 0x02C5 ], // DPT_TRIGGER	1BIT
 		'DETECTOR_PAIRING_MODE'                         =>[ 'ID' => 0x02C6 ], // DPT_SWITCH	1BIT
