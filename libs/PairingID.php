@@ -198,7 +198,7 @@ class PID
 		'SWITCH_TEST_ALARM'                             =>[ 'ID' => 0x02C1 ], // DPT_SWITCH	1BIT
 		'TEST_ALARM_ACTIVE'                             =>[ 'ID' => 0x02C2 ], // DPT_ALARM	1BIT
 		'FIRE_ALARM_ACTIVE'                             =>[ 'ID' => 0x02C3,
-															 'info' => 'Fire Alarm',
+															 'info' => 'Fire alert',
 															 'type' => 0,   // bool
 															 'profile' => '~Alert' ], // DPT_ALARM	1BIT
 		'CO_ALARM_ACTIVE'                               =>[ 'ID' => 0x02C4 ], // DPT_ALARM	1BIT
