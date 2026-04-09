@@ -1,7 +1,7 @@
 # Free@Home Modul für IP-Symcon
 
 **Autor**: Bruno Marx  
-**Version**: 0.1
+**Version**: 0.2
 
 ## ACHTUNG 
 
@@ -18,7 +18,7 @@ Dieses Modul ermöglicht die Integration von Busch-Jaeger free@home in IP-Symcon
 
 - Gruppierter Konfigurator für:
   - free@home Geräte
-  - Szenen  ( in Planung)
+  - free@home Rauchmelder
   - Hue-Komponenten 
 - Automatische Variablenanlage mit passenden Profilen
 - Echtzeit-Aktualisierung über WebSocket (in Planung - derzeit zyklisch)
@@ -46,4 +46,4 @@ Dieses Modul ermöglicht die Integration von Busch-Jaeger free@home in IP-Symcon
 
 ## Lizenz
 
-Copyright © 2025 Bruno Marx
+Copyright © 2026 Bruno Marx
