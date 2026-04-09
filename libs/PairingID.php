@@ -422,6 +422,7 @@ class PID
 		self::mMapPairingID['INFO_LOCKED_SENSOR']['ID'],
 		self::mMapPairingID['MOVE_UP_DOWN']['ID'],
 		self::mMapPairingID['STOP_STEP_UP_DOWN']['ID'],
+		self::mMapPairingID['FIRE_ALARM_ACTIVE']['ID'],
 	);
 
 	
