@@ -37,7 +37,7 @@ class FreeAtHomeBridge extends IPSModule
         $this->RegisterPropertyBoolean('UseTLS', false);
 
         // WebSocket-Properties
-        $this->RegisterPropertyBoolean('UseWebSocket', false);
+        $this->RegisterPropertyBoolean('UseWebSocket', true);
         $this->RegisterPropertyInteger('WebSocketPort', 0);    // 0 = automatisch (80/443)
         $this->RegisterPropertyInteger('WsKeepaliveSec', 30);
         $this->RegisterPropertyInteger('WsStaleTimeoutSec', 120);

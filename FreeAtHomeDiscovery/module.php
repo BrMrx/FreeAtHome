@@ -4,8 +4,9 @@ class FreeAtHomeDiscovery extends IPSModule
 {
     const mBridgeModuleId       = '{9AFFB383-D756-8422-BCA0-EFD3BB1E3E29}';
     const mConfiguratorModuleId = '{943F52A9-5E1E-5C7A-6CF4-E9C28F569957}';
-    const SCAN_TIMEOUT_MS = 400;
-    const SCAN_PARALLEL   = 16;
+    const mClientSocketGuid     = '{3CFF0FD9-E306-41DB-9B5A-9D06D38576C3}';
+    const SCAN_TIMEOUT_MS       = 400;
+    const SCAN_PARALLEL         = 16;
 
     public function Create()
     {
@@ -40,34 +41,49 @@ class FreeAtHomeDiscovery extends IPSModule
             $lName     = 'free@home SysAP (' . $lHost['ip'] . ')';
             $lFirmware = '';
 
-            // Name und Firmware aus bestehender Instanz übernehmen
             if ($lInstanceId !== 0)
             {
                 $lName     = IPS_GetProperty($lInstanceId, 'SysAPName') ?: $lName;
                 $lFirmware = IPS_GetProperty($lInstanceId, 'SysAPFirmware');
             }
 
-            // create immer setzen - IPS markiert die Zeile sonst rot.
-            // Bei vorhandener instanceID wird create ignoriert und die
-            // bestehende Instanz verknüpft.
+            // create als flache Kette: Konfigurator → Bridge → Client-Socket
+            // IPS legt die Instanzen von oben nach unten an und verbindet sie.
+            // Bei vorhandener instanceID wird create ignoriert.
+            $lPort = $lHost['tls'] ? 443 : 80;
+
             $lValues[] = [
                 'Name'       => $lName,
                 'IPAddress'  => $lHost['ip'],
                 'Firmware'   => $lFirmware,
                 'instanceID' => $lInstanceId,
                 'create'     => [
-                    'moduleID'      => self::mBridgeModuleId,
-                    'configuration' => [
-                        'Host'   => $lHost['ip'],
-                        'UseTLS' => $lHost['tls'],
+                    [
+                        'moduleID'      => self::mConfiguratorModuleId,
+                        'configuration' => new stdClass(),
+                        'name'          => 'free@home Konfigurator',
                     ],
-                    'name'     => $lName,
-                    'children' => [
-                        [
-                            'moduleID'      => self::mConfiguratorModuleId,
-                            'configuration' => new stdClass(),
-                            'name'          => 'free@home Konfigurator',
+                    [
+                        'moduleID'      => self::mBridgeModuleId,
+                        'configuration' => [
+                            'Host'         => $lHost['ip'],
+                            'UseTLS'       => $lHost['tls'],
+                            'UseWebSocket' => true,
+                            'WebSocketPort'=> 0,
                         ],
+                        'name'          => $lName,
+                    ],
+                    [
+                        'moduleID'      => self::mClientSocketGuid,
+                        'configuration' => [
+                            'Host'        => $lHost['ip'],
+                            'Port'        => $lPort,
+                            'UseSSL'      => $lHost['tls'],
+                            'VerifyPeer'  => false,
+                            'VerifyHost'  => false,
+                            'Open'        => true,
+                        ],
+                        'name'          => 'Client Socket (free@home)',
                     ],
                 ],
             ];
@@ -116,7 +132,6 @@ class FreeAtHomeDiscovery extends IPSModule
         $lMulti   = curl_multi_init();
         $lHandles = [];
 
-        // Je Host zwei Handles: http + https
         foreach ($a_Hosts as $lIp)
         {
             foreach (['https', 'http'] as $lScheme)
@@ -156,15 +171,14 @@ class FreeAtHomeDiscovery extends IPSModule
             $lHttpCode = curl_getinfo($lCh, CURLINFO_HTTP_CODE);
             $lBody     = curl_multi_getcontent($lCh);
 
-            // SysAP erkennbar an HTTP 200 + "free@home" im Body
             if (!in_array($lIp, $lFoundIps) &&
                 $lHttpCode === 200 &&
                 $lBody !== false &&
                 strpos($lBody, 'free@home') !== false)
             {
                 $lFound[]    = [
-                    'ip'  => $lIp,
-                    'tls' => ($lScheme === 'https'),
+                    'ip'     => $lIp,
+                    'tls'    => ($lScheme === 'https'),
                 ];
                 $lFoundIps[] = $lIp;
                 $this->SendDebug('Discovery', "Found SysAP at {$lScheme}://{$lIp}", 0);
@@ -184,7 +198,6 @@ class FreeAtHomeDiscovery extends IPSModule
 
     private function getLocalIp(): string
     {
-        // Methode 1: Hostname auflösen
         $lHostname = gethostname();
         if ($lHostname !== false)
         {
@@ -195,7 +208,6 @@ class FreeAtHomeDiscovery extends IPSModule
             }
         }
 
-        // Methode 2: UDP-Socket-Trick
         $lSocket = @socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
         if ($lSocket !== false)
         {
