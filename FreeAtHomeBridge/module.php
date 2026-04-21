@@ -541,6 +541,28 @@ class FreeAtHomeBridge extends IPSModule
             {
                 $this->SendDebug(__FUNCTION__ . ' SysAP Name changed:', $this->ReadPropertyString('SysAPName') . ' -> ' . $lAnswer->sysapName, 0);
                 IPS_SetProperty($this->InstanceID, 'SysAPName', $lAnswer->sysapName);
+
+                // Bridge-Instanznamen im Objektbaum aktualisieren
+                // aber nur wenn er noch dem Discovery-Standard-Namen entspricht
+                // oder leer/unbenannt ist - keine manuell gesetzten Namen überschreiben
+                $lCurrentName = IPS_GetName($this->InstanceID);
+                if ($lCurrentName === '' ||
+                    strpos($lCurrentName, 'Unnamed') !== false ||
+                    strpos($lCurrentName, 'free@home SysAP (') !== false)
+                {
+                    IPS_SetName($this->InstanceID, $lAnswer->sysapName);
+                }
+
+                // Konfigurator-Namen mitaktualisieren
+                $lConfModuleId = '{943F52A9-5E1E-5C7A-6CF4-E9C28F569957}';
+                foreach (IPS_GetInstanceListByModuleID($lConfModuleId) as $lConfId)
+                {
+                    if (IPS_GetInstance($lConfId)['ConnectionID'] === $this->InstanceID)
+                    {
+                        IPS_SetName($lConfId, $lAnswer->sysapName . ' - Konfigurator');
+                        break;
+                    }
+                }
             }
             if ($lVersionChanged)
             {
@@ -592,7 +614,16 @@ class FreeAtHomeBridge extends IPSModule
         // Neuen Konfigurator anlegen. Der Konfigurator verbindet sich
         // über ConnectParent() in seinem Create() selbst mit der Bridge.
         $lConfId = IPS_CreateInstance($lConfModuleId);
-        IPS_SetName($lConfId, IPS_GetName($this->InstanceID) . ' - Konfigurator');
+
+        // Als Basis-Name den SysAP-Namen verwenden falls bereits bekannt,
+        // sonst den Bridge-Instanz-Namen. Der Name wird in BridgeConnected()
+        // nochmals aktualisiert sobald der SysAP antwortet.
+        $lBaseName = $this->ReadPropertyString('SysAPName');
+        if ($lBaseName === '')
+        {
+            $lBaseName = IPS_GetName($this->InstanceID);
+        }
+        IPS_SetName($lConfId, $lBaseName . ' - Konfigurator');
     }
 
     // ====================================================================
