@@ -47,8 +47,10 @@ class FreeAtHomeDiscovery extends IPSModule
                 $lFirmware = IPS_GetProperty($lInstanceId, 'SysAPFirmware');
             }
 
-            // create als flache Kette: Konfigurator → Bridge → Client-Socket
-            // IPS legt die Instanzen von oben nach unten an und verbindet sie.
+            // create als flache Kette von oben nach unten:
+            // [0] Konfigurator  (Kind der Bridge, oberste Ebene)
+            // [1] Bridge        (Splitter, wird dem Anwender zur Eingabe von Credentials angezeigt)
+            // [2] Client-Socket (I/O, unterste Ebene)
             // Bei vorhandener instanceID wird create ignoriert.
             $lPort = $lHost['tls'] ? 443 : 80;
 
@@ -61,27 +63,27 @@ class FreeAtHomeDiscovery extends IPSModule
                     [
                         'moduleID'      => self::mConfiguratorModuleId,
                         'configuration' => new stdClass(),
-                        'name'          => 'free@home Konfigurator',
+                        'name'          => $lName . ' - Konfigurator',
                     ],
                     [
                         'moduleID'      => self::mBridgeModuleId,
                         'configuration' => [
-                            'Host'         => $lHost['ip'],
-                            'UseTLS'       => $lHost['tls'],
-                            'UseWebSocket' => true,
-                            'WebSocketPort'=> 0,
+                            'Host'          => $lHost['ip'],
+                            'UseTLS'        => $lHost['tls'],
+                            'UseWebSocket'  => true,
+                            'WebSocketPort' => 0,
                         ],
                         'name'          => $lName,
                     ],
                     [
                         'moduleID'      => self::mClientSocketGuid,
                         'configuration' => [
-                            'Host'        => $lHost['ip'],
-                            'Port'        => $lPort,
-                            'UseSSL'      => $lHost['tls'],
-                            'VerifyPeer'  => false,
-                            'VerifyHost'  => false,
-                            'Open'        => true,
+                            'Host'       => $lHost['ip'],
+                            'Port'       => $lPort,
+                            'UseSSL'     => $lHost['tls'],
+                            'VerifyPeer' => false,
+                            'VerifyHost' => false,
+                            'Open'       => true,
                         ],
                         'name'          => 'Client Socket (free@home)',
                     ],
