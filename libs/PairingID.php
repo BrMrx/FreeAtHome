@@ -485,17 +485,20 @@ class PID
         return '['.$a_ID.']';      
     }
 				
-	public static function GetType( int $a_ID ) : string
+	// Rückgabetyp: 0 = bool, 1 = int, 2 = float.
+	// Defensiv gegen Einträge ohne 'type'-Feld (nicht-supported Pairing-IDs):
+	// liefert dann 0 statt Notice/NULL.
+	public static function GetType( int $a_ID ) : int
     {
  		foreach( self::mMapPairingID as $lName => $lVal )
 		{
 			if( $lVal['ID'] == $a_ID )
 			{
-				return $lVal['type'];
+				return $lVal['type'] ?? 0;
 			}
 		}
 
-        return 0;      
+        return 0;
     }
 
 	public static function GetInfo( int $a_ID ) : string
@@ -511,20 +514,22 @@ class PID
 				return "";
 			}
 		}
-        return '?'.$a_ID.'?';      
+        // Fallback: ID hexadezimal ausgeben (z. B. "?0x10F4?"), nicht dezimal.
+        return '?' . sprintf('0x%04X', $a_ID) . '?';
     }
 				
+	// Defensiv gegen Einträge ohne 'profile'-Feld: liefert dann ''.
 	public static function GetProfile( int $a_ID ) : string
     {
   		foreach( self::mMapPairingID as $lName => $lVal )
 		{
 			if( $lVal['ID'] == $a_ID )
 			{
-				return $lVal['profile'];
+				return $lVal['profile'] ?? '';
 			}
 		}
 
-        return '';      
+        return '';
     }
 	public static function GetAction( int $a_ID ) : string
     {
