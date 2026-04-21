@@ -190,30 +190,43 @@ class FreeAtHomeDevice extends IPSModule
         return $value;
     }
 
-    protected function LinearizeFromDevice(int $value) : int
+    // Umkehrfunktion von LinearizeToDevice.
+    //
+    // Funktionsweise: GetLinearisation() liefert eine Tabelle mit key=logisch,
+    // value=device ([25=>10, 50=>30, 75=>60, 100=>100]). Für die Rückrichtung
+    // iterieren wir mit "$lY1 => $lX1" – das dreht die Bedeutung der Schleifen-
+    // variablen, sodass $lX1 den Device-Stützpunkt (Eingabeachse) und $lY1 den
+    // logischen Stützpunkt (Ausgabeachse) darstellt. Der anschließende Aufruf
+    // Linearize($a_Value, $lX0, $lY0, $lX1, $lY1) interpoliert dann korrekt
+    // vom Device- in den logischen Wertebereich.
+    //
+    // Hinweis: mathematisch identisch zur vorherigen Implementierung – hier
+    // nur mit sprechenderen Variablennamen und im Codingstyle konsistent.
+    protected function LinearizeFromDevice(int $a_Value) : int
     {
-        if ($value <= 0 || $value >= 100)
+        if( $a_Value <= 0 || $a_Value >= 100 )
         {
-            return $value;
+            return $a_Value;
         }  
 
-        $data = $this->GetLinearisation();
-        $x0 = 0;
-        $y0 = 0;
-        foreach ($data as $y1 => $x1) 
+        $lData = $this->GetLinearisation();
+        $lX0 = 0; // device-Seite (Eingabe)
+        $lY0 = 0; // logische Seite (Ausgabe)
+
+        foreach( $lData as $lY1 => $lX1 )
         {
-            if ($value > $x1) 
+            if( $a_Value > $lX1 )
             {
-                $x0 = $x1;
-                $y0 = $y1;
+                $lX0 = $lX1;
+                $lY0 = $lY1;
             } 
             else 
             {
-                return $this->Linearize($value, $x0, $y0, $x1, $y1);
+                return $this->Linearize( $a_Value, $lX0, $lY0, $lX1, $lY1 );
             }
         }
 
-        return $value;
+        return $a_Value;
     }
 
     protected function HasActionInput( string $a_Action ) : bool
@@ -743,6 +756,9 @@ class FreeAtHomeDevice extends IPSModule
         return false ;
     }
 
+    // Setzt den Wert im lokalen Abbild und wendet dabei LinearizeFromDevice an.
+    // Diese Variante wird verwendet, wenn der übergebene Wert ein Device-Wert
+    // ist (z. B. aus einer Rückmeldung des SysAP).
     private function do_SetValue( string $a_Ident, string $a_Value )
     {
         $lPairingID = PID::GetID( $a_Ident );
@@ -779,11 +795,55 @@ class FreeAtHomeDevice extends IPSModule
         }
     }
 
+    // FIX: Setzt den Wert im lokalen Abbild ohne jede Linearisierung.
+    // Wird aus RequestAction() aufgerufen, wenn wir den ORIGINAL-logischen
+    // Wert direkt ins Abbild schreiben wollen. do_SetValue() hätte hier
+    // ein zweites Mal LinearizeFromDevice angewendet.
+    private function do_SetValueRaw( string $a_Ident, $a_Value )
+    {
+        $lPairingID = PID::GetID( $a_Ident );
+        $lId        = $this->GetIDForIdent($a_Ident);
+        $lType      = PID::GetType( $lPairingID );
+        switch($lType)
+        {
+        case 0: // bool
+            $lNewBool = boolval($a_Value);
+            if( GetValueBoolean($lId) != $lNewBool )
+            {
+                $lConvertedBool = $lNewBool ? 'true' : 'false';
+                $this->SendDebug(__FUNCTION__, $a_Ident.' => '.$lConvertedBool, 0);
+                SetValueBoolean($lId, $lNewBool);
+            }
+            break;
+        case 1: // int
+            $lNewInt = intval($a_Value);
+            $lOldValue = GetValueInteger($lId);
+            if( $lOldValue != $lNewInt )
+            {
+                $this->SendDebug(__FUNCTION__, "$a_Ident: $lOldValue => $lNewInt (raw)", 0);
+                SetValueInteger($lId, $lNewInt);
+            }
+            break;
+        case 2: // float
+            $lNewFloat = floatval($a_Value);
+            if( GetValueFloat($lId) != $lNewFloat )
+            {
+                $this->SendDebug(__FUNCTION__, "$a_Ident: => $lNewFloat (raw)", 0);
+                SetValueFloat($lId, $lNewFloat);
+            }
+            break;
+        }
+    }
+
     public function RequestAction($Ident, $Value)
     {
         // Daten empfangen
         $this->SendDebug(__FUNCTION__, $Ident.' => '.$Value, 0);
 
+        // FIX: $lBeforeValue enthält den LOGISCHEN Wert (0..100), $Value wird
+        //      ggf. überschrieben mit dem linearisierten Device-Wert.
+        //      Für do_SetValueRaw() wollen wir den Original-Wert nutzen,
+        //      nicht den linearisierten → wir halten beides getrennt.
         $lBeforeValue= $Value;
         if(  PID::HasLinearisation(PID::GetID($Ident)) )
         {
@@ -911,13 +971,37 @@ class FreeAtHomeDevice extends IPSModule
 
                    if( $lDoSetValue )
                    {
-                        // Date im Abbild direkt übernehmen ohne auf die Rückmeldung zu warten
-                        $this->do_SetValue( $Ident, $SendValue );
+                        // FIX: lokalen Status mit dem LOGISCHEN Wert setzen,
+                        //      nicht mit dem Device-Wert. do_SetValueRaw() wendet
+                        //      keine Linearisierung an – sonst würde der Wert
+                        //      doppelt (einmal zu Device, dann wieder zurück) 
+                        //      transformiert und wäre im Ergebnis falsch.
+                        //
+                        //      Für den Ident, der tatsächlich geschickt wurde,
+                        //      benutzen wir den entsprechenden Vor-Linearisierungs-
+                        //      Wert: wenn $Ident == $lOrigIdent, ist das
+                        //      $lBeforeValue; wurde $Ident konvertiert (z. B.
+                        //      INFO_ACTUAL_DIMMING_VALUE → INFO_ON_OFF), ist
+                        //      $Value bereits der finale logische Wert (bool)
+                        //      und wird direkt übernommen.
+                        if( $Ident === $lOrigIdent )
+                        {
+                            $this->do_SetValueRaw( $Ident, $lBeforeValue );
+                        }
+                        else
+                        {
+                            $this->do_SetValueRaw( $Ident, $Value );
+                        }
                    }
 
                    if( $lDoSetOrigValue )
                    {
-                       $this->do_SetValue( $lOrigIdent, strval($lOrigValue) );
+                       // Original-Ident zusätzlich setzen (z. B. Dimmer-Wert,
+                       // nachdem wir auf INFO_ON_OFF umgeschwenkt sind).
+                       // $lOrigValue ist hier der linearisierte Device-Wert;
+                       // wir wollen aber den logischen Wert im Status →
+                       // $lBeforeValue.
+                       $this->do_SetValueRaw( $lOrigIdent, $lBeforeValue );
                    }
   
                    $lbPollData = true;
