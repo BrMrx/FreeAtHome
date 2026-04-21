@@ -451,63 +451,79 @@ class FreeAtHomeBridge extends IPSModule
         $lHost     = $this->ReadPropertyString('Host');
         $lUsername = $this->ReadPropertyString('Username');
         $lPassword = $this->ReadPropertyString('Password');
-        $lScheme   = $this->ReadPropertyBoolean('UseTLS') ? 'https' : 'http';
-        $lUrl      = "{$lScheme}://{$lHost}/fhapi/v1/api/rest/{$a_Endpoint}";
+        $lUseTls   = $this->ReadPropertyBoolean('UseTLS');
 
-        $this->SendDebug(__FUNCTION__ . ' URL', $lUrl, 0);
+        // Schemes die versucht werden: konfiguriertes zuerst, dann Fallback
+        $lSchemes = $lUseTls ? ['https', 'http'] : ['http', 'https'];
 
-        $lCh = curl_init();
-        curl_setopt($lCh, CURLOPT_URL, $lUrl);
-        curl_setopt($lCh, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($lCh, CURLOPT_USERPWD, $lUsername . ':' . $lPassword);
-        curl_setopt($lCh, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-
-        if ($this->ReadPropertyBoolean('UseTLS'))
+        foreach ($lSchemes as $lScheme)
         {
+            $lUrl = "{$lScheme}://{$lHost}/fhapi/v1/api/rest/{$a_Endpoint}";
+            $this->SendDebug(__FUNCTION__ . ' URL', $lUrl, 0);
+
+            $lCh = curl_init();
+            curl_setopt($lCh, CURLOPT_URL, $lUrl);
+            curl_setopt($lCh, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($lCh, CURLOPT_USERPWD, $lUsername . ':' . $lPassword);
+            curl_setopt($lCh, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+            curl_setopt($lCh, CURLOPT_TIMEOUT, 5);
+            curl_setopt($lCh, CURLOPT_CONNECTTIMEOUT, 3);
             curl_setopt($lCh, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($lCh, CURLOPT_SSL_VERIFYHOST, 0);
-        }
 
-        if (in_array($a_Method, ['POST', 'PUT', 'DELETE'], true))
-        {
-            if ($a_Method === 'POST')
+            if (in_array($a_Method, ['POST', 'PUT', 'DELETE'], true))
             {
-                curl_setopt($lCh, CURLOPT_POST, true);
+                if ($a_Method === 'POST')
+                {
+                    curl_setopt($lCh, CURLOPT_POST, true);
+                }
+                else
+                {
+                    curl_setopt($lCh, CURLOPT_CUSTOMREQUEST, $a_Method);
+                }
+                curl_setopt($lCh, CURLOPT_POSTFIELDS, $a_Params[0]);
             }
-            else
-            {
-                curl_setopt($lCh, CURLOPT_CUSTOMREQUEST, $a_Method);
-            }
-            curl_setopt($lCh, CURLOPT_POSTFIELDS, $a_Params[0]);
-        }
 
-        $lApiResult = curl_exec($lCh);
-        $this->SendDebug(__FUNCTION__ . ' Result', $lApiResult, 0);
-        $lHeaderInfo = curl_getinfo($lCh);
+            $lApiResult  = curl_exec($lCh);
+            $lHeaderInfo = curl_getinfo($lCh);
+            $lCurlError  = curl_error($lCh);
+            curl_close($lCh);
 
-        if ($lHeaderInfo['http_code'] === 200)
-        {
-            if ($lApiResult !== false)
+            $this->SendDebug(__FUNCTION__ . ' Result', $lApiResult, 0);
+
+            if ($lHeaderInfo['http_code'] === 200 && $lApiResult !== false)
             {
+                // Erfolgreich — TLS-Property automatisch korrigieren falls Fallback genutzt
+                if (($lScheme === 'https') !== $lUseTls)
+                {
+                    $this->SendDebug(__FUNCTION__, "Auto-correcting UseTLS to " . ($lScheme === 'https' ? 'true' : 'false'), 0);
+                    IPS_SetProperty($this->InstanceID, 'UseTLS', ($lScheme === 'https'));
+                    IPS_ApplyChanges($this->InstanceID);
+                    return false; // ApplyChanges übernimmt
+                }
                 $this->SetStatus(102);
-                curl_close($lCh);
                 return json_decode($lApiResult, false);
             }
-            else
+
+            // Bei curl-Fehler (Timeout, Connection refused) nächstes Scheme versuchen
+            if ($lCurlError !== '')
             {
-                $this->LogMessage('Free At Home sendRequest Error: ' . curl_error($lCh), 10205);
-                $this->SetStatus(201);
-                curl_close($lCh);
-                return new stdClass();
+                $this->SendDebug(__FUNCTION__, "Scheme {$lScheme} failed: {$lCurlError}", 0);
+                continue;
+            }
+
+            // HTTP-Fehler (401, 403 etc.) — kein Fallback sinnvoll
+            if ($lHeaderInfo['http_code'] > 0)
+            {
+                $this->LogMessage("Free At Home sendRequest Error – HTTP {$lHeaderInfo['http_code']} on {$lUrl}", 10205);
+                $this->SetStatus(202);
+                return false;
             }
         }
-        else
-        {
-            $this->LogMessage('Free At Home sendRequest Error – Curl: ' . curl_error($lCh) . ' HTTP: ' . $lHeaderInfo['http_code'], 10205);
-            $this->SetStatus(202);
-            curl_close($lCh);
-            return new stdClass();
-        }
+
+        $this->LogMessage("Free At Home sendRequest Error – SysAP nicht erreichbar auf {$lHost}", 10205);
+        $this->SetStatus(202);
+        return false;
     }
 
     private function BridgeConnected(): bool
