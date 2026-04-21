@@ -165,8 +165,9 @@ class FreeAtHomeBridge extends IPSModule
             return;
         }
 
-        // IPS überträgt Binärdaten als Latin-1-kodierten String im JSON
-        $lChunk = utf8_decode($lIncoming->Buffer);
+        // IPS überträgt Binärdaten als Latin-1-kodierten String im JSON.
+        // utf8_decode/utf8_encode sind seit PHP 8.2 deprecated → mb_convert_encoding.
+        $lChunk = mb_convert_encoding($lIncoming->Buffer, 'ISO-8859-1', 'UTF-8');
 
         if ($this->GetBuffer(self::WS_BUF_HANDSHAKE_OK) !== '1')
         {
@@ -1004,10 +1005,11 @@ class FreeAtHomeBridge extends IPSModule
     private function wsSendRaw(string $a_Data): bool
     {
         // IPS erwartet JSON mit DataID des Client-Sockets und
-        // den Nutzdaten als utf8-kodiertem String im Feld "Buffer"
+        // den Nutzdaten als utf8-kodiertem String im Feld "Buffer".
+        // utf8_encode ist seit PHP 8.2 deprecated → mb_convert_encoding.
         $lJson = json_encode([
             'DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}',  // Client-Socket TX-DataID (parentRequirements)
-            'Buffer' => utf8_encode($a_Data),
+            'Buffer' => mb_convert_encoding($a_Data, 'UTF-8', 'ISO-8859-1'),
         ]);
 
         $lResult = $this->SendDataToParent($lJson);
