@@ -36,32 +36,33 @@ class FreeAtHomeDiscovery extends IPSModule
         {
             $lInstanceId = $this->findExistingBridgeInstance($lHost['ip']);
 
-            $lEntry = [
-                'Name'       => 'free@home SysAP (' . $lHost['ip'] . ')',
-                'IPAddress'  => $lHost['ip'],
-                'Firmware'   => '',
-                'instanceID' => $lInstanceId,
-            ];
+            $lName     = 'free@home SysAP (' . $lHost['ip'] . ')';
+            $lFirmware = '';
 
-            if ($lInstanceId === 0)
+            // Name und Firmware aus bestehender Instanz übernehmen
+            if ($lInstanceId !== 0)
             {
-                $lEntry['create'] = [
+                $lName     = IPS_GetProperty($lInstanceId, 'SysAPName') ?: $lName;
+                $lFirmware = IPS_GetProperty($lInstanceId, 'SysAPFirmware');
+            }
+
+            // create immer setzen - IPS markiert die Zeile sonst rot.
+            // Bei vorhandener instanceID wird create ignoriert und die
+            // bestehende Instanz verknüpft.
+            $lValues[] = [
+                'Name'       => $lName,
+                'IPAddress'  => $lHost['ip'],
+                'Firmware'   => $lFirmware,
+                'instanceID' => $lInstanceId,
+                'create'     => [
                     'moduleID'      => self::mBridgeModuleId,
                     'configuration' => [
                         'Host'   => $lHost['ip'],
                         'UseTLS' => $lHost['tls'],
                     ],
-                    'name' => 'free@home SysAP (' . $lHost['ip'] . ')',
-                ];
-            }
-            else
-            {
-                // Name und Firmware aus bestehender Instanz übernehmen
-                $lEntry['Name']     = IPS_GetProperty($lInstanceId, 'SysAPName') ?: $lEntry['Name'];
-                $lEntry['Firmware'] = IPS_GetProperty($lInstanceId, 'SysAPFirmware');
-            }
-
-            $lValues[] = $lEntry;
+                    'name' => $lName,
+                ],
+            ];
         }
 
         $lForm['actions'][0]['values'] = $lValues;
