@@ -9,7 +9,7 @@ class FreeAtHomeDiscovery extends IPSModule
     const SCAN_TIMEOUT_MS = 400;
 
     // Maximale parallele cURL-Handles
-    const SCAN_PARALLEL = 32;
+    const SCAN_PARALLEL = 16;
 
     public function Create()
     {
@@ -27,7 +27,7 @@ class FreeAtHomeDiscovery extends IPSModule
     }
 
     // ====================================================================
-    //  Discovery-Einsprungpunkt — wird von IPS aufgerufen
+    //  Discovery-Einsprungpunkt - wird von IPS aufgerufen
     // ====================================================================
 
     public function GetConfigurationForm()
@@ -54,7 +54,8 @@ class FreeAtHomeDiscovery extends IPSModule
                 $lEntry['create'] = [
                     'moduleID'      => self::mBridgeModuleId,
                     'configuration' => [
-                        'Host' => $lHost['ip'],
+                        'Host'   => $lHost['ip'],
+                        'UseTLS' => $lHost['tls'],
                     ],
                     'name' => $lHost['name'],
                 ];
@@ -71,12 +72,6 @@ class FreeAtHomeDiscovery extends IPSModule
     //  Subnetz-Scan
     // ====================================================================
 
-    /**
-     * Ermittelt das lokale /24-Subnetz und scannt alle 254 Hosts
-     * parallel per cURL auf den free@home SysAP-Endpunkt.
-     *
-     * @return array  Liste von ['ip', 'name', 'firmware']
-     */
     private function scanSubnet(): array
     {
         $lLocalIp = $this->getLocalIp();
@@ -86,13 +81,11 @@ class FreeAtHomeDiscovery extends IPSModule
             return [];
         }
 
-        // /24-Subnetz aus lokaler IP ableiten
         $lParts  = explode('.', $lLocalIp);
         $lPrefix = $lParts[0] . '.' . $lParts[1] . '.' . $lParts[2] . '.';
 
         $this->SendDebug('Discovery', "Scanning subnet {$lPrefix}0/24", 0);
 
-        // Alle 254 Hosts in Batches von SCAN_PARALLEL parallel scannen
         $lHosts   = [];
         $lResults = [];
 
@@ -101,7 +94,6 @@ class FreeAtHomeDiscovery extends IPSModule
             $lHosts[] = $lPrefix . $i;
         }
 
-        // Batches verarbeiten
         foreach (array_chunk($lHosts, self::SCAN_PARALLEL) as $lBatch)
         {
             $lBatchResults = $this->scanBatch($lBatch);
@@ -112,34 +104,32 @@ class FreeAtHomeDiscovery extends IPSModule
         return $lResults;
     }
 
-    /**
-     * Scannt einen Batch von Hosts parallel per cURL.
-     *
-     * @param  string[] $a_Hosts  Liste von IP-Adressen
-     * @return array              Liste von gefundenen SysAPs
-     */
     private function scanBatch(array $a_Hosts): array
     {
         $lMulti   = curl_multi_init();
         $lHandles = [];
 
-        // cURL-Handles initialisieren
+        // Je Host zwei Handles: http (Port 80) und https (Port 443)
         foreach ($a_Hosts as $lIp)
         {
-            $lCh = curl_init();
-            curl_setopt_array($lCh, [
-                CURLOPT_URL            => "http://{$lIp}/fhapi/v1/api/rest/sysap",
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_TIMEOUT_MS     => self::SCAN_TIMEOUT_MS,
-                CURLOPT_CONNECTTIMEOUT_MS => self::SCAN_TIMEOUT_MS,
-                CURLOPT_FOLLOWLOCATION => false,
-                CURLOPT_NOBODY         => false,
-            ]);
-            curl_multi_add_handle($lMulti, $lCh);
-            $lHandles[$lIp] = $lCh;
+            foreach (['http', 'https'] as $lScheme)
+            {
+                $lCh = curl_init();
+                curl_setopt_array($lCh, [
+                    CURLOPT_URL               => "{$lScheme}://{$lIp}/fhapi/v1/api/rest/sysap",
+                    CURLOPT_RETURNTRANSFER    => true,
+                    CURLOPT_TIMEOUT_MS        => self::SCAN_TIMEOUT_MS,
+                    CURLOPT_CONNECTTIMEOUT_MS => self::SCAN_TIMEOUT_MS,
+                    CURLOPT_FOLLOWLOCATION    => false,
+                    CURLOPT_SSL_VERIFYPEER    => false,
+                    CURLOPT_SSL_VERIFYHOST    => 0,
+                ]);
+                curl_multi_add_handle($lMulti, $lCh);
+                $lHandles[] = ['ch' => $lCh, 'ip' => $lIp, 'scheme' => $lScheme];
+            }
         }
 
-        // Alle Requests parallel ausführen
+        // Alle Requests parallel ausfuhren
         $lRunning = null;
         do
         {
@@ -148,24 +138,35 @@ class FreeAtHomeDiscovery extends IPSModule
         }
         while ($lRunning > 0);
 
-        // Ergebnisse auswerten
-        $lFound = [];
-        foreach ($lHandles as $lIp => $lCh)
+        // Ergebnisse auswerten - pro IP nur einen Treffer ubernehmen
+        $lFound    = [];
+        $lFoundIps = [];
+
+        foreach ($lHandles as $lEntry)
         {
+            $lCh     = $lEntry['ch'];
+            $lIp     = $lEntry['ip'];
+            $lScheme = $lEntry['scheme'];
+
             $lHttpCode = curl_getinfo($lCh, CURLINFO_HTTP_CODE);
             $lBody     = curl_multi_getcontent($lCh);
 
-            if ($lHttpCode === 200 && $lBody !== false && $lBody !== '')
+            if (!in_array($lIp, $lFoundIps) &&
+                $lHttpCode === 200 &&
+                $lBody !== false &&
+                $lBody !== '')
             {
                 $lSysap = json_decode($lBody, true);
                 if (is_array($lSysap) && isset($lSysap['sysapName']))
                 {
-                    $lFound[] = [
+                    $lFound[]    = [
                         'ip'       => $lIp,
                         'name'     => $lSysap['sysapName'],
                         'firmware' => $lSysap['version'] ?? '',
+                        'tls'      => ($lScheme === 'https'),
                     ];
-                    $this->SendDebug('Discovery', "Found SysAP at {$lIp}: {$lSysap['sysapName']}", 0);
+                    $lFoundIps[] = $lIp;
+                    $this->SendDebug('Discovery', "Found SysAP at {$lScheme}://{$lIp}: {$lSysap['sysapName']}", 0);
                 }
             }
 
@@ -181,13 +182,9 @@ class FreeAtHomeDiscovery extends IPSModule
     //  Hilfsfunktionen
     // ====================================================================
 
-    /**
-     * Ermittelt die lokale IP-Adresse des IPS-Hosts.
-     * Versucht zuerst gethostbyname(), dann einen UDP-Trick gegen 8.8.8.8.
-     */
     private function getLocalIp(): string
     {
-        // Methode 1: Hostname auflösen
+        // Methode 1: Hostname auflosen
         $lHostname = gethostname();
         if ($lHostname !== false)
         {
@@ -215,12 +212,6 @@ class FreeAtHomeDiscovery extends IPSModule
         return '';
     }
 
-    /**
-     * Sucht eine bereits existierende Bridge-Instanz mit der gegebenen IP.
-     *
-     * @param  string $a_Ip  IP-Adresse des SysAP
-     * @return int           InstanceID oder 0
-     */
     private function findExistingBridgeInstance(string $a_Ip): int
     {
         $lInstances = IPS_GetInstanceListByModuleID(self::mBridgeModuleId);
