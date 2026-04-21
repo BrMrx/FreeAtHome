@@ -12,7 +12,17 @@
       "Invalid JSON": "Ungültiges JSON",
       "free@home Bridge unreachable": "free@home System Accespoint nicht erreichbar",
       "Registration complete": "Registrierung abgeschlossen",
-      "Registration incomplete, more Information in IP-Symcon Log": "Registrierung unvollständig, weitere Informationen im IP-Symcon Log"
+      "Registration incomplete, more Information in IP-Symcon Log": "Registrierung unvollständig, weitere Informationen im IP-Symcon Log",
+      "Use TLS (https/wss)": "TLS verwenden (https/wss)",
+      "WebSocket": "WebSocket",
+      "Enable WebSocket push": "WebSocket-Push aktivieren",
+      "WebSocket port (0 = auto)": "WebSocket-Port (0 = automatisch)",
+      "Receive poll interval (ms)": "Empfangs-Intervall (ms)",
+      "Keepalive ping interval (s)": "Keepalive-Intervall (s)",
+      "Stale timeout (s, 0 = off)": "Timeout ohne Daten (s, 0 = aus)",
+      "WebSocket: Connect": "WebSocket: Verbinden",
+      "WebSocket: Disconnect": "WebSocket: Trennen",
+      "WebSocket: Send Ping": "WebSocket: Ping senden"
     }
   }
 }

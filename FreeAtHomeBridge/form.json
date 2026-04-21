@@ -20,6 +20,48 @@
       "caption": "Seconds"
   },
   {
+      "type": "CheckBox",
+      "name": "UseTLS",
+      "caption": "Use TLS (https/wss)"
+  },
+  {
+    "type": "ExpansionPanel",
+    "caption": "WebSocket",
+    "items": [
+      {
+        "type": "CheckBox",
+        "name": "UseWebSocket",
+        "caption": "Enable WebSocket push"
+      },
+      {
+        "type": "NumberSpinner",
+        "name": "WebSocketPort",
+        "caption": "WebSocket port (0 = auto)"
+      },
+      {
+        "type": "NumberSpinner",
+        "name": "WsReceiveIntervalMs",
+        "caption": "Receive poll interval (ms)",
+        "minimum": 50,
+        "maximum": 5000
+      },
+      {
+        "type": "NumberSpinner",
+        "name": "WsKeepaliveSec",
+        "caption": "Keepalive ping interval (s)",
+        "minimum": 5,
+        "maximum": 600
+      },
+      {
+        "type": "NumberSpinner",
+        "name": "WsStaleTimeoutSec",
+        "caption": "Stale timeout (s, 0 = off)",
+        "minimum": 0,
+        "maximum": 3600
+      }
+    ]
+  },
+  {
       "type": "ValidationTextBox",
       "enabled": false,
      "name": "SysAPName",
@@ -40,7 +82,10 @@
    ],
   "actions":
   [
-    { "type": "Button", "label": "Check Connection", "onClick": "FAHBR_CheckConnection($id);" }
+    { "type": "Button", "label": "Check Connection", "onClick": "FAHBR_CheckConnection($id);" },
+    { "type": "Button", "label": "WebSocket: Connect", "onClick": "FAHBR_WsConnect($id);" },
+    { "type": "Button", "label": "WebSocket: Disconnect", "onClick": "FAHBR_WsDisconnect($id);" },
+    { "type": "Button", "label": "WebSocket: Send Ping", "onClick": "FAHBR_WsSendPing($id);" }
   ],
   "status": [
     {

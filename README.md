@@ -1,13 +1,8 @@
 # Free@Home Modul für IP-Symcon
 
 **Autor**: Bruno Marx  
-**Version**: 0.2
+**Version**: 1.0
 
-## ACHTUNG 
-
-** Der Treiber ist bereits lauffähig, befindet sich aber noch in der Entwicklung!!**
-
-es werden bereits viele Busch Jäger (Dimmer, Relais, Universalmelder) und Hue Komponenten unterstützt.
 
 ## Beschreibung
 
@@ -21,7 +16,7 @@ Dieses Modul ermöglicht die Integration von Busch-Jaeger free@home in IP-Symcon
   - free@home Rauchmelder
   - Hue-Komponenten 
 - Automatische Variablenanlage mit passenden Profilen
-- Echtzeit-Aktualisierung über WebSocket (in Planung - derzeit zyklisch)
+- Echtzeit-Aktualisierung über WebSocket
 - Synchronisation mit SysAP 
   - verwaiste Instanzen werden markiert
   - Umbenennungen werden nachgezogen
