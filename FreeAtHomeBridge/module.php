@@ -923,7 +923,7 @@ class FreeAtHomeBridge extends IPSModule
         // IPS erwartet JSON mit DataID des Client-Sockets und
         // den Nutzdaten als utf8-kodiertem String im Feld "Buffer"
         $lJson = json_encode([
-            'DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}',  // Client-Socket TX-DataID
+            'DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}',  // Client-Socket TX-DataID (parentRequirements)
             'Buffer' => utf8_encode($a_Data),
         ]);
 
