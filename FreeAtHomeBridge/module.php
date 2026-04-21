@@ -621,6 +621,12 @@ class FreeAtHomeBridge extends IPSModule
         IPS_SetProperty($lSockId, 'Host', $lHost);
         IPS_SetProperty($lSockId, 'Port', $lPort);
         IPS_SetProperty($lSockId, 'UseSSL', $lUseTls);
+        // SysAP nutzt self-signed Zertifikat → Verifikation deaktivieren
+        if ($lUseTls)
+        {
+            IPS_SetProperty($lSockId, 'VerifyPeer', false);
+            IPS_SetProperty($lSockId, 'VerifyHost', false);
+        }
         IPS_SetProperty($lSockId, 'Open', true);
 
         // Statusänderungen des Sockets abonnieren
