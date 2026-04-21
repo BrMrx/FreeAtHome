@@ -15,7 +15,7 @@ class FreeAtHomeConfigurator extends IPSModule
     const m_Types = array( 
         'RF' => 'free@home wireless',
         'smokealarm' => 'free@home smokealarm',
-        'hue' => 'Phillips HUE');
+        'hue' => 'Philips Hue');
 
 
     public function Create()
@@ -52,7 +52,7 @@ class FreeAtHomeConfigurator extends IPSModule
                                         'name'         => 'devices',
                                         'id'           => 99999,
                                         'objects'      => $Devices       ],
-            'Phillips Hue Devices' => [ 'category'     => 'HUE_TargetCategory',
+            'Philips Hue Devices'  => [ 'category'     => 'HUE_TargetCategory',
                                         'name'         => 'hue_devices',
                                         'id'           => 99998,
                                         'objects'      => $HueDevices    ]

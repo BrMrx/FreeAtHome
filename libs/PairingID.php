@@ -217,7 +217,7 @@ class PID
 															'type'  	=> 1,                    // int
 															'profile' 	=> 'FAH.WindForce'],     // Darstellungsprofil
 		'BRIGHTNESS_ALARM'                              =>[ 'ID' => 0x0402,  // DPT_SWITCH	1BIT
-															'info' => 'Illumination Alarm',
+															'info' => 'Illumination alert',
 															'type'  	=> 0,                    // bool
 															'profile' 	=> 'FAH.IlluminationAlert'],         // Darstellungsprofil
 		'BRIGHTNESS_LEVEL'                              =>[ 'ID' => 0x0403, // DPT_VALUE_LUX	2BYTE	Weatherstation brightness level
