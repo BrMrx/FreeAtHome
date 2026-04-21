@@ -59,6 +59,10 @@ class FreeAtHomeBridge extends IPSModule
 
         // Client-Socket als Eltern-Instanz anlegen (wird von IPS verwaltet)
         $this->RequireParent(self::mClientSocketGuid);
+
+        // Konfigurator als Kind-Instanz anlegen falls noch keiner existiert.
+        // Wird nur beim erstmaligen Erstellen der Bridge aufgerufen.
+        $this->createConfiguratorIfNeeded();
     }
 
     public function Destroy()
@@ -566,6 +570,29 @@ class FreeAtHomeBridge extends IPSModule
         }
 
         return false;
+    }
+
+    // ====================================================================
+    //  Konfigurator-Hilfsfunktion
+    // ====================================================================
+
+    private function createConfiguratorIfNeeded(): void
+    {
+        // Prüfen ob bereits ein Konfigurator mit dieser Bridge verbunden ist
+        $lConfModuleId = '{943F52A9-5E1E-5C7A-6CF4-E9C28F569957}';
+        $lChildren     = IPS_GetInstanceListByModuleID($lConfModuleId);
+        foreach ($lChildren as $lId)
+        {
+            if (IPS_GetInstance($lId)['ConnectionID'] === $this->InstanceID)
+            {
+                return; // Konfigurator existiert bereits
+            }
+        }
+
+        // Neuen Konfigurator anlegen und mit dieser Bridge verbinden
+        $lConfId = IPS_CreateInstance($lConfModuleId);
+        IPS_SetName($lConfId, IPS_GetName($this->InstanceID) . ' - Konfigurator');
+        IPS_ConnectInstance($lConfId, $this->InstanceID);
     }
 
     // ====================================================================
