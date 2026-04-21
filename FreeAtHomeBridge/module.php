@@ -1,6 +1,5 @@
 <?php
 
-declare(strict_types=1);
 require_once __DIR__ . '/../libs/FunctionID.php';
 require_once __DIR__ . '/../libs/PairingID.php';
 
@@ -112,7 +111,7 @@ class FreeAtHomeBridge extends IPSModule
     //  IPS-Kernel-Nachrichten (Client-Socket Status)
     // ====================================================================
 
-    public function MessageSink(int $a_TimeStamp, int $a_SenderID, int $a_Message, array $a_Data)
+    public function MessageSink($a_TimeStamp, $a_SenderID, $a_Message, $a_Data)
     {
         switch ($a_Message)
         {
@@ -151,7 +150,7 @@ class FreeAtHomeBridge extends IPSModule
     //  Datenempfang vom Client-Socket (wird von IPS aufgerufen)
     // ====================================================================
 
-    public function ReceiveData(string $a_JSONString)
+    public function ReceiveData($a_JSONString)
     {
         $lIncoming = json_decode($a_JSONString);
         if (!isset($lIncoming->Buffer))
