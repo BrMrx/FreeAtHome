@@ -48,8 +48,8 @@ class FreeAtHomeDiscovery extends IPSModule
             }
 
             // create als flache Kette von oben nach unten:
-            // [0] Konfigurator  (Kind der Bridge, oberste Ebene)
-            // [1] Bridge        (Splitter, wird dem Anwender zur Eingabe von Credentials angezeigt)
+            // [0] Bridge        (Index 0 = wird bei 'Konfigurieren' geöffnet → Credentials)
+            // [1] Konfigurator  (Kind der Bridge)
             // [2] Client-Socket (I/O, unterste Ebene)
             // Bei vorhandener instanceID wird create ignoriert.
             $lPort = $lHost['tls'] ? 443 : 80;
@@ -61,11 +61,6 @@ class FreeAtHomeDiscovery extends IPSModule
                 'instanceID' => $lInstanceId,
                 'create'     => [
                     [
-                        'moduleID'      => self::mConfiguratorModuleId,
-                        'configuration' => new stdClass(),
-                        'name'          => $lName . ' - Konfigurator',
-                    ],
-                    [
                         'moduleID'      => self::mBridgeModuleId,
                         'configuration' => [
                             'Host'          => $lHost['ip'],
@@ -74,6 +69,11 @@ class FreeAtHomeDiscovery extends IPSModule
                             'WebSocketPort' => 0,
                         ],
                         'name'          => $lName,
+                    ],
+                    [
+                        'moduleID'      => self::mConfiguratorModuleId,
+                        'configuration' => new stdClass(),
+                        'name'          => $lName . ' - Konfigurator',
                     ],
                     [
                         'moduleID'      => self::mClientSocketGuid,
