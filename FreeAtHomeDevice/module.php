@@ -1,6 +1,5 @@
 <?php
 
-declare(strict_types=1);
 require_once __DIR__ . '/../libs/FunctionID.php';
 require_once __DIR__ . '/../libs/PairingID.php';
 
@@ -331,7 +330,7 @@ class FreeAtHomeDevice extends IPSModule
         }
         $this->SendDebug(__FUNCTION__, json_encode($lDataObj), 0);
  
-        do_ReseiveData($lDataObj);
+        $this->do_ReseiveData($lDataObj);
      }
 
     private  function  do_ReseiveData(  $lDataObj  )
@@ -871,7 +870,7 @@ class FreeAtHomeDevice extends IPSModule
         $lSettings = PID::GetSettings($Ident);
         if( isset($lSettings['action']) )
         {
-            if( isset($lActionIdent) || isset($lActionIdent) )
+            if( isset($lActionIdent) )
             {
                 $lActionPID = PID::GetID( $lActionIdent );
             }
