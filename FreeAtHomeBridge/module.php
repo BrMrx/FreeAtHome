@@ -71,6 +71,9 @@ class FreeAtHomeBridge extends IPSModule
         // Never delete this line!
         parent::ApplyChanges();
 
+        // Sicherstellen dass ein Client-Socket als Parent existiert
+        $this->RequireParent(self::mClientSocketGuid);
+
         // Timer und WS-State zurücksetzen
         $this->SetTimerInterval('FAHBR_WsKeepalive', 0);
         $this->SetTimerInterval('FAHBR_WsStaleCheck', 0);
