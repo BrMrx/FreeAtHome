@@ -2,7 +2,8 @@
 
 class FreeAtHomeDiscovery extends IPSModule
 {
-    const mBridgeModuleId = '{9AFFB383-D756-8422-BCA0-EFD3BB1E3E29}';
+    const mBridgeModuleId       = '{9AFFB383-D756-8422-BCA0-EFD3BB1E3E29}';
+    const mConfiguratorModuleId = '{943F52A9-5E1E-5C7A-6CF4-E9C28F569957}';
     const SCAN_TIMEOUT_MS = 400;
     const SCAN_PARALLEL   = 16;
 
@@ -60,7 +61,14 @@ class FreeAtHomeDiscovery extends IPSModule
                         'Host'   => $lHost['ip'],
                         'UseTLS' => $lHost['tls'],
                     ],
-                    'name' => $lName,
+                    'name'     => $lName,
+                    'children' => [
+                        [
+                            'moduleID'      => self::mConfiguratorModuleId,
+                            'configuration' => new stdClass(),
+                            'name'          => 'free@home Konfigurator',
+                        ],
+                    ],
                 ],
             ];
         }
