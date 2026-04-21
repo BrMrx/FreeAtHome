@@ -207,7 +207,7 @@ class FreeAtHomeDevice extends IPSModule
         if( $a_Value <= 0 || $a_Value >= 100 )
         {
             return $a_Value;
-        }  
+        }
 
         $lData = $this->GetLinearisation();
         $lX0 = 0; // device-Seite (Eingabe)
@@ -219,8 +219,8 @@ class FreeAtHomeDevice extends IPSModule
             {
                 $lX0 = $lX1;
                 $lY0 = $lY1;
-            } 
-            else 
+            }
+            else
             {
                 return $this->Linearize( $a_Value, $lX0, $lY0, $lX1, $lY1 );
             }
@@ -505,238 +505,180 @@ class FreeAtHomeDevice extends IPSModule
         $this->do_ReseiveData( $lDataObj );
     }
 
-    public function SetState( bool $Value )
+    // ====================================================================
+    //  Refactoring-Helpers für die public Setter/Getter
+    // ====================================================================
+
+    /**
+     * Sucht in den Outputs des Kanals die Pairing-ID, deren Settings dem
+     * gegebenen info/type-Kriterium entsprechen.
+     *
+     * @param string $a_Info            Wert des 'info'-Feldes (z. B. 'State').
+     * @param int    $a_Type            Erwarteter type-Wert (0 bool, 1 int, 2 float).
+     * @param bool   $a_RequireAction   Wenn true, muss zusätzlich ein nicht-leerer
+     *                                  'action'-Eintrag vorhanden sein (für Setter).
+     *
+     * @return int|null Pairing-ID oder null wenn nicht gefunden.
+     */
+    private function findOutputPairing( string $a_Info, int $a_Type, bool $a_RequireAction ) : ?int
     {
         $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
+        if( !is_object($lOutputs) && !is_array($lOutputs) )
+        {
+            return null;
+        }
 
-        foreach( $lOutputs as $lDatapoint => $lPairingID  )
+        foreach( $lOutputs as $lDatapoint => $lPairingID )
         {
             $lSettings = PID::GetSettingsByID( $lPairingID );
-            if( $lSettings['info'] == 'State' && $lSettings['action'] != '' && $lSettings['type'] == 0 )
+            if( ($lSettings['info'] ?? '') !== $a_Info )
             {
-                $this->RequestAction( PID::GetName($lPairingID), $Value );
-                return true;
+                continue;
             }
-        }                  
-
-        // Wert nicht gültig oder Funktion State nicht verfügbar
-        IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).") not supported" );
-        return false;
+            if( ($lSettings['type'] ?? -1) != $a_Type )
+            {
+                continue;
+            }
+            if( $a_RequireAction && ($lSettings['action'] ?? '') === '' )
+            {
+                continue;
+            }
+            return (int) $lPairingID;
+        }
+        return null;
     }
-   
+
+    /**
+     * Löst einen Setter-Aufruf aus: sucht das passende Pairing (mit Action),
+     * ruft RequestAction() und gibt true/false zurück. Im Fehlerfall wird
+     * eine einheitliche Log-Meldung geschrieben.
+     */
+    private function callOnInfo( string $a_Info, int $a_Type, $a_Value, string $a_LogName ) : bool
+    {
+        $lPairingID = $this->findOutputPairing( $a_Info, $a_Type, true );
+        if( $lPairingID === null )
+        {
+            IPS_LogMessage(
+                $this->InstanceID,
+                $a_LogName . '(' . strval($a_Value) . ') attribut "' . $a_Info . '" not supported'
+            );
+            return false;
+        }
+
+        $this->RequestAction( PID::GetName($lPairingID), $a_Value );
+        return true;
+    }
+
+    /**
+     * Liest den aktuellen Wert eines Outputs typgerecht aus. Rückgabe ist
+     * der passende PHP-Typ (bool/int/float) oder null wenn nicht gefunden.
+     */
+    private function readFromInfo( string $a_Info, int $a_Type, string $a_LogName )
+    {
+        $lPairingID = $this->findOutputPairing( $a_Info, $a_Type, false );
+        if( $lPairingID === null )
+        {
+            IPS_LogMessage(
+                $this->InstanceID,
+                $a_LogName . '() attribut "' . $a_Info . '" not found'
+            );
+            return null;
+        }
+
+        $lId = $this->GetIDForIdent( PID::GetName($lPairingID) );
+        switch( $a_Type )
+        {
+            case 0:
+                return GetValueBoolean($lId);
+            case 1:
+                return GetValueInteger($lId);
+            case 2:
+                return GetValueFloat($lId);
+        }
+        return null;
+    }
+
+    // ====================================================================
+    //  Public Setter/Getter (refaktoriert auf gemeinsame Helpers)
+    // ====================================================================
+
+    public function SetState( bool $a_Value )
+    {
+        return $this->callOnInfo( 'State', 0, $a_Value, __FUNCTION__ );
+    }
 
     public function GetState() : bool
     {
-        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
-
-        foreach( $lOutputs as $lDatapoint => $lPairingID  )
-        {
-            $lSettings = PID::GetSettingsByID( $lPairingID );
-            if( $lSettings['info'] == 'State' && $lSettings['type'] == 0 )
-            {
-                $lId = $this->GetIDForIdent( PID::GetName($lPairingID) );
-                return GetValueBoolean($lId);
-            }
-        }
- 
-        // Attribut Position nicht gefunden
-        IPS_LogMessage( $this->InstanceID, __FUNCTION__."() attribut State not found" );
-        return false;
+        $lResult = $this->readFromInfo( 'State', 0, __FUNCTION__ );
+        return (bool) $lResult;
     }
 
-
-    public function SetBrightness( int $Value )
+    public function SetBrightness( int $a_Value )
     {
-        // Wert im gültigen Bereich
-        if( $Value <= 100 )
+        // Gültiger Bereich: 0..100
+        if( $a_Value < 0 || $a_Value > 100 )
         {
-            $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
-
-            foreach( $lOutputs as $lDatapoint => $lPairingID  )
-            {
-                $lSettings = PID::GetSettingsByID( $lPairingID );
-                if( $lSettings['info'] == 'Brightness' && $lSettings['action'] != '' && $lSettings['type'] == 1 )
-                {
-                    $this->RequestAction( PID::GetName($lPairingID), $Value );
-                    return true;
-                }
-            }                  
-        }
-
-        // Wert nicht gültig oder Funktion Brighness nicht verfügbar
-        IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).") not supported" );
-        return false;
-    }
-
-    
-    public function SetColour( int $Value )
-    {
-        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
-
-        foreach( $lOutputs as $lDatapoint => $lPairingID  )
-        {
-            $lSettings = PID::GetSettingsByID( $lPairingID );
-            if( $lSettings['info'] == 'Colour' && $lSettings['action'] != '' && $lSettings['type'] == 1 )
-            {
-                $this->RequestAction( PID::GetName($lPairingID), $Value );
-                return true;
-            }
-        }                  
-
-        // Wert nicht gültig oder Funktion Colour nicht verfügbar
-        IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).") not supported" );
-        return false;
-    }
-
-    public function SetPosition( int $Value )
-    {
-        // beim negativem Wert nichts machen
-        if( $Value < 0  )
-        {
-            // Wert nicht gültig oder Funktion Brighness nicht verfügbar
-            IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).") not supported" );
+            IPS_LogMessage(
+                $this->InstanceID,
+                __FUNCTION__ . '(' . strval($a_Value) . ') out of range'
+            );
             return false;
         }
-       // beim Wert über 100 nichts machen
-       if( $Value > 100  )
-       {
-            // Wert nicht gültig oder Funktion Brighness nicht verfügbar
-            IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).") not supported" );
-            return false;
-       }
+        return $this->callOnInfo( 'Brightness', 1, $a_Value, __FUNCTION__ );
+    }
 
-        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
+    public function SetColour( int $a_Value )
+    {
+        return $this->callOnInfo( 'Colour', 1, $a_Value, __FUNCTION__ );
+    }
 
-        foreach( $lOutputs as $lDatapoint => $lPairingID  )
+    public function SetPosition( int $a_Value )
+    {
+        if( $a_Value < 0 || $a_Value > 100 )
         {
-            $lSettings = PID::GetSettingsByID( $lPairingID );
-            if( $lSettings['info'] == 'Position' && $lSettings['action'] != '' && $lSettings['type'] == 1 )
-            {
-                $this->RequestAction( PID::GetName($lPairingID), $Value );
-                return true;
-            }
-        }                  
-
-        // Wert nicht gültig oder Funktion Brighness nicht verfügbar
-        IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).") not supported" );
-        return false;
+            IPS_LogMessage(
+                $this->InstanceID,
+                __FUNCTION__ . '(' . strval($a_Value) . ') out of range'
+            );
+            return false;
+        }
+        return $this->callOnInfo( 'Position', 1, $a_Value, __FUNCTION__ );
     }
 
     public function GetPosition() : int
     {
-        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
-
-        foreach( $lOutputs as $lDatapoint => $lPairingID  )
-        {
-            $lSettings = PID::GetSettingsByID( $lPairingID );
-            if( $lSettings['info'] == 'Position' && $lSettings['type'] == 1 )
-            {
-                $lId = $this->GetIDForIdent( PID::GetName($lPairingID) );
-                return GetValueInteger($lId);
-            }
-        }
- 
-        // Attribut Position nicht gefunden
-        IPS_LogMessage( $this->InstanceID, __FUNCTION__."() attribut Position not found" );
-        return 0;
+        $lResult = $this->readFromInfo( 'Position', 1, __FUNCTION__ );
+        return ($lResult === null) ? 0 : (int) $lResult;
     }
 
-  public function SetSensorLock( bool $Value )
-  {
-        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
-
-        foreach( $lOutputs as $lDatapoint => $lPairingID  )
-        {
-            $lSettings = PID::GetSettingsByID( $lPairingID );
-            if( $lSettings['info'] == 'Sensor lock' && $lSettings['action'] != '' && $lSettings['type'] == 0 )
-            {
-                $this->RequestAction( PID::GetName($lPairingID), $Value );
-                return true;
-            }
-        }                  
-
-        // Wert nicht gültig oder Funktion Brighness nicht verfügbar
-        IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).") attribut Sensor lock not found" );
-        return false;
+    public function SetSensorLock( bool $a_Value )
+    {
+        return $this->callOnInfo( 'Sensor lock', 0, $a_Value, __FUNCTION__ );
     }
-  
+
     public function GetSensorLock() : bool
     {
-        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
-
-        foreach( $lOutputs as $lDatapoint => $lPairingID  )
-        {
-            $lSettings = PID::GetSettingsByID( $lPairingID );
-            if( $lSettings['info'] == 'Sensor lock' && $lSettings['type'] == 0 )
-            {
-                $lId = $this->GetIDForIdent( PID::GetName($lPairingID) );
-                return GetValueBoolean($lId);
-            }
-        }
- 
-        // Attribut Position nicht gefunden
-        IPS_LogMessage( $this->InstanceID, __FUNCTION__."() attribut Sensor lock not found" );
-        return false;
+        $lResult = $this->readFromInfo( 'Sensor lock', 0, __FUNCTION__ );
+        return (bool) $lResult;
     }
 
     public function SetUp()
     {
-        $Value = 2;
-        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
-
-        foreach( $lOutputs as $lDatapoint => $lPairingID  )
-        {
-            $lSettings = PID::GetSettingsByID( $lPairingID );
-            if( $lSettings['info'] == 'Move info' && $lSettings['action'] != '' && $lSettings['type'] == 1 )
-            {
-                $this->RequestAction( PID::GetName($lPairingID), $Value );
-                return true;
-            }
-        }                  
-
-        // Wert nicht gültig oder Funktion Move Info nicht verfügbar
-        IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).") attribut Move info not found" );
-        return false;
+        // Move-Info-Value 2 = Hochfahren (wird in RequestAction auf
+        // STOP_STEP_UP_DOWN/0 gemappt).
+        return $this->callOnInfo( 'Move info', 1, 2, __FUNCTION__ );
     }
 
     public function SetDown()
     {
-        $Value = 3;
-        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
-
-        foreach( $lOutputs as $lDatapoint => $lPairingID  )
-        {
-            $lSettings = PID::GetSettingsByID( $lPairingID );
-            if( $lSettings['info'] == 'Move info' && $lSettings['action'] != '' && $lSettings['type'] == 1 )
-            {
-                $this->RequestAction( PID::GetName($lPairingID), $Value );
-                return true;
-            }
-        }                  
-
-        // Wert nicht gültig oder Funktion Move Info nicht verfügbar
-        IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).") attribut Move info not found" );
-        return false;
+        // Move-Info-Value 3 = Runterfahren
+        return $this->callOnInfo( 'Move info', 1, 3, __FUNCTION__ );
     }
 
     public function SetStop()
     {
-        $Value = 0;
-        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
-
-        foreach( $lOutputs as $lDatapoint => $lPairingID  )
-        {
-            $lSettings = PID::GetSettingsByID( $lPairingID );
-            if( $lSettings['info'] == 'Move info' && $lSettings['action'] != '' && $lSettings['type'] == 1 )
-            {
-                $this->RequestAction( PID::GetName($lPairingID), $Value );
-                return true;
-            }
-        }                  
-
-        // Wert nicht gültig oder Funktion Move Info nicht verfügbar
-        IPS_LogMessage( $this->InstanceID, __FUNCTION__.'('.strval($Value).") attribut Move info not found" );
-        return false;
+        // Move-Info-Value 0 = Stop
+        return $this->callOnInfo( 'Move info', 1, 0, __FUNCTION__ );
     }
 
     private function do_GetValue( string $a_Ident )
@@ -844,8 +786,8 @@ class FreeAtHomeDevice extends IPSModule
         //      ggf. überschrieben mit dem linearisierten Device-Wert.
         //      Für do_SetValueRaw() wollen wir den Original-Wert nutzen,
         //      nicht den linearisierten → wir halten beides getrennt.
-        $lBeforeValue= $Value;
-        if(  PID::HasLinearisation(PID::GetID($Ident)) )
+        $lBeforeValue = $Value;
+        if( PID::HasLinearisation(PID::GetID($Ident)) )
         {
             $Value = $this->LinearizeToDevice( $Value );
             $this->SendDebug(__FUNCTION__, "LinearizeToDevice $lBeforeValue => $Value", 0);
