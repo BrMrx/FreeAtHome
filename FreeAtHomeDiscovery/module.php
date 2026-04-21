@@ -2,14 +2,9 @@
 
 class FreeAtHomeDiscovery extends IPSModule
 {
-    // GUID der Bridge-Instanz die angelegt werden soll
     const mBridgeModuleId = '{9AFFB383-D756-8422-BCA0-EFD3BB1E3E29}';
-
-    // Timeout pro Host in Millisekunden
     const SCAN_TIMEOUT_MS = 400;
-
-    // Maximale parallele cURL-Handles
-    const SCAN_PARALLEL = 16;
+    const SCAN_PARALLEL   = 16;
 
     public function Create()
     {
@@ -27,7 +22,7 @@ class FreeAtHomeDiscovery extends IPSModule
     }
 
     // ====================================================================
-    //  Discovery-Einsprungpunkt - wird von IPS aufgerufen
+    //  Discovery-Einsprungpunkt
     // ====================================================================
 
     public function GetConfigurationForm()
@@ -42,13 +37,12 @@ class FreeAtHomeDiscovery extends IPSModule
             $lInstanceId = $this->findExistingBridgeInstance($lHost['ip']);
 
             $lEntry = [
-                'Name'       => $lHost['name'],
+                'Name'       => 'free@home SysAP (' . $lHost['ip'] . ')',
                 'IPAddress'  => $lHost['ip'],
-                'Firmware'   => $lHost['firmware'],
+                'Firmware'   => '',
                 'instanceID' => $lInstanceId,
             ];
 
-            // Nur anbieten wenn noch keine Bridge-Instanz mit dieser IP existiert
             if ($lInstanceId === 0)
             {
                 $lEntry['create'] = [
@@ -57,8 +51,14 @@ class FreeAtHomeDiscovery extends IPSModule
                         'Host'   => $lHost['ip'],
                         'UseTLS' => $lHost['tls'],
                     ],
-                    'name' => $lHost['name'],
+                    'name' => 'free@home SysAP (' . $lHost['ip'] . ')',
                 ];
+            }
+            else
+            {
+                // Name und Firmware aus bestehender Instanz übernehmen
+                $lEntry['Name']     = IPS_GetProperty($lInstanceId, 'SysAPName') ?: $lEntry['Name'];
+                $lEntry['Firmware'] = IPS_GetProperty($lInstanceId, 'SysAPFirmware');
             }
 
             $lValues[] = $lEntry;
@@ -86,18 +86,16 @@ class FreeAtHomeDiscovery extends IPSModule
 
         $this->SendDebug('Discovery', "Scanning subnet {$lPrefix}0/24", 0);
 
-        $lHosts   = [];
-        $lResults = [];
-
+        $lHosts = [];
         for ($i = 1; $i <= 254; $i++)
         {
             $lHosts[] = $lPrefix . $i;
         }
 
+        $lResults = [];
         foreach (array_chunk($lHosts, self::SCAN_PARALLEL) as $lBatch)
         {
-            $lBatchResults = $this->scanBatch($lBatch);
-            $lResults      = array_merge($lResults, $lBatchResults);
+            $lResults = array_merge($lResults, $this->scanBatch($lBatch));
         }
 
         $this->SendDebug('Discovery', 'Found ' . count($lResults) . ' SysAP(s)', 0);
@@ -109,14 +107,14 @@ class FreeAtHomeDiscovery extends IPSModule
         $lMulti   = curl_multi_init();
         $lHandles = [];
 
-        // Je Host zwei Handles: http (Port 80) und https (Port 443)
+        // Je Host zwei Handles: http + https
         foreach ($a_Hosts as $lIp)
         {
-            foreach (['http', 'https'] as $lScheme)
+            foreach (['https', 'http'] as $lScheme)
             {
                 $lCh = curl_init();
                 curl_setopt_array($lCh, [
-                    CURLOPT_URL               => "{$lScheme}://{$lIp}/fhapi/v1/api/rest/sysap",
+                    CURLOPT_URL               => "{$lScheme}://{$lIp}/",
                     CURLOPT_RETURNTRANSFER    => true,
                     CURLOPT_TIMEOUT_MS        => self::SCAN_TIMEOUT_MS,
                     CURLOPT_CONNECTTIMEOUT_MS => self::SCAN_TIMEOUT_MS,
@@ -129,7 +127,6 @@ class FreeAtHomeDiscovery extends IPSModule
             }
         }
 
-        // Alle Requests parallel ausfuhren
         $lRunning = null;
         do
         {
@@ -138,7 +135,6 @@ class FreeAtHomeDiscovery extends IPSModule
         }
         while ($lRunning > 0);
 
-        // Ergebnisse auswerten - pro IP nur einen Treffer ubernehmen
         $lFound    = [];
         $lFoundIps = [];
 
@@ -151,23 +147,18 @@ class FreeAtHomeDiscovery extends IPSModule
             $lHttpCode = curl_getinfo($lCh, CURLINFO_HTTP_CODE);
             $lBody     = curl_multi_getcontent($lCh);
 
+            // SysAP erkennbar an HTTP 200 + "free@home" im Body
             if (!in_array($lIp, $lFoundIps) &&
                 $lHttpCode === 200 &&
                 $lBody !== false &&
-                $lBody !== '')
+                strpos($lBody, 'free@home') !== false)
             {
-                $lSysap = json_decode($lBody, true);
-                if (is_array($lSysap) && isset($lSysap['sysapName']))
-                {
-                    $lFound[]    = [
-                        'ip'       => $lIp,
-                        'name'     => $lSysap['sysapName'],
-                        'firmware' => $lSysap['version'] ?? '',
-                        'tls'      => ($lScheme === 'https'),
-                    ];
-                    $lFoundIps[] = $lIp;
-                    $this->SendDebug('Discovery', "Found SysAP at {$lScheme}://{$lIp}: {$lSysap['sysapName']}", 0);
-                }
+                $lFound[]    = [
+                    'ip'  => $lIp,
+                    'tls' => ($lScheme === 'https'),
+                ];
+                $lFoundIps[] = $lIp;
+                $this->SendDebug('Discovery', "Found SysAP at {$lScheme}://{$lIp}", 0);
             }
 
             curl_multi_remove_handle($lMulti, $lCh);
@@ -184,7 +175,7 @@ class FreeAtHomeDiscovery extends IPSModule
 
     private function getLocalIp(): string
     {
-        // Methode 1: Hostname auflosen
+        // Methode 1: Hostname auflösen
         $lHostname = gethostname();
         if ($lHostname !== false)
         {
@@ -195,7 +186,7 @@ class FreeAtHomeDiscovery extends IPSModule
             }
         }
 
-        // Methode 2: UDP-Socket-Trick (kein echtes Paket wird gesendet)
+        // Methode 2: UDP-Socket-Trick
         $lSocket = @socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
         if ($lSocket !== false)
         {
