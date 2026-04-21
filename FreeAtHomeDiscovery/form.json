@@ -1,0 +1,33 @@
+{
+  "actions": [
+    {
+      "type": "Configurator",
+      "name": "Configurator",
+      "caption": "Discovered SysAP instances",
+      "rowCount": 10,
+      "delete": false,
+      "sort": {
+        "column": "Name",
+        "direction": "ascending"
+      },
+      "columns": [
+        {
+          "caption": "Name",
+          "name": "Name",
+          "width": "auto"
+        },
+        {
+          "caption": "IP address",
+          "name": "IPAddress",
+          "width": "160px"
+        },
+        {
+          "caption": "Firmware",
+          "name": "Firmware",
+          "width": "160px"
+        }
+      ],
+      "values": []
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "translations": {
+    "de": {
+      "Discovered SysAP instances": "Gefundene SysAP-Instanzen",
+      "Name": "Name",
+      "IP address": "IP-Adresse",
+      "Firmware": "Firmware",
+      "FreeAtHome Discovery": "FreeAtHome Suche"
+    }
+  }
+}
