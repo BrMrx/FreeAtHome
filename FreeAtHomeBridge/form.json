@@ -1,5 +1,6 @@
 {
-  "elements": [{
+  "elements": [
+    {
     "name": "Host",
     "type": "ValidationTextBox",
     "caption": "IP-Adress SysAP"
@@ -36,14 +37,9 @@
       {
         "type": "NumberSpinner",
         "name": "WebSocketPort",
-        "caption": "WebSocket port (0 = auto)"
-      },
-      {
-        "type": "NumberSpinner",
-        "name": "WsReceiveIntervalMs",
-        "caption": "Receive poll interval (ms)",
-        "minimum": 50,
-        "maximum": 5000
+          "caption": "WebSocket port (0 = auto)",
+          "minimum": 0,
+          "maximum": 65535
       },
       {
         "type": "NumberSpinner",
@@ -80,8 +76,7 @@
       "caption": "SysAP GUID"
     } 
    ],
-  "actions":
-  [
+  "actions": [
     { "type": "Button", "label": "Check Connection", "onClick": "FAHBR_CheckConnection($id);" },
     { "type": "Button", "label": "WebSocket: Connect", "onClick": "FAHBR_WsConnect($id);" },
     { "type": "Button", "label": "WebSocket: Disconnect", "onClick": "FAHBR_WsDisconnect($id);" },
@@ -93,15 +88,18 @@
       "icon": "active",
       "caption": "Registration complete"
     },
-    { "code": 200,
+    {
+      "code": 200,
       "icon": "error",
       "caption": "Registration complete, more Information in IP-Symcon Log"
     },
-    { "code": 201,
+    {
+      "code": 201,
       "icon": "error",
       "caption": "Invalid JSON"
     },
-    { "code": 202,
+    {
+      "code": 202,
       "icon": "error",
       "caption": "free@home Bridge unreachable"
     }
