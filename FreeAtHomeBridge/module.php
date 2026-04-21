@@ -589,9 +589,13 @@ class FreeAtHomeBridge extends IPSModule
             }
         }
 
-        // Neuen Konfigurator anlegen und mit dieser Bridge verbinden
+        // Neuen Konfigurator anlegen und mit dieser Bridge verbinden.
+        // IPS_CreateInstance legt die Instanz unter einem Default-Parent ab.
+        // IPS_SetParent(0) löst diese Verbindung bevor IPS_ConnectInstance
+        // die logische Datenfluss-Verbindung zur Bridge herstellt.
         $lConfId = IPS_CreateInstance($lConfModuleId);
         IPS_SetName($lConfId, IPS_GetName($this->InstanceID) . ' - Konfigurator');
+        IPS_SetParent($lConfId, 0);
         IPS_ConnectInstance($lConfId, $this->InstanceID);
     }
 
