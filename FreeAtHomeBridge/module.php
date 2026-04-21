@@ -579,7 +579,7 @@ class FreeAtHomeBridge extends IPSModule
         {
             return 0;
         }
-        if (IPS_GetInstance($lParentId)['ModuleInfo']['ModuleGUID'] !== self::mClientSocketGuid)
+        if (IPS_GetInstance($lParentId)['ModuleInfo']['ModuleID'] !== self::mClientSocketGuid)
         {
             return 0;
         }
