@@ -230,15 +230,22 @@ class FreeAtHomeConfigurator extends IPSModule
 
     private function getPathOfCategory(int $categoryId): array
     {
-        if ($categoryId === 0) {
+        // Kategorie noch gültig? (Kategorie könnte seit Konfiguration gelöscht worden sein)
+        if ($categoryId === 0 || !IPS_ObjectExists($categoryId))
+        {
             return [];
         }
 
-        $path[] = IPS_GetName($categoryId);
+        $path    = [];
+        $path[]  = IPS_GetName($categoryId);
         $parentId = IPS_GetObject($categoryId)['ParentID'];
 
-        while ($parentId > 0) {
-            $path[] = IPS_GetName($parentId);
+        // Nach oben durchhangeln, dabei jede ID erneut auf Existenz prüfen.
+        // Ein fehlender Parent bricht die Kette sauber ab, statt IPS_GetName
+        // mit einer ungültigen ID aufzurufen.
+        while ($parentId > 0 && IPS_ObjectExists($parentId))
+        {
+            $path[]   = IPS_GetName($parentId);
             $parentId = IPS_GetObject($parentId)['ParentID'];
         }
 

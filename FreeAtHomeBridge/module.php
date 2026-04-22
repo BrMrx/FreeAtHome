@@ -54,6 +54,12 @@ class FreeAtHomeBridge extends IPSModule
         $this->RegisterAttributeString('SysAPFirmware', '');
         $this->RegisterAttributeString('SysAP_GUID', '');
 
+        // Deferred TLS-Korrektur: wenn die TLS-Einstellung mitten in einem
+        // sendRequest nicht passt, merken wir den Zielwert hier. Das nächste
+        // reguläre ApplyChanges zieht ihn nach (kein Rekursions-Sturm im
+        // laufenden Request).  '' = keine Korrektur pending, '0'/'1' = Zielwert.
+        $this->RegisterAttributeString('PendingUseTLS', '');
+
         // Timer
         $this->RegisterTimer('FAHBR_UpdateState',   0, 'FAHBR_UpdateState($_IPS[\'TARGET\']);');
         $this->RegisterTimer('FAHBR_WsKeepalive',   0, 'FAHBR_WsTimerKeepalive($_IPS[\'TARGET\']);');
@@ -85,6 +91,30 @@ class FreeAtHomeBridge extends IPSModule
     {
         // Never delete this line!
         parent::ApplyChanges();
+
+        // ---- Pending TLS-Korrektur (deferred aus sendRequest) ----
+        // sendRequest() darf mitten im laufenden HTTP-Call kein IPS_ApplyChanges
+        // auslösen, weil das eine Rekursions-Kette startet. Stattdessen merkt
+        // sich sendRequest den gewünschten TLS-Wert im Attribut PendingUseTLS.
+        // Hier, *vor* jeder weiteren Initialisierung, ziehen wir ihn nach.
+        $lPending = $this->ReadAttributeString('PendingUseTLS');
+        if ($lPending === '0' || $lPending === '1')
+        {
+            $lTargetTls = ($lPending === '1');
+            if ($lTargetTls !== $this->ReadPropertyBoolean('UseTLS'))
+            {
+                $this->diagLog('TLS', 'Applying deferred UseTLS → ' . ($lTargetTls ? 'true' : 'false'));
+                // WICHTIG: Attribut zuerst leeren, damit der durch IPS_ApplyChanges
+                // ausgelöste rekursive Einstieg nicht wieder hier einsteigt.
+                $this->WriteAttributeString('PendingUseTLS', '');
+                IPS_SetProperty($this->InstanceID, 'UseTLS', $lTargetTls);
+                IPS_ApplyChanges($this->InstanceID);
+                return; // rekursiver Durchlauf übernimmt die restliche Init
+            }
+            // Attribut und Property sind bereits konsistent → Flag leeren
+            $this->WriteAttributeString('PendingUseTLS', '');
+        }
+        // ------------------------------------------------------------
 
         // ---- Diagnostik: ApplyChanges-Aufruf zählen und Zeitabstand messen ----
         $lCount    = intval($this->GetBuffer(self::DIAG_BUF_APPLY_COUNT)) + 1;
@@ -564,17 +594,26 @@ class FreeAtHomeBridge extends IPSModule
 
             if ($lHeaderInfo['http_code'] === 200 && $lApiResult !== false)
             {
-                // Erfolgreich — TLS-Property automatisch korrigieren falls Fallback genutzt
+                // Erfolgreich — TLS-Property automatisch korrigieren falls Fallback genutzt.
+                // Wichtig: wir rufen hier KEIN IPS_ApplyChanges direkt auf, weil das eine
+                // Rekursions-Kette (ApplyChanges → BridgeConnected → sendRequest → ...)
+                // auslösen würde. Stattdessen merken wir den gewünschten Wert in einem
+                // Attribut; das nächste reguläre ApplyChanges (Button "Check Connection",
+                // IPS-Restart o. ä.) zieht ihn nach.
                 if (($lScheme === 'https') !== $lUseTls)
                 {
+                    $lTargetTls = ($lScheme === 'https');
                     $this->diagLog('TLS',
-                        'Auto-correcting UseTLS ' . ($lUseTls ? 'true' : 'false')
-                        . ' → ' . ($lScheme === 'https' ? 'true' : 'false')
-                        . ' – will trigger IPS_ApplyChanges!');
-                    $this->SendDebug(__FUNCTION__, "Auto-correcting UseTLS to " . ($lScheme === 'https' ? 'true' : 'false'), 0);
-                    IPS_SetProperty($this->InstanceID, 'UseTLS', ($lScheme === 'https'));
-                    IPS_ApplyChanges($this->InstanceID);
-                    return false; // ApplyChanges übernimmt
+                        'Queueing deferred UseTLS change: '
+                        . ($lUseTls ? 'true' : 'false') . ' → '
+                        . ($lTargetTls ? 'true' : 'false')
+                        . ' (applied at next ApplyChanges)');
+                    $this->WriteAttributeString('PendingUseTLS', $lTargetTls ? '1' : '0');
+                    $this->SendDebug(__FUNCTION__,
+                        'TLS mismatch queued (deferred), continuing with current request',
+                        0);
+                    // Aktuellen Request normal mit Erfolg zurückgeben – der Fallback
+                    // hat ja funktioniert, die Daten sind valide.
                 }
                 $this->SetStatus(102);
                 return json_decode($lApiResult, false);

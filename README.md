@@ -24,7 +24,8 @@ Dieses Modul ermöglicht die Integration von Busch-Jaeger free@home in IP-Symcon
 ## Installation
 
 1. Repository in IP-Symcon hinzufügen
-2. Konfigurator-Instanz erstellen und Bridge Parameter ausfüllen
+2. SysAP mit Discovery Konfigurator suchen und Bridge & Konfigurator erstellen
+2. Bridge Parameter ausfüllen
 3. Im Konfigurator Instanzen gruppiert anlegen
 
 ## Voraussetzungen
@@ -35,7 +36,8 @@ Dieses Modul ermöglicht die Integration von Busch-Jaeger free@home in IP-Symcon
 
 ## Verzeichnisstruktur
 
-- `FreeAtHomeConfigurator/` – Gruppierter Konfigurator
+- `FreeAtHomeDiscovery/` – SysAP Discovery Konfigurator sucht im gleichen Netzt nach SysAP
+- `FreeAtHomeConfigurator/` – Geräte Konfigurator
 - `FreeAtHomeDevice/` – Gerät mit REST/WebSocket
 - `FreeAtHomeBridge/` – Zentrale Kommunikationsinstanz
 

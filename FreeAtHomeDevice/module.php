@@ -229,10 +229,34 @@ class FreeAtHomeDevice extends IPSModule
         return $a_Value;
     }
 
+    // ====================================================================
+    //  JSON-Decoder-Helpers für Outputs/Inputs
+    //
+    //  Die Properties 'Outputs' und 'Inputs' werden vom Configurator als
+    //  JSON-Objekt gespeichert (z. B. '{"odp0000":256,"odp0001":272}').
+    //  Bei frisch angelegter oder defekter Instanz kann der String leer oder
+    //  ungültig sein – ein direktes json_decode(...) liefert dann null, was
+    //  in einer foreach-Schleife in PHP 8+ einen Warning wirft.
+    //
+    //  Diese Helper liefern IMMER einen iterierbaren stdClass. Alle Aufrufer
+    //  können also bedenkenlos foreach() darauf anwenden.
+    // ====================================================================
+
+    private function getOutputsDecoded() : object
+    {
+        $lDecoded = json_decode($this->ReadPropertyString('Outputs'));
+        return is_object($lDecoded) ? $lDecoded : new stdClass();
+    }
+
+    private function getInputsDecoded() : object
+    {
+        $lDecoded = json_decode($this->ReadPropertyString('Inputs'));
+        return is_object($lDecoded) ? $lDecoded : new stdClass();
+    }
+
     protected function HasActionInput( string $a_Action ) : bool
     {
-        // Variablen für alle Outputs (des Devises) anlegen
-        $lInputs = json_decode( $this->ReadPropertyString('Inputs') );
+        $lInputs = $this->getInputsDecoded();
 
         $lActionPairingId = PID::GetID($a_Action);
 
@@ -255,7 +279,7 @@ class FreeAtHomeDevice extends IPSModule
         }
 
         // Variablen für alle Outputs (des Devices) anlegen
-        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
+        $lOutputs = $this->getOutputsDecoded();
  
         foreach( $lOutputs as $lOdp => $lPairingId  )
         {
@@ -278,7 +302,7 @@ class FreeAtHomeDevice extends IPSModule
         $lJsonForm = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
 
 
-        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
+        $lOutputs = $this->getOutputsDecoded();
 
         // hat einer der Meldungen eine Linearisierung aktiv
         $lHasLinearisation = false;
@@ -312,7 +336,7 @@ class FreeAtHomeDevice extends IPSModule
         $lVectRet = array();
 
         $lData = $this->ReadPropertyString('FAHDeviceID').'.'.$this->ReadPropertyString('Channel').'.';
-        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
+        $lOutputs = $this->getOutputsDecoded();
 
         foreach( $lOutputs as $lDatapoint => $lPairingID  )
         {
@@ -363,7 +387,7 @@ class FreeAtHomeDevice extends IPSModule
         $this->SendDebug(__FUNCTION__, json_encode($lDataObj->{$lDeviceID}), 0);
 
         $lChannel = $this->ReadPropertyString('Channel');
-        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
+        $lOutputs = $this->getOutputsDecoded();
 
         if( isset( $lDataObj->{$lDeviceID}->unresponsive ) )
         {
@@ -522,11 +546,7 @@ class FreeAtHomeDevice extends IPSModule
      */
     private function findOutputPairing( string $a_Info, int $a_Type, bool $a_RequireAction ) : ?int
     {
-        $lOutputs = json_decode( $this->ReadPropertyString('Outputs') );
-        if( !is_object($lOutputs) && !is_array($lOutputs) )
-        {
-            return null;
-        }
+        $lOutputs = $this->getOutputsDecoded();
 
         foreach( $lOutputs as $lDatapoint => $lPairingID )
         {
@@ -881,7 +901,7 @@ class FreeAtHomeDevice extends IPSModule
                 $lActionPID = PID::GetID( $lSettings['action'] );
             }
             // Variablen für alle Outputs (des Devises) anlegen
-            $lInputs = json_decode( $this->ReadPropertyString('Inputs') );
+            $lInputs = $this->getInputsDecoded();
 
             foreach( $lInputs as $lDatapoint => $lPairingId  )
             {
