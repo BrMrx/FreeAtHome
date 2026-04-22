@@ -46,8 +46,14 @@ class FreeAtHomeDevice extends IPSModule
         // Buffer 'PositionSkipDebounce' — 1 = der nächste RequestAction-Aufruf
         //                                 kommt bereits aus dem Debounce-Timer,
         //                                 nicht erneut debouncen
+        // Buffer 'LastPositionCommandTime' — microtime(true) des letzten
+        //                                 Zwischenwert-Positions-Kommandos.
+        //                                 Wird ausgewertet beim Endwert 0/100
+        //                                 um den MOVE-Trick zu überspringen,
+        //                                 falls eine Fahrt schon läuft.
         $this->SetBuffer('PendingPosition', '');
         $this->SetBuffer('PositionSkipDebounce', '0');
+        $this->SetBuffer('LastPositionCommandTime', '0');
         // ----------------------------
 
         // Wind Grenzwert Profil
@@ -941,17 +947,34 @@ class FreeAtHomeDevice extends IPSModule
 
             case 'CURRENT_ABSOLUTE_POSITION_BLINDS_PERCENTAGE':
                 {
-                    // Beim Anfahren eines Anschlags (0 bzw. 100) wird nicht die
-                    // Ziel-Position gesendet, sondern ein MOVE-Kommando. Grund:
-                    // positionierte Endanschläge würden bei minimaler
-                    // Kalibrier-Abweichung knapp davor stehen bleiben.
+                    // Am Anschlag (0 bzw. 100) soll statt einer Ziel-Position
+                    // ein MOVE-Kommando (hochfahren/runterfahren) gesendet
+                    // werden, damit Kalibrier-Ungenauigkeiten am Endanschlag
+                    // nicht dazu führen, dass die Rolladen ein paar % davor
+                    // stehen bleibt.
                     //
-                    // WICHTIG: Nur umschalten wenn die Rolladen noch nicht am
-                    // gewünschten Anschlag steht. Sonst würde ein wiederholtes
-                    // 0%/100%-Kommando (z. B. von HomeKit-Sliders mit Hopser
-                    // am Anschlag, oder bei Aufruf "Scene setzen" mit bereits
-                    // passender Position) den Aktor nochmal losfahren lassen.
+                    // Es gibt aber zwei Situationen, in denen der MOVE-Trick
+                    // NICHT greifen darf:
+                    //  (1) Die Rolladen steht bereits am gewünschten Anschlag.
+                    //      Dann wäre jedes zusätzliche Kommando überflüssig.
+                    //  (2) Kurz vorher wurde schon ein Positions-Kommando
+                    //      rausgeschickt. Das Apple-HomeKit-WindowCovering-
+                    //      Profil schickt beim "ganz auf/zu"-Tippen häufig
+                    //      zwei Kommandos in Folge: zuerst einen Zwischen-
+                    //      wert (z. B. aktuelle Position 49), dann den
+                    //      Endwert 0 bzw. 100. Der zweite Aufruf würde
+                    //      sonst die laufende Positions-Fahrt unterbrechen
+                    //      und einen neuen MOVE-Modus starten → sichtbarer
+                    //      Hopser. In diesem Fall senden wir statt MOVE
+                    //      einfach die reguläre Zielposition (0 bzw. 100),
+                    //      der Aktor korrigiert nur sein aktuelles Ziel.
                     $lCurrentPos = $this->GetPosition();
+
+                    // Wurde "eben" ein Position-Kommando rausgeschickt?
+                    //  '' = noch nie, sonst Timestamp als string.
+                    $lLastPosTime = (float) $this->GetBuffer('LastPositionCommandTime');
+                    $lRecentPosCmd = ($lLastPosTime > 0)
+                        && ((microtime(true) - $lLastPosTime) < 3.0);
 
                     if( $lBeforeValue == 0 )
                     {
@@ -961,8 +984,20 @@ class FreeAtHomeDevice extends IPSModule
                                 "already at upper stop (0%), no action", 0);
                             return;
                         }
-                        $Ident = 'INFO_MOVE_UP_DOWN';
-                        $Value = 0;  // hochfahren
+                        if( $lRecentPosCmd )
+                        {
+                            // recent position command → normales Positions-
+                            // Kommando senden, keinen MOVE-Wechsel erzwingen
+                            $this->SendDebug(__FUNCTION__,
+                                "recent position cmd, skipping MOVE trick at 0%", 0);
+                            // Ident bleibt, Value bleibt 0 → läuft unten durch
+                            // als normales CURRENT_ABSOLUTE_POSITION...=0
+                        }
+                        else
+                        {
+                            $Ident = 'INFO_MOVE_UP_DOWN';
+                            $Value = 0;  // hochfahren
+                        }
                     }
                     else if( $lBeforeValue == 100 )
                     {
@@ -972,8 +1007,25 @@ class FreeAtHomeDevice extends IPSModule
                                 "already at lower stop (100%), no action", 0);
                             return;
                         }
-                        $Ident = 'INFO_MOVE_UP_DOWN';
-                        $Value = 1;  // runterfahren
+                        if( $lRecentPosCmd )
+                        {
+                            $this->SendDebug(__FUNCTION__,
+                                "recent position cmd, skipping MOVE trick at 100%", 0);
+                            // analog zu oben
+                        }
+                        else
+                        {
+                            $Ident = 'INFO_MOVE_UP_DOWN';
+                            $Value = 1;  // runterfahren
+                        }
+                    }
+                    else
+                    {
+                        // Zwischenwert (1..99) → normales Position-Kommando.
+                        // Zeit merken, damit ein unmittelbar folgender
+                        // Endwert (0/100) den MOVE-Trick überspringt.
+                        $this->SetBuffer('LastPositionCommandTime',
+                            (string) microtime(true));
                     }
                     // Wert immer zurücklesen
                     $lDoSetValue = false;
