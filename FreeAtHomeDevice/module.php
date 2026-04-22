@@ -652,7 +652,20 @@ class FreeAtHomeDevice extends IPSModule
         return $this->callOnInfo( 'Colour', 1, $a_Value, __FUNCTION__ );
     }
 
-    public function SetPosition( int $a_Value, bool $a_Force = false )
+    public function SetPositionForce( int $a_Value )
+    {
+        if( $a_Value < 0 || $a_Value > 100 )
+        {
+            IPS_LogMessage(
+                $this->InstanceID,
+                __FUNCTION__ . '(' . strval($a_Value) . ') out of range'
+            );
+            return false;
+        }
+        return $this->callOnInfo( 'Position', 1, $a_Value, __FUNCTION__ );
+    }
+
+    public function SetPosition( int $a_Value )
     {
         if( $a_Value < 0 || $a_Value > 100 )
         {
@@ -663,7 +676,7 @@ class FreeAtHomeDevice extends IPSModule
             return false;
         }
         // wenn kein $a_Force und Position schon erreicht
-        if( !$a_Force && $this->GetPosition() == $a_Value )
+        if( $this->GetPosition() == $a_Value )
         {
             // nichts machen, Position schon erreicht
             return;
