@@ -17,6 +17,13 @@ class FreeAtHomeBridge extends IPSModule
     private const WS_BUF_HANDSHAKE_OK  = 'WsHandshakeDone';  // '1' nach erfolgreichem Upgrade
     private const WS_BUF_WS_KEY        = 'WsKey';            // Sec-WebSocket-Key für Validierung
 
+    // ---- Diagnostik (temporär, kann nach Analyse entfernt werden) ----
+    private const DIAG_BUF_APPLY_COUNT = 'DiagApplyCount';   // Zähler für ApplyChanges
+    private const DIAG_BUF_APPLY_LAST  = 'DiagApplyLast';    // microtime letzter ApplyChanges
+    private const DIAG_BUF_REQ_COUNT   = 'DiagReqCount';     // Zähler für sendRequest
+    private const DIAG_BUF_REQ_LAST    = 'DiagReqLast';      // microtime letzter sendRequest
+    // ------------------------------------------------------------------
+
     // ====================================================================
     //  Lebenszyklusmethoden
     // ====================================================================
@@ -57,6 +64,13 @@ class FreeAtHomeBridge extends IPSModule
         $this->SetBuffer(self::WS_BUF_HANDSHAKE_OK, '0');
         $this->SetBuffer(self::WS_BUF_WS_KEY, '');
 
+        // ---- Diagnostik-Buffer initialisieren ----
+        $this->SetBuffer(self::DIAG_BUF_APPLY_COUNT, '0');
+        $this->SetBuffer(self::DIAG_BUF_APPLY_LAST,  '0');
+        $this->SetBuffer(self::DIAG_BUF_REQ_COUNT,   '0');
+        $this->SetBuffer(self::DIAG_BUF_REQ_LAST,    '0');
+        // ------------------------------------------
+
         // Client-Socket als Eltern-Instanz anlegen (wird von IPS verwaltet)
         $this->RequireParent(self::mClientSocketGuid);
 
@@ -71,6 +85,24 @@ class FreeAtHomeBridge extends IPSModule
     {
         // Never delete this line!
         parent::ApplyChanges();
+
+        // ---- Diagnostik: ApplyChanges-Aufruf zählen und Zeitabstand messen ----
+        $lCount    = intval($this->GetBuffer(self::DIAG_BUF_APPLY_COUNT)) + 1;
+        $lNow      = microtime(true);
+        $lLast     = floatval($this->GetBuffer(self::DIAG_BUF_APPLY_LAST));
+        $lDeltaStr = ($lLast > 0) ? sprintf('%.2fs', $lNow - $lLast) : '(first)';
+        $this->SetBuffer(self::DIAG_BUF_APPLY_COUNT, (string) $lCount);
+        $this->SetBuffer(self::DIAG_BUF_APPLY_LAST,  (string) $lNow);
+
+        // Stack-Trace, um zu sehen woher ApplyChanges getriggert wurde
+        $lCallers = [];
+        foreach (debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 8) as $lFrame)
+        {
+            $lCallers[] = ($lFrame['class'] ?? '') . ($lFrame['type'] ?? '') . ($lFrame['function'] ?? '?');
+        }
+        $this->diagLog('APPLY',
+            'ApplyChanges #' . $lCount . ' (Δ=' . $lDeltaStr . ') stack=' . implode(' ← ', array_slice($lCallers, 1, 5)));
+        // -----------------------------------------------------------------------
 
         // Sicherstellen dass ein Client-Socket als Parent existiert
         $this->RequireParent(self::mClientSocketGuid);
@@ -102,6 +134,7 @@ class FreeAtHomeBridge extends IPSModule
             $lPollSec = max($lPollSec, 300);
         }
         $this->SetTimerInterval('FAHBR_UpdateState', $lPollSec * 1000);
+        $this->diagLog('APPLY', 'UpdateState timer armed: ' . $lPollSec . 's');
 
         // Client-Socket konfigurieren und ggf. verbinden
         if ($this->ReadPropertyBoolean('UseWebSocket'))
@@ -125,6 +158,7 @@ class FreeAtHomeBridge extends IPSModule
             case IPS_KERNELMESSAGE:
                 if ($a_Data[0] === KR_READY)
                 {
+                    $this->diagLog('MSG', 'IPS_KERNELMESSAGE: KR_READY → WS connect');
                     // Kernel ist hochgefahren → WS-Verbindung aufbauen
                     if ($this->ReadPropertyBoolean('UseWebSocket'))
                     {
@@ -137,6 +171,7 @@ class FreeAtHomeBridge extends IPSModule
                 // Client-Socket hat seinen Status geändert
                 if ($a_SenderID === $this->wsGetClientSocketId())
                 {
+                    $this->diagLog('MSG', 'IM_CHANGESTATUS from Client-Socket: new status = ' . $a_Data[0]);
                     if ($a_Data[0] === 102) // IS_ACTIVE
                     {
                         // Verbindung steht → WebSocket-Handshake senden
@@ -152,6 +187,21 @@ class FreeAtHomeBridge extends IPSModule
                 break;
         }
     }
+
+    // ====================================================================
+    //  Diagnostik-Hilfsfunktion (temporär, kann nach Analyse entfernt werden)
+    //
+    //  Schreibt sowohl ins IPS-Debug (Bridge-Instanz öffnen, Debug-Tab) als
+    //  auch ins IPS-Meldungsfenster mit KL_NOTIFY. So lässt sich auch ohne
+    //  offenes Debug-Fenster im Nachhinein verfolgen, was das Modul getan hat.
+    // ====================================================================
+    private function diagLog(string $a_Tag, string $a_Msg): void
+    {
+        $lLine = '[DIAG/' . $a_Tag . '] ' . $a_Msg;
+        $this->SendDebug('DIAG', $lLine, 0);
+        IPS_LogMessage('FAH.Bridge(' . $this->InstanceID . ')', $lLine);
+    }
+
 
     // ====================================================================
     //  Datenempfang vom Client-Socket (wird von IPS aufgerufen)
@@ -302,6 +352,7 @@ class FreeAtHomeBridge extends IPSModule
 
     public function UpdateState()
     {
+        $this->diagLog('POLL', 'UpdateState() called – will fetch configuration via HTTP');
         $this->SendDebug(__FUNCTION__, 'update SysAP States', 0);
 
         $lListRequest = $this->GetOutputDataPointsOfDevices();
@@ -431,6 +482,25 @@ class FreeAtHomeBridge extends IPSModule
 
     private function sendRequest(string $a_Endpoint, array $a_Params = [], string $a_Method = 'GET')
     {
+        // ---- Diagnostik: sendRequest-Aufrufe zählen und loggen ----
+        $lReqCount    = intval($this->GetBuffer(self::DIAG_BUF_REQ_COUNT)) + 1;
+        $lReqNow      = microtime(true);
+        $lReqLast     = floatval($this->GetBuffer(self::DIAG_BUF_REQ_LAST));
+        $lReqDeltaStr = ($lReqLast > 0) ? sprintf('%.2fs', $lReqNow - $lReqLast) : '(first)';
+        $this->SetBuffer(self::DIAG_BUF_REQ_COUNT, (string) $lReqCount);
+        $this->SetBuffer(self::DIAG_BUF_REQ_LAST,  (string) $lReqNow);
+        // Stack-Trace: zeigt welcher Caller den Request ausgelöst hat
+        $lReqCallers = [];
+        foreach (debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 6) as $lFrame)
+        {
+            $lReqCallers[] = ($lFrame['function'] ?? '?');
+        }
+        $this->diagLog('HTTP',
+            'sendRequest #' . $lReqCount . ' (Δ=' . $lReqDeltaStr . ') '
+            . $a_Method . ' ' . $a_Endpoint
+            . ' ← ' . implode(' ← ', array_slice($lReqCallers, 1, 4)));
+        // ------------------------------------------------------------
+
         $this->SendDebug(__FUNCTION__ . ' endpoint', $a_Endpoint, 0);
 
         if ($this->ReadPropertyString('Host') === '')
@@ -497,6 +567,10 @@ class FreeAtHomeBridge extends IPSModule
                 // Erfolgreich — TLS-Property automatisch korrigieren falls Fallback genutzt
                 if (($lScheme === 'https') !== $lUseTls)
                 {
+                    $this->diagLog('TLS',
+                        'Auto-correcting UseTLS ' . ($lUseTls ? 'true' : 'false')
+                        . ' → ' . ($lScheme === 'https' ? 'true' : 'false')
+                        . ' – will trigger IPS_ApplyChanges!');
                     $this->SendDebug(__FUNCTION__, "Auto-correcting UseTLS to " . ($lScheme === 'https' ? 'true' : 'false'), 0);
                     IPS_SetProperty($this->InstanceID, 'UseTLS', ($lScheme === 'https'));
                     IPS_ApplyChanges($this->InstanceID);
@@ -529,6 +603,7 @@ class FreeAtHomeBridge extends IPSModule
 
     private function BridgeConnected(): bool
     {
+        $this->diagLog('BCON', 'BridgeConnected() enter');
         $lAnswer = $this->sendRequest('sysap');
 
         if ($lAnswer === false)
@@ -549,11 +624,18 @@ class FreeAtHomeBridge extends IPSModule
         $this->WriteAttributeString('SysAPName', $lAnswer->sysapName);
         $this->WriteAttributeString('SysAPFirmware', $lAnswer->version);
 
-        $lNameChanged    = $lAnswer->sysapName !== $this->ReadPropertyString('SysAPName');
-        $lVersionChanged = $lAnswer->version    !== $this->ReadPropertyString('SysAPFirmware');
+        $lStoredName    = $this->ReadPropertyString('SysAPName');
+        $lStoredVersion = $this->ReadPropertyString('SysAPFirmware');
+        $lNameChanged    = $lAnswer->sysapName !== $lStoredName;
+        $lVersionChanged = $lAnswer->version    !== $lStoredVersion;
 
         if ($lNameChanged || $lVersionChanged)
         {
+            $this->diagLog('BCON',
+                'Property change detected: '
+                . ($lNameChanged    ? 'NAME ["' . $lStoredName . '"→"' . $lAnswer->sysapName . '"] ' : '')
+                . ($lVersionChanged ? 'FW ["' . $lStoredVersion . '"→"' . $lAnswer->version . '"]' : '')
+                . ' – WILL TRIGGER IPS_ApplyChanges!');
             if ($lNameChanged)
             {
                 $this->SendDebug(__FUNCTION__ . ' SysAP Name changed:', $this->ReadPropertyString('SysAPName') . ' -> ' . $lAnswer->sysapName, 0);
@@ -601,6 +683,9 @@ class FreeAtHomeBridge extends IPSModule
             $this->WriteAttributeString('SysAP_GUID', $lKey);
             if ($lKey !== $this->ReadPropertyString('SysAP_GUID'))
             {
+                $this->diagLog('BCON',
+                    'GUID change: "' . $this->ReadPropertyString('SysAP_GUID') . '" → "' . $lKey
+                    . '" – WILL TRIGGER IPS_ApplyChanges!');
                 $this->SendDebug(__FUNCTION__ . ' SysAP_GUID changed:', $this->ReadPropertyString('SysAP_GUID') . ' -> ' . $lKey, 0);
                 IPS_SetProperty($this->InstanceID, 'SysAP_GUID', $lKey);
                 IPS_ApplyChanges($this->InstanceID);
