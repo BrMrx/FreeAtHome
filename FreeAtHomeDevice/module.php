@@ -59,9 +59,18 @@ class FreeAtHomeDevice extends IPSModule
         //                                 Wird ausgewertet beim Endwert 0/100
         //                                 um den MOVE-Trick zu überspringen,
         //                                 falls eine Fahrt schon läuft.
+        // Buffer 'LastKnownRealPosition' — zuletzt vom SysAP gemeldete Ist-
+        //                                 Position (linearisierter logischer
+        //                                 Wert 0..100). Wird NUR aus
+        //                                 do_ReseiveData geschrieben, nicht
+        //                                 vom Gate-Variable-Update. So kann
+        //                                 der MOVE-Trick den echten Istwert
+        //                                 vom User-Wunsch unterscheiden.
+        //                                 '' = noch nie empfangen.
         $this->SetBuffer('PendingPosition', '');
         $this->SetBuffer('PositionSkipDebounce', '0');
         $this->SetBuffer('LastPositionCommandTime', '0');
+        $this->SetBuffer('LastKnownRealPosition', '');
         // ----------------------------
 
         // Wind Grenzwert Profil
@@ -527,7 +536,15 @@ class FreeAtHomeDevice extends IPSModule
                                     $lNewInt = $this->LinearizeFromDevice( $lNewInt );
                                     $this->SendDebug(__FUNCTION__ , 'Linarize from Device '.intval($lValue).' => '.$lNewInt, 0);
                                 }
-                                
+
+                                // Ist-Position getrennt vom Variable-Wert merken.
+                                // Begründung siehe Create() und getRealPosition().
+                                if( $lValueId === 'CURRENT_ABSOLUTE_POSITION_BLINDS_PERCENTAGE' )
+                                {
+                                    $this->SetBuffer('LastKnownRealPosition',
+                                        (string) $lNewInt);
+                                }
+
                                 if(GetValueInteger($lId) != $lNewInt )
                                 {
                                     $this->SendDebug(__FUNCTION__ , $lValueId.' => '.strval($lNewInt), 0);
@@ -715,6 +732,29 @@ class FreeAtHomeDevice extends IPSModule
         return ($lResult === null) ? 0 : (int) $lResult;
     }
 
+    /**
+     * Liefert die zuletzt vom SysAP tatsächlich gemeldete Ist-Position.
+     *
+     * GetPosition() liest die IPS-Variable, die beim Queuen eines Debounce-
+     * Kommandos vom Gate schon auf den User-WUNSCHwert vorausgesetzt wird.
+     * Wer den echten Istwert braucht (z. B. der MOVE-Trick, um zu prüfen
+     * ob die Rolladen überhaupt noch fahren muss), muss diesen Buffer
+     * lesen – der wird ausschließlich in do_ReseiveData geschrieben.
+     *
+     * Solange noch kein Positions-Update angekommen ist (frisch angelegte
+     * Instanz, unbekannter Zustand) wird auf GetPosition() zurückgefallen –
+     * dann gibt es ohnehin keinen Konflikt mit dem Gate-Wert.
+     */
+    private function getRealPosition() : int
+    {
+        $lRaw = $this->GetBuffer('LastKnownRealPosition');
+        if( $lRaw === '' )
+        {
+            return $this->GetPosition();
+        }
+        return (int) $lRaw;
+    }
+
     public function SetSensorLock( bool $a_Value )
     {
         return $this->callOnInfo( 'Sensor lock', 0, $a_Value, __FUNCTION__ );
@@ -887,6 +927,20 @@ class FreeAtHomeDevice extends IPSModule
             $this->SendDebug(__FUNCTION__,
                 "Position debounce: queueing value $Value (1100 ms)", 0);
 
+            // Initialer Schutz: wenn LastKnownRealPosition noch leer ist
+            // (noch nie ein Positions-Update vom SysAP empfangen), nehmen
+            // wir den aktuellen Variablenwert als besten Näherungswert für
+            // die Ist-Position – BEVOR wir sie gleich mit dem User-Wunsch
+            // überschreiben. Sonst würde der MOVE-Trick nach dem Gate-
+            // Update auf den User-Wunsch fallen und fälschlich "schon am
+            // Anschlag" schlussfolgern.
+            if( $this->GetBuffer('LastKnownRealPosition') === '' )
+            {
+                $lPosId = $this->GetIDForIdent($Ident);
+                $this->SetBuffer('LastKnownRealPosition',
+                    (string) GetValueInteger($lPosId));
+            }
+
             // Lokale Variable SOFORT auf den User-Wunsch setzen, auch wenn
             // der tatsächliche PUT an den SysAP noch 1100 ms verzögert ist.
             // Grund: HomeKit (und die Symcon-WebFront/Visualisierung) liest
@@ -996,7 +1050,11 @@ class FreeAtHomeDevice extends IPSModule
                     //      Hopser. In diesem Fall senden wir statt MOVE
                     //      einfach die reguläre Zielposition (0 bzw. 100),
                     //      der Aktor korrigiert nur sein aktuelles Ziel.
-                    $lCurrentPos = $this->GetPosition();
+                    // Für die Endanschlag-Prüfung brauchen wir den ECHTEN
+                    // Istwert, nicht den User-Wunsch. Der User-Wunsch wurde
+                    // vom Debounce-Gate oben schon ins Variable-Abbild
+                    // geschrieben und würde GetPosition() verfälschen.
+                    $lCurrentPos = $this->getRealPosition();
 
                     // Wurde "eben" ein Position-Kommando rausgeschickt?
                     //  '' = noch nie, sonst Timestamp als string.
