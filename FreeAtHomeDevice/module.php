@@ -470,23 +470,6 @@ class FreeAtHomeDevice extends IPSModule
             $lChannelData = $lDataObj->{$lDeviceID}->{$lChannel};
 
             $lPairingIdsToSuppress = array();
-
-            // Positions-Update unterdrücken, wenn gerade ein User-Kommando
-            // gesendet wurde (< 3 s). Grund: zwischen Sendezeitpunkt und
-            // dem tatsächlichen Motor-Start meldet der SysAP nochmal den
-            // aktuellen Istwert. Würden wir den übernehmen, liefe die
-            // IPS-Variable zurück auf die alte Position, und HomeKit zeigt
-            // wieder den alten Wert statt des User-Wunsches. Erst wenn
-            // MOVE wirklich loslegt, greift die bestehende is-moving-
-            // Suppression; dieses Fenster füllt die Lücke davor.
-            $lLastPosTime = (float) $this->GetBuffer('LastPositionCommandTime');
-            if( $lLastPosTime > 0 && (microtime(true) - $lLastPosTime) < 3.0 )
-            {
-                $lPairingIdsToSuppress[] = PID::GetID('CURRENT_ABSOLUTE_POSITION_BLINDS_PERCENTAGE');
-                $this->SendDebug(__FUNCTION__,
-                    'recent position cmd, suppress CURRENT_ABSOLUTE_POSITION_BLINDS_PERCENTAGE echo', 0);
-            }
-
             // Prüfe ob Daten für die Übernahme unterdrückt werden müssen
             foreach( $lOutputs as $lDatapoint => $lPairingID  )
             {
