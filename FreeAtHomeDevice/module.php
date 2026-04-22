@@ -652,19 +652,6 @@ class FreeAtHomeDevice extends IPSModule
         return $this->callOnInfo( 'Colour', 1, $a_Value, __FUNCTION__ );
     }
 
-    public function SetPositionForce( int $a_Value )
-    {
-        if( $a_Value < 0 || $a_Value > 100 )
-        {
-            IPS_LogMessage(
-                $this->InstanceID,
-                __FUNCTION__ . '(' . strval($a_Value) . ') out of range'
-            );
-            return false;
-        }
-        return $this->callOnInfo( 'Position', 1, $a_Value, __FUNCTION__ );
-    }
-
     public function SetPosition( int $a_Value )
     {
         if( $a_Value < 0 || $a_Value > 100 )
@@ -675,13 +662,6 @@ class FreeAtHomeDevice extends IPSModule
             );
             return false;
         }
-        // wenn kein $a_Force und Position schon erreicht
-        if( $this->GetPosition() == $a_Value )
-        {
-            // nichts machen, Position schon erreicht
-            return;
-        }
-
         return $this->callOnInfo( 'Position', 1, $a_Value, __FUNCTION__ );
     }
 
@@ -887,13 +867,37 @@ class FreeAtHomeDevice extends IPSModule
 
             case 'CURRENT_ABSOLUTE_POSITION_BLINDS_PERCENTAGE':
                 {
+                    // Beim Anfahren eines Anschlags (0 bzw. 100) wird nicht die
+                    // Ziel-Position gesendet, sondern ein MOVE-Kommando. Grund:
+                    // positionierte Endanschläge würden bei minimaler
+                    // Kalibrier-Abweichung knapp davor stehen bleiben.
+                    //
+                    // WICHTIG: Nur umschalten wenn die Rolladen noch nicht am
+                    // gewünschten Anschlag steht. Sonst würde ein wiederholtes
+                    // 0%/100%-Kommando (z. B. von HomeKit-Sliders mit Hopser
+                    // am Anschlag, oder bei Aufruf "Scene setzen" mit bereits
+                    // passender Position) den Aktor nochmal losfahren lassen.
+                    $lCurrentPos = $this->GetPosition();
+
                     if( $lBeforeValue == 0 )
                     {
+                        if( $lCurrentPos == 0 )
+                        {
+                            $this->SendDebug(__FUNCTION__,
+                                "already at upper stop (0%), no action", 0);
+                            return;
+                        }
                         $Ident = 'INFO_MOVE_UP_DOWN';
                         $Value = 0;  // hochfahren
                     }
                     else if( $lBeforeValue == 100 )
                     {
+                        if( $lCurrentPos == 100 )
+                        {
+                            $this->SendDebug(__FUNCTION__,
+                                "already at lower stop (100%), no action", 0);
+                            return;
+                        }
                         $Ident = 'INFO_MOVE_UP_DOWN';
                         $Value = 1;  // runterfahren
                     }
