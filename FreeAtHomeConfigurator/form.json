@@ -13,11 +13,6 @@
          "type": "SelectCategory",
          "name": "HUE_TargetCategory",
          "caption": "Target Category - HUE devices"
-      },
-      {
-         "type": "SelectCategory",
-         "name": "Scene_TargetCategory",
-         "caption": "Target Category - scenes"
       }
    ],
    "actions": [

@@ -26,7 +26,6 @@ class FreeAtHomeConfigurator extends IPSModule
         $this->RegisterPropertyString('Serialnumber', '');
         $this->RegisterPropertyInteger('RF_TargetCategory', 0);
         $this->RegisterPropertyInteger('HUE_TargetCategory', 0);
-        $this->RegisterPropertyInteger('Scene_TargetCategory', 0);
 
     }
 
@@ -44,7 +43,6 @@ class FreeAtHomeConfigurator extends IPSModule
 
         $Devices = $this->FilterDeviceList( $AllDevices, false, ['hue','huegroup']);  // alles ausser Hue Devices
         $HueDevices = $this->FilterDeviceList( $AllDevices, true, ['hue']); // nur Hue Devices
-        $Scenes = array(); 
 
 
         $lAllDeviceGroups = [
@@ -64,8 +62,14 @@ class FreeAtHomeConfigurator extends IPSModule
 
         foreach( $lAllDeviceGroups as $lGroupName => $lVal )
         {
-            // Busch und Jäger Komponenten
-            $location = $this->getPathOfCategory($this->ReadPropertyInteger($lVal['category']));
+            // Busch und Jäger Komponenten.
+            //
+            // Hinweis zu 'location' im create-Block weiter unten: IP-Symcon
+            // interpretiert den Pfad relativ zur bereits gewählten Ziel-Kategorie
+            // und legt ihn dort als Unterstruktur an. Wenn wir den absoluten
+            // Pfad der Ziel-Kategorie übergeben, entsteht deshalb eine
+            // doppelte Verschachtelung. Wir übergeben daher ein leeres Array –
+            // die neue Instanz landet dann direkt in der gewählten Ziel-Kategorie.
             $lAddTypeCategory = true;
             foreach ($lVal['objects'] as $key => $lDevice) {
                 $lListFunctionIds = FID::FilterSupportedChannels( (object)$lDevice['channels'] );
@@ -127,7 +131,7 @@ class FreeAtHomeConfigurator extends IPSModule
                             'Inputs'         => $lInputs,
                             'Outputs'        => $lOutputs
                             ],
-                        'location' => $location
+                        'location' => []
                     ];
     
                     $Values[] = $AddValueLights;
@@ -194,6 +198,9 @@ class FreeAtHomeConfigurator extends IPSModule
         return $result;
     }
 
+    // getHUEDevices ist momentan ungenutzt – die Bridge verteilt Hue-Devices
+    // bereits über getAllDevices. Die Funktion bleibt als Platzhalter, falls
+    // später getrennte Hue-Gruppen-Abfragen ergänzt werden.
     private function getHUEDevices()
     {
         $Data = [];
@@ -209,47 +216,6 @@ class FreeAtHomeConfigurator extends IPSModule
             return [];
         }
         return $result;
-    }
-
-    private function getFAHScenes()
-    {
-        $Data = [];
-        $Buffer = [];
-
-        $Data['DataID'] = self::mBridgeDataId;
-        $Buffer['Command'] = 'getAllSensors';
-        $Buffer['Params'] = '';
-        $Data['Buffer'] = $Buffer;
-        $Data = json_encode($Data);
-        $result = json_decode($this->SendDataToParent($Data), true);
-        if (!$result) {
-            return [];
-        }
-        return $result;
-    }
-
-    private function getPathOfCategory(int $categoryId): array
-    {
-        // Kategorie noch gültig? (Kategorie könnte seit Konfiguration gelöscht worden sein)
-        if ($categoryId === 0 || !IPS_ObjectExists($categoryId))
-        {
-            return [];
-        }
-
-        $path    = [];
-        $path[]  = IPS_GetName($categoryId);
-        $parentId = IPS_GetObject($categoryId)['ParentID'];
-
-        // Nach oben durchhangeln, dabei jede ID erneut auf Existenz prüfen.
-        // Ein fehlender Parent bricht die Kette sauber ab, statt IPS_GetName
-        // mit einer ungültigen ID aufzurufen.
-        while ($parentId > 0 && IPS_ObjectExists($parentId))
-        {
-            $path[]   = IPS_GetName($parentId);
-            $parentId = IPS_GetObject($parentId)['ParentID'];
-        }
-
-        return array_reverse($path);
     }
 
 }  
