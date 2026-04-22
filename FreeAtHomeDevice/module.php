@@ -28,19 +28,23 @@ class FreeAtHomeDevice extends IPSModule
         $this->RegisterAttributeString('DeviceType', '');
 
         // ---- Positions-Debounce ----
-        // Das Apple-HomeKit-WindowCovering-Profil schickt beim schnellen
-        // Ziehen oder Tippen auf "ganz auf/zu" typischerweise ZWEI Positions-
-        // kommandos in Folge – z. B. beim Ziehen auf 0%:
+        // Das Apple-HomeKit-WindowCovering-Profil schickt beim Ziehen oder
+        // Tippen auf "ganz auf/zu" typischerweise ZWEI Positions-kommandos
+        // in Folge – z. B. beim Ziehen auf 0%:
         //   t+0.0s  Position=49  (aktuelle CurrentPosition als Ausgangswert)
         //   t+1.0s  Position=0   (der eigentliche Zielwert)
         // Der SysAP-Aktor beginnt beim ersten Kommando anzufahren und muss
         // beim zweiten sein Ziel umstellen – das ergibt einen sichtbaren
         // Hopser vor der eigentlichen Fahrt.
         //
-        // Wir sammeln Positions-Kommandos deshalb für 1500 ms und senden erst
-        // danach den ZULETZT eingegangenen Wert. Jeder neue Aufruf setzt den
-        // Timer zurück (sliding debounce). Die 1500 ms sind spürbar, aber
-        // beim Tap-to-close-Bedienen noch im akzeptablen Bereich.
+        // Wir sammeln Positions-Kommandos deshalb für 1100 ms und senden
+        // erst danach den ZULETZT eingegangenen Wert. Jeder neue Aufruf
+        // setzt den Timer zurück (sliding debounce). 1100 ms ist der minimal
+        // sichere Wert, um die ~1 s HomeKit-Lücke zu überbrücken.
+        //
+        // Direkte Skript-Aufrufe (SetPosition, SetState, ...) kommen
+        // über callOnInfo rein und setzen dort ein Skip-Flag, sodass
+        // sie NICHT debounced werden und sofort durchschlagen.
         $this->RegisterTimer(
             'FAHDEV_DebouncedPosition',
             0,
@@ -618,6 +622,13 @@ class FreeAtHomeDevice extends IPSModule
             return false;
         }
 
+        // Skript-Aufrufe (SetPosition, SetState, SetBrightness, ...) sollen
+        // NICHT durch den Positions-Debounce laufen. Das Debounce-Gate in
+        // RequestAction ist ausschließlich dafür da, HomeKit / WebFront-
+        // Doppelkommandos zu schlucken. Direkte Aufrufe kommen immer nur
+        // einmal und sollen unmittelbar durchschlagen. Wir setzen daher
+        // vor jedem RequestAction aus callOnInfo heraus das Skip-Flag.
+        $this->SetBuffer('PositionSkipDebounce', '1');
         $this->RequestAction( PID::GetName($lPairingID), $a_Value );
         return true;
     }
@@ -874,9 +885,9 @@ class FreeAtHomeDevice extends IPSModule
             && $this->GetBuffer('PositionSkipDebounce') !== '1' )
         {
             $this->SendDebug(__FUNCTION__,
-                "Position debounce: queueing value $Value (1500 ms)", 0);
+                "Position debounce: queueing value $Value (1100 ms)", 0);
             $this->SetBuffer('PendingPosition', (string) $Value);
-            $this->SetTimerInterval('FAHDEV_DebouncedPosition', 1500);
+            $this->SetTimerInterval('FAHDEV_DebouncedPosition', 1100);
             return;
         }
         // Flag wieder zurücksetzen (nur für genau einen Aufruf aktiv)
