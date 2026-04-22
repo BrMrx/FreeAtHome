@@ -28,15 +28,19 @@ class FreeAtHomeDevice extends IPSModule
         $this->RegisterAttributeString('DeviceType', '');
 
         // ---- Positions-Debounce ----
-        // Homebridge-Slider schickt beim schnellen Ziehen mehrere Zwischen-
-        // werte hintereinander (z. B. 50 → 70 → 85 → 95 → 100). Ohne
-        // Debounce würde der Rolladen-Aktor jeden einzelnen davon verarbeiten
-        // und dabei kurz anfahren / stoppen / die Richtung korrigieren – das
-        // sieht man als "Hopser vor der Zielfahrt".
+        // Das Apple-HomeKit-WindowCovering-Profil schickt beim schnellen
+        // Ziehen oder Tippen auf "ganz auf/zu" typischerweise ZWEI Positions-
+        // kommandos in Folge – z. B. beim Ziehen auf 0%:
+        //   t+0.0s  Position=49  (aktuelle CurrentPosition als Ausgangswert)
+        //   t+1.0s  Position=0   (der eigentliche Zielwert)
+        // Der SysAP-Aktor beginnt beim ersten Kommando anzufahren und muss
+        // beim zweiten sein Ziel umstellen – das ergibt einen sichtbaren
+        // Hopser vor der eigentlichen Fahrt.
         //
-        // Wir sammeln Positions-Kommandos stattdessen im Buffer und senden
-        // erst nach einer Ruhephase von 250 ms den LETZTEN eingegangenen
-        // Wert – also genau das, was der User tatsächlich haben wollte.
+        // Wir sammeln Positions-Kommandos deshalb für 1500 ms und senden erst
+        // danach den ZULETZT eingegangenen Wert. Jeder neue Aufruf setzt den
+        // Timer zurück (sliding debounce). Die 1500 ms sind spürbar, aber
+        // beim Tap-to-close-Bedienen noch im akzeptablen Bereich.
         $this->RegisterTimer(
             'FAHDEV_DebouncedPosition',
             0,
@@ -870,9 +874,9 @@ class FreeAtHomeDevice extends IPSModule
             && $this->GetBuffer('PositionSkipDebounce') !== '1' )
         {
             $this->SendDebug(__FUNCTION__,
-                "Position debounce: queueing value $Value (250 ms)", 0);
+                "Position debounce: queueing value $Value (1500 ms)", 0);
             $this->SetBuffer('PendingPosition', (string) $Value);
-            $this->SetTimerInterval('FAHDEV_DebouncedPosition', 250);
+            $this->SetTimerInterval('FAHDEV_DebouncedPosition', 1500);
             return;
         }
         // Flag wieder zurücksetzen (nur für genau einen Aufruf aktiv)
