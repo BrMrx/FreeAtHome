@@ -470,6 +470,23 @@ class FreeAtHomeDevice extends IPSModule
             $lChannelData = $lDataObj->{$lDeviceID}->{$lChannel};
 
             $lPairingIdsToSuppress = array();
+
+            // Positions-Update unterdrücken, wenn gerade ein User-Kommando
+            // gesendet wurde (< 3 s). Grund: zwischen Sendezeitpunkt und
+            // dem tatsächlichen Motor-Start meldet der SysAP nochmal den
+            // aktuellen Istwert. Würden wir den übernehmen, liefe die
+            // IPS-Variable zurück auf die alte Position, und HomeKit zeigt
+            // wieder den alten Wert statt des User-Wunsches. Erst wenn
+            // MOVE wirklich loslegt, greift die bestehende is-moving-
+            // Suppression; dieses Fenster füllt die Lücke davor.
+            $lLastPosTime = (float) $this->GetBuffer('LastPositionCommandTime');
+            if( $lLastPosTime > 0 && (microtime(true) - $lLastPosTime) < 3.0 )
+            {
+                $lPairingIdsToSuppress[] = PID::GetID('CURRENT_ABSOLUTE_POSITION_BLINDS_PERCENTAGE');
+                $this->SendDebug(__FUNCTION__,
+                    'recent position cmd, suppress CURRENT_ABSOLUTE_POSITION_BLINDS_PERCENTAGE echo', 0);
+            }
+
             // Prüfe ob Daten für die Übernahme unterdrückt werden müssen
             foreach( $lOutputs as $lDatapoint => $lPairingID  )
             {
@@ -886,6 +903,19 @@ class FreeAtHomeDevice extends IPSModule
         {
             $this->SendDebug(__FUNCTION__,
                 "Position debounce: queueing value $Value (1100 ms)", 0);
+
+            // Lokale Variable SOFORT auf den User-Wunsch setzen, auch wenn
+            // der tatsächliche PUT an den SysAP noch 1100 ms verzögert ist.
+            // Grund: HomeKit (und die Symcon-WebFront/Visualisierung) liest
+            // diese Variable laufend, um seine Anzeige zu aktualisieren. Wenn
+            // wir hier nichts schreiben würden, blieb die Anzeige bei schnell
+            // aufeinanderfolgenden Slider-Bewegungen bis zum Timer-Feuern auf
+            // dem alten Wert stehen und käme dadurch mit der realen Position
+            // aus dem Tritt. Der SysAP wird den tatsächlichen Istwert später
+            // per WebSocket-Push melden und do_ReseiveData schreibt dann die
+            // Variable bei Bedarf nochmal zurück.
+            $this->do_SetValueRaw( $Ident, $Value );
+
             $this->SetBuffer('PendingPosition', (string) $Value);
             $this->SetTimerInterval('FAHDEV_DebouncedPosition', 1100);
             return;
@@ -1037,11 +1067,17 @@ class FreeAtHomeDevice extends IPSModule
                     else
                     {
                         // Zwischenwert (1..99) → normales Position-Kommando.
-                        // Zeit merken, damit ein unmittelbar folgender
-                        // Endwert (0/100) den MOVE-Trick überspringt.
-                        $this->SetBuffer('LastPositionCommandTime',
-                            (string) microtime(true));
                     }
+                    // Zeitstempel des ausgehenden Positions-Kommandos merken.
+                    // Wird an zwei Stellen ausgewertet:
+                    //  (a) beim NÄCHSTEN RequestAction: wenn ein Endwert (0/100)
+                    //      binnen 3 s nachrückt, MOVE-Trick überspringen
+                    //  (b) in do_ReseiveData: eingehende Positions-Echos des
+                    //      SysAP im selben Zeitfenster unterdrücken, damit die
+                    //      IPS-Variable nicht auf den Istwert "zurück-springt"
+                    //      bevor der Motor überhaupt losgefahren ist.
+                    $this->SetBuffer('LastPositionCommandTime',
+                        (string) microtime(true));
                     // Wert immer zurücklesen
                     $lDoSetValue = false;
                 }
