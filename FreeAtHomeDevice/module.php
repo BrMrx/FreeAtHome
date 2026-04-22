@@ -27,6 +27,29 @@ class FreeAtHomeDevice extends IPSModule
  
         $this->RegisterAttributeString('DeviceType', '');
 
+        // ---- Positions-Debounce ----
+        // Homebridge-Slider schickt beim schnellen Ziehen mehrere Zwischen-
+        // werte hintereinander (z. B. 50 → 70 → 85 → 95 → 100). Ohne
+        // Debounce würde der Rolladen-Aktor jeden einzelnen davon verarbeiten
+        // und dabei kurz anfahren / stoppen / die Richtung korrigieren – das
+        // sieht man als "Hopser vor der Zielfahrt".
+        //
+        // Wir sammeln Positions-Kommandos stattdessen im Buffer und senden
+        // erst nach einer Ruhephase von 250 ms den LETZTEN eingegangenen
+        // Wert – also genau das, was der User tatsächlich haben wollte.
+        $this->RegisterTimer(
+            'FAHDEV_DebouncedPosition',
+            0,
+            'FAHDEV_DebouncedPositionFire($_IPS[\'TARGET\']);'
+        );
+        // Buffer 'PendingPosition'    — letzter Zielwert (als string)
+        // Buffer 'PositionSkipDebounce' — 1 = der nächste RequestAction-Aufruf
+        //                                 kommt bereits aus dem Debounce-Timer,
+        //                                 nicht erneut debouncen
+        $this->SetBuffer('PendingPosition', '');
+        $this->SetBuffer('PositionSkipDebounce', '0');
+        // ----------------------------
+
         // Wind Grenzwert Profil
         if (!IPS_VariableProfileExists('FAH.WindAlarm')) {
             IPS_CreateVariableProfile('FAH.WindAlarm', 0);
@@ -797,10 +820,61 @@ class FreeAtHomeDevice extends IPSModule
         }
     }
 
+    // ====================================================================
+    //  Timer-Callback für Positions-Debounce
+    //
+    //  Wird 250 ms nach dem letzten eingegangenen Positions-Kommando
+    //  aufgerufen. Holt den Zielwert aus dem Buffer, stoppt den Timer,
+    //  setzt ein Flag, damit RequestAction beim nächsten Durchgang NICHT
+    //  erneut debounced, und delegiert dann an RequestAction wie üblich.
+    //  Der MOVE-Trick am Anschlag und die Linearisierung werden damit
+    //  weiterhin angewandt, aber nur EINMAL für den finalen Wert.
+    // ====================================================================
+    public function DebouncedPositionFire(): void
+    {
+        $this->SetTimerInterval('FAHDEV_DebouncedPosition', 0);
+
+        $lPending = $this->GetBuffer('PendingPosition');
+        if( $lPending === '' )
+        {
+            return;
+        }
+        $this->SetBuffer('PendingPosition', '');
+
+        $this->SendDebug(__FUNCTION__,
+            "Firing debounced position: $lPending", 0);
+
+        // Signal an RequestAction: diesen Aufruf nicht nochmal debouncen
+        $this->SetBuffer('PositionSkipDebounce', '1');
+        $this->RequestAction(
+            'CURRENT_ABSOLUTE_POSITION_BLINDS_PERCENTAGE',
+            intval($lPending)
+        );
+    }
+
     public function RequestAction($Ident, $Value)
     {
         // Daten empfangen
         $this->SendDebug(__FUNCTION__, $Ident.' => '.$Value, 0);
+
+        // ---- Debounce für Jalousie-Positionskommandos ----
+        // Nur für das eine Pairing, und auch nur wenn wir nicht gerade vom
+        // Debounce-Timer aufgerufen werden (sonst unendliche Kette).
+        if( $Ident === 'CURRENT_ABSOLUTE_POSITION_BLINDS_PERCENTAGE'
+            && $this->GetBuffer('PositionSkipDebounce') !== '1' )
+        {
+            $this->SendDebug(__FUNCTION__,
+                "Position debounce: queueing value $Value (250 ms)", 0);
+            $this->SetBuffer('PendingPosition', (string) $Value);
+            $this->SetTimerInterval('FAHDEV_DebouncedPosition', 250);
+            return;
+        }
+        // Flag wieder zurücksetzen (nur für genau einen Aufruf aktiv)
+        if( $this->GetBuffer('PositionSkipDebounce') === '1' )
+        {
+            $this->SetBuffer('PositionSkipDebounce', '0');
+        }
+        // ---------------------------------------------------
 
         // FIX: $lBeforeValue enthält den LOGISCHEN Wert (0..100), $Value wird
         //      ggf. überschrieben mit dem linearisierten Device-Wert.
