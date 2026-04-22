@@ -479,6 +479,47 @@ class FreeAtHomeDevice extends IPSModule
             $lChannelData = $lDataObj->{$lDeviceID}->{$lChannel};
 
             $lPairingIdsToSuppress = array();
+
+            // Echo-Schutz: wenn wir gerade eben selbst ein Positions-Kommando
+            // geschickt haben (< 3 s), meldet der SysAP typischerweise zuerst
+            // einen "stationary"-Status (odp0000 = 0 oder 1) mit der ALTEN
+            // Istposition zurück, bevor der Motor losfährt. Die is-moving-
+            // Suppression unten greift erst wenn INFO_MOVE_UP_DOWN >= 2 ist,
+            // also zu spät.
+            //
+            // Wir unterscheiden nach dem MIT-gelieferten MOVE-Status:
+            //  • kein MOVE im Paket       → Position-Echo vor Fahrtbeginn → suppress
+            //  • MOVE = 0 oder 1          → stationary → suppress (altes Echo oder
+            //                               Endposition). Unterscheidung "Echo vor
+            //                               Fahrt" vs "Echo nach Fahrt-Ende":
+            //                               nach 3 s gilt es als Endposition.
+            //  • MOVE >= 2 (fährt)        → is-moving-Logik unten übernimmt
+            $lLastPosTime = (float) $this->GetBuffer('LastPositionCommandTime');
+            $lRecentCmdWindow = ($lLastPosTime > 0)
+                && ((microtime(true) - $lLastPosTime) < 3.0);
+            if( $lRecentCmdWindow )
+            {
+                // Prüfe ob im selben Paket ein MOVE-Status >= 2 enthalten ist.
+                // Falls ja, greift sowieso die is-moving-Suppression weiter
+                // unten. Hier suppressen wir nur bei MOVE=0/1 (oder fehlend).
+                $lMoveInPacket = null;
+                foreach( $lOutputs as $lDP2 => $lPID2 )
+                {
+                    if( PID::GetName( $lPID2 ) === 'INFO_MOVE_UP_DOWN'
+                        && isset( $lChannelData->$lDP2 ) )
+                    {
+                        $lMoveInPacket = intval( $lChannelData->$lDP2 );
+                        break;
+                    }
+                }
+                if( $lMoveInPacket === null || $lMoveInPacket < 2 )
+                {
+                    $lPairingIdsToSuppress[] = PID::GetID('CURRENT_ABSOLUTE_POSITION_BLINDS_PERCENTAGE');
+                    $this->SendDebug(__FUNCTION__,
+                        'recent cmd window + stationary status, suppress CURRENT_ABSOLUTE_POSITION_BLINDS_PERCENTAGE echo', 0);
+                }
+            }
+
             // Prüfe ob Daten für die Übernahme unterdrückt werden müssen
             foreach( $lOutputs as $lDatapoint => $lPairingID  )
             {
