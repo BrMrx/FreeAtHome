@@ -44,8 +44,19 @@ class FreeAtHomeConfigurator extends IPSModule
         $Form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
         $AllDevices = $this->getFAH_AllDevices();
 
+        $this->SendDebug('GetConfigurationForm',
+            'AllDevices: type=' . gettype($AllDevices)
+            . ' count=' . (is_array($AllDevices) ? count($AllDevices) : '-')
+            . ' first_key=' . (is_array($AllDevices) && count($AllDevices) > 0 ? array_keys($AllDevices)[0] : '-'),
+            0);
+
         $Devices = $this->FilterDeviceList( $AllDevices, false, ['hue','huegroup']);  // alles ausser Hue Devices
         $HueDevices = $this->FilterDeviceList( $AllDevices, true, ['hue']); // nur Hue Devices
+
+        $this->SendDebug('GetConfigurationForm',
+            'After filter: Devices count=' . count((array)$Devices)
+            . ' HueDevices count=' . count((array)$HueDevices),
+            0);
 
 
         $lAllDeviceGroups = [
