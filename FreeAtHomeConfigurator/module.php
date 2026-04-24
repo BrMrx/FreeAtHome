@@ -27,6 +27,9 @@ class FreeAtHomeConfigurator extends IPSModule
         $this->RegisterPropertyInteger('RF_TargetCategory', 0);
         $this->RegisterPropertyInteger('HUE_TargetCategory', 0);
 
+        // Cache-Buffer für getFAH_AllDevices (siehe dort für Hintergrund).
+        // Bleibt bis zum manuellen "Aktualisieren" des Users persistent.
+        $this->SetBuffer('AllDevicesCache', '');
     }
 
     public function ApplyChanges()
@@ -180,8 +183,32 @@ class FreeAtHomeConfigurator extends IPSModule
 
 
 
+    /**
+     * Holt die komplette Gerätekonfiguration von der Bridge (via REST-API).
+     *
+     * Diese Abfrage ist teuer (HTTPS-GET auf /fhapi/v1/api/rest/configuration,
+     * typisch ~100-500 kB JSON). IP-Symcon ruft GetConfigurationForm in
+     * manchen Situationen mehrfach pro Minute auf (z. B. wenn der Configurator-
+     * Dialog in der Konsole offen ist). Deshalb wird das Ergebnis gecacht.
+     *
+     * Der Cache wird NICHT automatisch ablaufen – er bleibt bis der User
+     * explizit auf den "Aktualisieren"-Button im Dialog klickt, was den
+     * Cache über die public-Action RefreshDevices() invalidiert.
+     */
     private function getFAH_AllDevices()
     {
+        // Cache prüfen (kein Zeitlimit – Cache bleibt bis zur manuellen Invalidierung)
+        $lCached = $this->GetBuffer('AllDevicesCache');
+        if( $lCached !== '' )
+        {
+            $lDecoded = json_decode($lCached, true);
+            if( is_array($lDecoded) )
+            {
+                return $lDecoded;
+            }
+        }
+
+        // Cache leer → frisch holen
         $Data = [];
         $Buffer = [];
 
@@ -195,7 +222,26 @@ class FreeAtHomeConfigurator extends IPSModule
         if (!$result) {
             return [];
         }
+
+        // Ergebnis cachen
+        $this->SetBuffer('AllDevicesCache', json_encode($result));
+
         return $result;
+    }
+
+    /**
+     * Cache invalidieren und Configurator-Dialog zum Neuladen zwingen.
+     *
+     * Wird vom "Aktualisieren"-Button im Dialog aufgerufen. IPS-Symcon
+     * reloadet daraufhin das Configurator-Formular, wodurch
+     * GetConfigurationForm erneut aufgerufen wird – dieses Mal ist der
+     * Cache leer und es gibt einen frischen REST-Call.
+     */
+    public function RefreshDevices()
+    {
+        $this->SetBuffer('AllDevicesCache', '');
+        $this->UpdateFormField('Configurator', 'values', json_encode([]));
+        $this->ReloadForm();
     }
 
     // getHUEDevices ist momentan ungenutzt – die Bridge verteilt Hue-Devices
