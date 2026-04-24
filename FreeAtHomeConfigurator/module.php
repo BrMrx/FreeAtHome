@@ -199,13 +199,16 @@ class FreeAtHomeConfigurator extends IPSModule
     {
         // Cache prüfen (kein Zeitlimit – Cache bleibt bis zur manuellen Invalidierung)
         $lCached = $this->GetBuffer('AllDevicesCache');
+        $this->SendDebug(__FUNCTION__, 'cache length: ' . strlen($lCached), 0);
         if( $lCached !== '' )
         {
             $lDecoded = json_decode($lCached, true);
             if( is_array($lDecoded) )
             {
+                $this->SendDebug(__FUNCTION__, 'cache hit, returning ' . count($lDecoded) . ' devices', 0);
                 return $lDecoded;
             }
+            $this->SendDebug(__FUNCTION__, 'cache decode failed, falling through', 0);
         }
 
         // Cache leer → frisch holen
@@ -218,13 +221,23 @@ class FreeAtHomeConfigurator extends IPSModule
         $Data['Buffer'] = $Buffer;
         $Data = json_encode($Data);
         $ResultfromParent = $this->SendDataToParent($Data);
+        $this->SendDebug(__FUNCTION__,
+            'SendDataToParent returned type=' . gettype($ResultfromParent)
+            . ' length=' . (is_string($ResultfromParent) ? strlen($ResultfromParent) : '-')
+            . ' head=' . (is_string($ResultfromParent) ? substr($ResultfromParent, 0, 200) : json_encode($ResultfromParent)),
+            0);
         $result = json_decode($ResultfromParent, true);
         if (!$result) {
+            $this->SendDebug(__FUNCTION__, 'json_decode returned falsy, json_last_error=' . json_last_error_msg(), 0);
             return [];
         }
 
+        $this->SendDebug(__FUNCTION__, 'fresh result has ' . count($result) . ' devices', 0);
+
         // Ergebnis cachen
-        $this->SetBuffer('AllDevicesCache', json_encode($result));
+        $lEncoded = json_encode($result);
+        $lSetOk = $this->SetBuffer('AllDevicesCache', $lEncoded);
+        $this->SendDebug(__FUNCTION__, 'SetBuffer length=' . strlen($lEncoded) . ' returned=' . var_export($lSetOk, true), 0);
 
         return $result;
     }
