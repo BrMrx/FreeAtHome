@@ -44,19 +44,8 @@ class FreeAtHomeConfigurator extends IPSModule
         $Form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
         $AllDevices = $this->getFAH_AllDevices();
 
-        $this->SendDebug('GetConfigurationForm',
-            'AllDevices: type=' . gettype($AllDevices)
-            . ' count=' . (is_array($AllDevices) ? count($AllDevices) : '-')
-            . ' first_key=' . (is_array($AllDevices) && count($AllDevices) > 0 ? array_keys($AllDevices)[0] : '-'),
-            0);
-
         $Devices = $this->FilterDeviceList( $AllDevices, false, ['hue','huegroup']);  // alles ausser Hue Devices
         $HueDevices = $this->FilterDeviceList( $AllDevices, true, ['hue']); // nur Hue Devices
-
-        $this->SendDebug('GetConfigurationForm',
-            'After filter: Devices count=' . count((array)$Devices)
-            . ' HueDevices count=' . count((array)$HueDevices),
-            0);
 
 
         $lAllDeviceGroups = [
@@ -153,7 +142,18 @@ class FreeAtHomeConfigurator extends IPSModule
             }
         }
 
-        $Form['actions'][0]['values'] = $Values;
+        // Configurator-Element im Form finden (Button kann davor stehen,
+        // deshalb nicht auf einen festen Index verlassen).
+        foreach( $Form['actions'] as &$lAction )
+        {
+            if( ($lAction['type'] ?? '') === 'Configurator' )
+            {
+                $lAction['values'] = $Values;
+                break;
+            }
+        }
+        unset($lAction);
+
         return json_encode($Form);
     }
 
@@ -210,16 +210,13 @@ class FreeAtHomeConfigurator extends IPSModule
     {
         // Cache prüfen (kein Zeitlimit – Cache bleibt bis zur manuellen Invalidierung)
         $lCached = $this->GetBuffer('AllDevicesCache');
-        $this->SendDebug(__FUNCTION__, 'cache length: ' . strlen($lCached), 0);
         if( $lCached !== '' )
         {
             $lDecoded = json_decode($lCached, true);
             if( is_array($lDecoded) )
             {
-                $this->SendDebug(__FUNCTION__, 'cache hit, returning ' . count($lDecoded) . ' devices', 0);
                 return $lDecoded;
             }
-            $this->SendDebug(__FUNCTION__, 'cache decode failed, falling through', 0);
         }
 
         // Cache leer → frisch holen
@@ -232,23 +229,13 @@ class FreeAtHomeConfigurator extends IPSModule
         $Data['Buffer'] = $Buffer;
         $Data = json_encode($Data);
         $ResultfromParent = $this->SendDataToParent($Data);
-        $this->SendDebug(__FUNCTION__,
-            'SendDataToParent returned type=' . gettype($ResultfromParent)
-            . ' length=' . (is_string($ResultfromParent) ? strlen($ResultfromParent) : '-')
-            . ' head=' . (is_string($ResultfromParent) ? substr($ResultfromParent, 0, 200) : json_encode($ResultfromParent)),
-            0);
         $result = json_decode($ResultfromParent, true);
         if (!$result) {
-            $this->SendDebug(__FUNCTION__, 'json_decode returned falsy, json_last_error=' . json_last_error_msg(), 0);
             return [];
         }
 
-        $this->SendDebug(__FUNCTION__, 'fresh result has ' . count($result) . ' devices', 0);
-
         // Ergebnis cachen
-        $lEncoded = json_encode($result);
-        $lSetOk = $this->SetBuffer('AllDevicesCache', $lEncoded);
-        $this->SendDebug(__FUNCTION__, 'SetBuffer length=' . strlen($lEncoded) . ' returned=' . var_export($lSetOk, true), 0);
+        $this->SetBuffer('AllDevicesCache', json_encode($result));
 
         return $result;
     }
@@ -263,8 +250,10 @@ class FreeAtHomeConfigurator extends IPSModule
      */
     public function RefreshDevices()
     {
+        // Cache leeren – der nächste GetConfigurationForm-Aufruf wird dann
+        // frische Daten von der Bridge holen.
         $this->SetBuffer('AllDevicesCache', '');
-        $this->UpdateFormField('Configurator', 'values', json_encode([]));
+        // ReloadForm triggert GetConfigurationForm neu.
         $this->ReloadForm();
     }
 
